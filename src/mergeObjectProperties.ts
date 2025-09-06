@@ -60,10 +60,7 @@ export function mergeObjectProperties<
   isObjectType(schema2);
 
   const required = [
-    ...new Set([
-      ...(schema1?.required ? schema1.required : []),
-      ...(schema2?.required ? schema2.required : []),
-    ]),
+    ...new Set([...(schema1?.required ?? []), ...(schema2?.required ?? [])]),
   ];
 
   const properties = mergeOptionalRecords(

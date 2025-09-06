@@ -1,4 +1,4 @@
-import type { Merge, TupleToUnion, UnionToTuple } from 'type-fest';
+import type { Merge, SetRequired, TupleToUnion, UnionToTuple } from 'type-fest';
 
 import type { JSONSchemaObject, JSONSchemaObjectOutput } from './types';
 import { isObjectType } from './utils';
@@ -28,7 +28,7 @@ type PickSchemaProperties<
  * Create a new object by picking the specified properties from a JSON Schema object definition.
  */
 export function pickObjectProperties<
-  Schema extends JSONSchemaObject,
+  Schema extends SetRequired<JSONSchemaObject, 'properties'>,
   Keys extends (keyof Schema['properties'])[],
 >(
   schema: Schema,

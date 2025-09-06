@@ -1,4 +1,4 @@
-import type { Merge, TupleToUnion, UnionToTuple } from 'type-fest';
+import type { Merge, SetRequired, TupleToUnion, UnionToTuple } from 'type-fest';
 
 import type { JSONSchemaObject, JSONSchemaObjectOutput } from './types';
 import { isObjectType } from './utils';
@@ -28,7 +28,7 @@ type OmitSchemaProperties<
  * Remove specified properties from a JSON Schema object definition.
  */
 export function omitObjectProperties<
-  Schema extends JSONSchemaObject,
+  Schema extends SetRequired<JSONSchemaObject, 'properties'>,
   Keys extends (keyof Schema['properties'])[],
 >(
   schema: Schema,
