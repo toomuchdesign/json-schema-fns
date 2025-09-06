@@ -7,12 +7,9 @@ export type JSONSchemaObject = {
   patternProperties?: Record<string, unknown>;
 };
 
-export type RequiredField<Fields extends readonly unknown[] | undefined> =
-  Fields extends readonly [] ? undefined : Fields;
-
 export type JSONSchemaObjectOutput<Schema> = Simplify<
   Readonly<
-    // Remove undefined props
-    ConditionalExcept<Schema, undefined>
+    // Remove undefined props and empty arrays
+    ConditionalExcept<Schema, readonly [] | undefined>
   >
 >;

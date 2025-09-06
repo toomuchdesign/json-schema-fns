@@ -1,10 +1,6 @@
 import type { Merge, TupleToUnion, UnionToTuple } from 'type-fest';
 
-import type {
-  JSONSchemaObject,
-  JSONSchemaObjectOutput,
-  RequiredField,
-} from './types';
+import type { JSONSchemaObject, JSONSchemaObjectOutput } from './types';
 import { isObjectType } from './utils';
 
 type OmitFromTuple<Tuple extends readonly unknown[], EntriesToOmit> = Readonly<
@@ -18,15 +14,13 @@ type OmitSchemaProperties<
   Schema,
   {
     properties: Omit<Schema['properties'], Keys[number]>;
-    required: RequiredField<
-      undefined extends Schema['required']
-        ? undefined
-        : OmitFromTuple<
-            // @ts-expect-error extends doesn't narrow type
-            Schema['required'],
-            Keys[number]
-          >
-    >;
+    required: undefined extends Schema['required']
+      ? undefined
+      : OmitFromTuple<
+          // @ts-expect-error extends doesn't narrow type
+          Schema['required'],
+          Keys[number]
+        >;
   }
 >;
 

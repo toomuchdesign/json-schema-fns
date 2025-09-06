@@ -1,10 +1,6 @@
 import type { Merge, TupleToUnion, UnionToTuple } from 'type-fest';
 
-import type {
-  JSONSchemaObject,
-  JSONSchemaObjectOutput,
-  RequiredField,
-} from './types';
+import type { JSONSchemaObject, JSONSchemaObjectOutput } from './types';
 import { isObjectType } from './utils';
 
 type MergeTuples<T1, T2> = readonly [
@@ -29,9 +25,7 @@ type MergeSchemas<
 > = Merge<
   Merge<Schema1, Schema2>,
   {
-    required: RequiredField<
-      MergeTuples<Schema1['required'], Schema2['required']>
-    >;
+    required: MergeTuples<Schema1['required'], Schema2['required']>;
     properties: Merge<Schema1['properties'], Schema2['properties']>;
     patternProperties: MergeOptionalRecords<
       Schema1['patternProperties'],
