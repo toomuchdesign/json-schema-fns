@@ -16,7 +16,8 @@ npm install @toomuchdesign/json-schema-fns
 
 ## API
 
-- `omitObjectProperties`
+- [`omitObjectProperties`](#omitObjectProperties)
+- [`pickObjectProperties`](#pickObjectProperties)
 
 ### omitObjectProperties
 
@@ -36,6 +37,29 @@ const schema = {
 
 const result = omitObjectProperties(schema, ['b']);
 ```
+
+### pickObjectProperties
+
+Create a new object by picking the specified properties from a JSON Schema object definition.
+
+```ts
+import { pickObjectProperties } from '@toomuchdesign/json-schema-fns';
+
+const schema = {
+  type: 'object',
+  properties: {
+    a: { type: 'string' },
+    b: { type: 'number' },
+  },
+  required: ['a', 'b'],
+} as const;
+
+const result = pickObjectProperties(schema, ['b']);
+```
+
+## Similar packages
+
+- https://github.com/codeperate/json-schema-builder
 
 ## Contributing
 

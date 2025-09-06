@@ -1,53 +1,53 @@
 import type { Simplify, JSONSchemaObject } from './types';
 
-type OmitFromTuple<
+type PickFromTuple<
   Tuple extends readonly unknown[],
-  EntriesToRemove extends readonly unknown[],
+  EntriesToKeep extends readonly unknown[],
 > = Tuple extends readonly [infer First, ...infer Rest]
-  ? First extends EntriesToRemove[number]
-    ? OmitFromTuple<Rest, EntriesToRemove>
-    : readonly [First, ...OmitFromTuple<Rest, EntriesToRemove>]
+  ? First extends EntriesToKeep[number]
+    ? readonly [First, ...PickFromTuple<Rest, EntriesToKeep>]
+    : PickFromTuple<Rest, EntriesToKeep>
   : readonly [];
 
-type OmitSchemaProperties<
+type PickSchemaProperties<
   Schema extends JSONSchemaObject,
   Keys extends (keyof Schema['properties'])[],
   RequiredField = undefined extends Schema['required']
     ? undefined
-    : OmitFromTuple<
+    : PickFromTuple<
         // @ts-expect-error extends doesn't narrow type
         Schema['required'],
         Keys
       >,
 > = Omit<Schema, 'properties' | 'required'> & {
-  readonly properties: Omit<Schema['properties'], Keys[number]>;
+  readonly properties: Pick<Schema['properties'], Keys[number]>;
   readonly required: RequiredField extends readonly []
     ? undefined
     : RequiredField;
 };
 
-export function omitObjectProperties<
+export function pickObjectProperties<
   Schema extends JSONSchemaObject,
   Keys extends (keyof Schema['properties'])[],
 >(
   schema: Schema,
-  keysToRemove: Keys,
-): Simplify<OmitSchemaProperties<Schema, Keys>> {
+  keysToPick: Keys,
+): Simplify<PickSchemaProperties<Schema, Keys>> {
   if (schema.type !== 'object') {
     // @ts-expect-error types don't allow non-object schemas
     return schema;
   }
 
   const required = schema.required
-    ? schema.required.filter((key) => !keysToRemove.includes(key))
+    ? schema.required.filter((key) => keysToPick.includes(key))
     : [];
 
   // @ts-expect-error not relying on natural type flow
   return {
     ...schema,
     properties: Object.fromEntries(
-      Object.entries(schema.properties).filter(
-        ([key]) => !keysToRemove.includes(key),
+      Object.entries(schema.properties).filter(([key]) =>
+        keysToPick.includes(key),
       ),
     ),
     required: required.length > 0 ? required : undefined,
