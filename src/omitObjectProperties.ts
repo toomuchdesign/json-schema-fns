@@ -1,15 +1,10 @@
-import type { Simplify, Merge } from 'type-fest';
+import type { Simplify, Merge, UnionToTuple, TupleToUnion } from 'type-fest';
 import type { JSONSchemaObject, RequiredField } from './types';
 import { isObjectType } from './utils';
 
-type OmitFromTuple<
-  Tuple extends readonly unknown[],
-  EntriesToRemove extends readonly unknown[],
-> = Tuple extends readonly [infer First, ...infer Rest]
-  ? First extends EntriesToRemove[number]
-    ? OmitFromTuple<Rest, EntriesToRemove>
-    : readonly [First, ...OmitFromTuple<Rest, EntriesToRemove>]
-  : readonly [];
+type OmitFromTuple<Tuple extends readonly unknown[], EntriesToOmit> = Readonly<
+  UnionToTuple<Exclude<TupleToUnion<Tuple>, EntriesToOmit>>
+>;
 
 type OmitSchemaProperties<
   Schema extends JSONSchemaObject,
@@ -24,7 +19,7 @@ type OmitSchemaProperties<
         : OmitFromTuple<
             // @ts-expect-error extends doesn't narrow type
             Schema['required'],
-            Keys
+            Keys[number]
           >
     >;
   }>
@@ -38,16 +33,16 @@ export function omitObjectProperties<
   Keys extends (keyof Schema['properties'])[],
 >(
   schema: Schema,
-  keysToRemove: Keys,
+  keysToOmit: Keys,
 ): Simplify<OmitSchemaProperties<Schema, Keys>> {
   isObjectType(schema);
 
   const required = schema.required
-    ? schema.required.filter((key) => !keysToRemove.includes(key))
+    ? schema.required.filter((key) => !keysToOmit.includes(key))
     : [];
   const properties = Object.fromEntries(
     Object.entries(schema.properties).filter(
-      ([key]) => !keysToRemove.includes(key),
+      ([key]) => !keysToOmit.includes(key),
     ),
   );
 
@@ -58,3 +53,5 @@ export function omitObjectProperties<
     properties,
   };
 }
+
+type RRR = OmitFromTuple<['aaa', 'ddd', 'ttt'], 'ttt' | 'sss' | 'aaa'>;
