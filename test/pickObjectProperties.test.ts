@@ -1,28 +1,29 @@
 import { describe, it, expect } from 'vitest';
 import { expectTypeOf } from 'expect-type';
 import deepFreeze from 'deep-freeze';
-import { omitObjectProperties } from '../src';
+import { pickObjectProperties } from '../src';
 
-describe('omitObjectProperties', () => {
+describe('pickObjectProperties', () => {
   it('returns expected schema and types', () => {
     const schema = {
-      type: 'object',
-      required: ['a', 'b', 'c'],
-      properties: {
-        a: { type: 'string' },
-        b: { type: 'number' },
-        c: { type: 'string' },
-      },
-    } as const;
-    deepFreeze(schema);
-
-    const actual = omitObjectProperties(schema, ['c']);
-    const expected = {
       type: 'object',
       required: ['a', 'b'],
       properties: {
         a: { type: 'string' },
         b: { type: 'number' },
+        c: { type: 'string' },
+        d: { type: 'number' },
+      },
+    } as const;
+    deepFreeze(schema);
+
+    const actual = pickObjectProperties(schema, ['a', 'd']);
+    const expected = {
+      type: 'object',
+      required: ['a'],
+      properties: {
+        a: { type: 'string' },
+        d: { type: 'number' },
       },
     } as const;
 
@@ -35,6 +36,7 @@ describe('omitObjectProperties', () => {
       type: 'object',
       properties: {
         a: { type: 'string' },
+        b: { type: 'number' },
       },
       patternProperties: {
         '^S_': { type: 'string' },
@@ -43,11 +45,13 @@ describe('omitObjectProperties', () => {
     } as const;
     deepFreeze(schema);
 
-    const actual = omitObjectProperties(schema, ['a']);
+    const actual = pickObjectProperties(schema, ['a']);
     const expected = {
       type: 'object',
       required: undefined,
-      properties: {},
+      properties: {
+        a: { type: 'string' },
+      },
       patternProperties: {
         '^S_': { type: 'string' },
       },
@@ -70,7 +74,7 @@ describe('omitObjectProperties', () => {
       } as const;
       deepFreeze(schema);
 
-      const actual = omitObjectProperties(schema, ['a']);
+      const actual = pickObjectProperties(schema, ['c']);
       const expected = {
         type: 'object',
         required: undefined,
@@ -96,7 +100,7 @@ describe('omitObjectProperties', () => {
       deepFreeze(schema);
 
       // @ts-expect-error intentionally testing a scenario not allowed by types
-      const actual = omitObjectProperties(schema, ['a']);
+      const actual = pickObjectProperties(schema, ['a']);
       const expected = actual;
 
       expect(actual).toEqual(expected);
