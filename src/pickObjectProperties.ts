@@ -1,4 +1,5 @@
 import type { Simplify, JSONSchemaObject } from './types';
+import { isObjectType } from './utils';
 
 type PickFromTuple<
   Tuple extends readonly unknown[],
@@ -26,6 +27,9 @@ type PickSchemaProperties<
     : RequiredField;
 };
 
+/**
+ * Create a new object by picking the specified properties from a JSON Schema object definition.
+ */
 export function pickObjectProperties<
   Schema extends JSONSchemaObject,
   Keys extends (keyof Schema['properties'])[],
@@ -33,10 +37,7 @@ export function pickObjectProperties<
   schema: Schema,
   keysToPick: Keys,
 ): Simplify<PickSchemaProperties<Schema, Keys>> {
-  if (schema.type !== 'object') {
-    // @ts-expect-error types don't allow non-object schemas
-    return schema;
-  }
+  isObjectType(schema);
 
   const required = schema.required
     ? schema.required.filter((key) => keysToPick.includes(key))

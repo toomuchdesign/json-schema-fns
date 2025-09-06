@@ -85,7 +85,7 @@ describe('omitObjectProperties', () => {
   });
 
   describe('type !== object', () => {
-    it('returns schema as is', () => {
+    it('throws expected error', () => {
       const schema = {
         type: 'array',
         required: ['a'],
@@ -95,12 +95,10 @@ describe('omitObjectProperties', () => {
       } as const;
       deepFreeze(schema);
 
-      // @ts-expect-error intentionally testing a scenario not allowed by types
-      const actual = omitObjectProperties(schema, ['a']);
-      const expected = actual;
-
-      expect(actual).toEqual(expected);
-      expectTypeOf(actual).toEqualTypeOf(expected);
+      expect(() =>
+        // @ts-expect-error intentionally testing a scenario not allowed by types
+        omitObjectProperties(schema, ['a']),
+      ).toThrow('Schema is expected to have a "type" property set to "object"');
     });
   });
 });
