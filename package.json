@@ -1,0 +1,47 @@
+{
+  "name": "@toomuchdesign/npm-package-template",
+  "version": "0.0.0",
+  "description": "",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rimraf ./dist && tsc -p tsconfig.build.json",
+    "test": "vitest --config ./vitest.config.mts",
+    "preversion": "npm run prepare",
+    "version": "git add package.json",
+    "postversion": "git push && git push --tags",
+    "prepare": "npx simple-git-hooks && npm run source:check && npm run test -- --run && npm run build",
+    "prettier:check": "prettier . --check",
+    "prettier:fix": "npm run prettier:check -- --write",
+    "type:check": "tsc --noEmit",
+    "source:check": "npm run prettier:check && npm run type:check",
+    "source:fix": "npm run prettier:fix"
+  },
+  "keywords": [],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toomuchdesign/npm-package-template.git"
+  },
+  "author": "Andrea Carraro <me@andreacarraro.it>",
+  "license": "ISC",
+  "devDependencies": {
+    "@changesets/cli": "^2.29.6",
+    "@tsconfig/node20": "^20.1.6",
+    "@vitest/coverage-v8": "^3.2.4",
+    "prettier": "^3.6.2",
+    "rimraf": "^6.0.1",
+    "simple-git-hooks": "^2.13.1",
+    "typescript": "^5.9.2",
+    "vitest": "^3.0.1"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "npm run prepare"
+  }
+}
