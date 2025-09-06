@@ -40,6 +40,7 @@
   "devDependencies": {
     "@changesets/cli": "^2.29.6",
     "@tsconfig/node20": "^20.1.6",
+    "@types/deep-freeze": "^0.1.5",
     "@vitest/coverage-v8": "^3.2.4",
     "deep-freeze": "^0.0.1",
     "prettier": "^3.6.2",
@@ -52,6 +53,6 @@
     "pre-commit": "npm run prepare"
   },
   "dependencies": {
-    "@types/deep-freeze": "^0.1.5"
+    "type-fest": "^4.41.0"
   }
 }
