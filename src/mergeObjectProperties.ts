@@ -1,25 +1,50 @@
-import type { Merge, Simplify } from 'type-fest';
+import type {
+  Merge,
+  Simplify,
+  UnionToTuple,
+  TupleToUnion,
+  ConditionalExcept,
+} from 'type-fest';
 import type { JSONSchemaObject, RequiredField } from './types';
 import { isObjectType } from './utils';
 
-type NormalizeTuple<T> = T extends readonly unknown[] | unknown[] ? T : [];
-// @TODO handle duplicates
 type MergeTuples<T1, T2> = readonly [
-  ...NormalizeTuple<T1>,
-  ...NormalizeTuple<T2>,
+  ...UnionToTuple<TupleToUnion<T1> | TupleToUnion<T2>>,
 ];
+
+type MergeOptionalRecords<
+  Object1 extends Record<string, unknown> | undefined,
+  Object2 extends Record<string, unknown> | undefined,
+> =
+  Object1 extends Record<string, unknown>
+    ? Object2 extends Record<string, unknown>
+      ? Merge<Object1, Object2>
+      : Object1
+    : Object2 extends Record<string, unknown>
+      ? Object2
+      : undefined;
 
 type MergeSchemas<
   Schema1 extends JSONSchemaObject,
   Schema2 extends JSONSchemaObject,
 > = Merge<
   Merge<Schema1, Schema2>,
-  Readonly<{
-    required: RequiredField<
-      MergeTuples<Schema1['required'], Schema2['required']>
-    >;
-    properties: Merge<Schema1['properties'], Schema2['properties']>;
-  }>
+  Readonly<
+    ConditionalExcept<
+      {
+        properties: Merge<Schema1['properties'], Schema2['properties']>;
+        patternProperties: MergeOptionalRecords<
+          Schema1['patternProperties'],
+          Schema2['patternProperties']
+        >;
+      },
+      undefined
+    > & {
+      required: RequiredField<
+        MergeTuples<Schema1['required'], Schema2['required']>
+      >;
+    }
+  >
 >;
 
 /**
@@ -36,8 +61,10 @@ export function mergeObjectProperties<
   isObjectType(schema2);
 
   const required = [
-    ...(schema1?.required ? schema1.required : []),
-    ...(schema2?.required ? schema2.required : []),
+    ...new Set([
+      ...(schema1?.required ? schema1.required : []),
+      ...(schema2?.required ? schema2.required : []),
+    ]),
   ];
 
   const properties = {
@@ -45,11 +72,20 @@ export function mergeObjectProperties<
     ...schema2.properties,
   };
 
+  const patternProperties =
+    schema1.patternProperties || schema2.patternProperties
+      ? {
+          ...schema1.patternProperties,
+          ...schema2.patternProperties,
+        }
+      : undefined;
+
   // @ts-expect-error not relying on natural type flow
   return {
     ...schema1,
     ...schema2,
     required: required.length > 0 ? required : undefined,
     properties,
+    ...(patternProperties && { patternProperties }),
   };
 }

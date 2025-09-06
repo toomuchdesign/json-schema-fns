@@ -12,6 +12,11 @@ describe('mergeObjectProperties', () => {
         a: { type: 'string' },
         b: { type: 'number' },
       },
+      patternProperties: {
+        a: {
+          type: 'string',
+        },
+      },
     } as const;
 
     const schema2 = {
@@ -20,6 +25,11 @@ describe('mergeObjectProperties', () => {
       properties: {
         c: { type: 'string' },
         d: { type: 'number' },
+      },
+      patternProperties: {
+        b: {
+          type: 'number',
+        },
       },
     } as const;
     deepFreeze(schema1);
@@ -35,45 +45,53 @@ describe('mergeObjectProperties', () => {
         c: { type: 'string' },
         d: { type: 'number' },
       },
+      patternProperties: {
+        a: {
+          type: 'string',
+        },
+        b: {
+          type: 'number',
+        },
+      },
     } as const;
 
     expect(actual).toEqual(expected);
     expectTypeOf(actual).toEqualTypeOf(expected);
   });
 
-  // describe.only('clashing input properties', () => {
-  //   it('dedupes required field and give precedence to schema2', () => {
-  //     const schema1 = {
-  //       type: 'object',
-  //       required: ['a'],
-  //       properties: {
-  //         a: { type: 'string' },
-  //       },
-  //     } as const;
+  describe('clashing input properties', () => {
+    it('dedupes required field and gives precedence to schema2', () => {
+      const schema1 = {
+        type: 'object',
+        required: ['a'],
+        properties: {
+          a: { type: 'string' },
+        },
+      } as const;
 
-  //     const schema2 = {
-  //       type: 'object',
-  //       required: ['a'],
-  //       properties: {
-  //         a: { type: 'number' },
-  //       },
-  //     } as const;
-  //     deepFreeze(schema1);
-  //     deepFreeze(schema2);
+      const schema2 = {
+        type: 'object',
+        required: ['a'],
+        properties: {
+          a: { type: 'number' },
+        },
+      } as const;
+      deepFreeze(schema1);
+      deepFreeze(schema2);
 
-  //     const actual = mergeObjectProperties(schema1, schema2);
-  //     const expected = {
-  //       type: 'object',
-  //       required: ['a'],
-  //       properties: {
-  //         a: { type: 'number' },
-  //       },
-  //     } as const;
+      const actual = mergeObjectProperties(schema1, schema2);
+      const expected = {
+        type: 'object',
+        required: ['a'],
+        properties: {
+          a: { type: 'number' },
+        },
+      } as const;
 
-  //     expect(actual).toEqual(expected);
-  //     expectTypeOf(actual).toEqualTypeOf(expected);
-  //   });
-  // });
+      expect(actual).toEqual(expected);
+      expectTypeOf(actual).toEqualTypeOf(expected);
+    });
+  });
 
   it('preserves non relevant props giving precedence to schema2', () => {
     const schema1 = {
