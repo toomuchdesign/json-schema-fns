@@ -1,4 +1,5 @@
 import type { Simplify, JSONSchemaObject } from './types';
+import { isObjectType } from './utils';
 
 type OmitFromTuple<
   Tuple extends readonly unknown[],
@@ -26,6 +27,9 @@ type OmitSchemaProperties<
     : RequiredField;
 };
 
+/**
+ * Remove specified properties from a JSON Schema object definition.
+ */
 export function omitObjectProperties<
   Schema extends JSONSchemaObject,
   Keys extends (keyof Schema['properties'])[],
@@ -33,10 +37,7 @@ export function omitObjectProperties<
   schema: Schema,
   keysToRemove: Keys,
 ): Simplify<OmitSchemaProperties<Schema, Keys>> {
-  if (schema.type !== 'object') {
-    // @ts-expect-error types don't allow non-object schemas
-    return schema;
-  }
+  isObjectType(schema);
 
   const required = schema.required
     ? schema.required.filter((key) => !keysToRemove.includes(key))
