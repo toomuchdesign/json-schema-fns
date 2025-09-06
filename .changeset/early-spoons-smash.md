@@ -1,5 +1,5 @@
 ---
-'@toomuchdesign/json-schema-utils': minor
+'@toomuchdesign/json-schema-fns': minor
 ---
 
-Initial commit
+Initial release
