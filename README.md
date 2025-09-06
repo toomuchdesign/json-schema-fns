@@ -18,6 +18,7 @@ npm install @toomuchdesign/json-schema-fns
 
 - [`omitObjectProperties`](#omitObjectProperties)
 - [`pickObjectProperties`](#pickObjectProperties)
+- [`mergeObjectProperties`](#mergeObjectProperties)
 
 ### omitObjectProperties
 
@@ -55,6 +56,32 @@ const schema = {
 } as const;
 
 const result = pickObjectProperties(schema, ['b']);
+```
+
+### mergeObjectProperties
+
+Create a new object by picking the specified properties from a JSON Schema object definition.
+
+```ts
+import { mergeObjectProperties } from '@toomuchdesign/json-schema-fns';
+
+const schema1 = {
+  type: 'object',
+  properties: {
+    a: { type: 'string' },
+  },
+  required: ['a'],
+} as const;
+
+const schema2 = {
+  type: 'object',
+  properties: {
+    b: { type: 'number' },
+  },
+  required: ['b'],
+} as const;
+
+const result = mergeObjectProperties(schema1, schema2);
 ```
 
 ## Similar packages

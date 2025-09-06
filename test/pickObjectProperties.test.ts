@@ -62,7 +62,7 @@ describe('pickObjectProperties', () => {
     expectTypeOf(actual).toEqualTypeOf(expected);
   });
 
-  describe('all required props removed', () => {
+  describe('no required props on resulting schema', () => {
     it('returns undefined required', () => {
       const schema = {
         type: 'object',
