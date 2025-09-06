@@ -1,7 +1,7 @@
 {
-  "name": "@toomuchdesign/npm-package-template",
+  "name": "@toomuchdesign/json-schema-fns",
   "version": "0.0.0",
-  "description": "",
+  "description": "JSON Schema utility library with full TypeScript support",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "sideEffects": false,
@@ -21,13 +21,19 @@
     "source:check": "npm run prettier:check && npm run type:check",
     "source:fix": "npm run prettier:fix"
   },
-  "keywords": [],
+  "keywords": [
+    "json",
+    "schema",
+    "jsonschema",
+    "typescript",
+    "utilities"
+  ],
   "publishConfig": {
     "access": "public"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/toomuchdesign/npm-package-template.git"
+    "url": "git+https://github.com/toomuchdesign/json-schema-fns.git"
   },
   "author": "Andrea Carraro <me@andreacarraro.it>",
   "license": "ISC",
