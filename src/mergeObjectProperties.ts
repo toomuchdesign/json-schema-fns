@@ -34,6 +34,18 @@ type MergeSchemas<
   }
 >;
 
+function mergeOptionalRecords(
+  record1?: Record<string, unknown>,
+  record2?: Record<string, unknown>,
+): Record<string, unknown> | undefined {
+  return record1 || record2
+    ? {
+        ...record1,
+        ...record2,
+      }
+    : undefined;
+}
+
 /**
  * Merge two JSON Schema object definitions.
  */
@@ -54,25 +66,22 @@ export function mergeObjectProperties<
     ]),
   ];
 
-  const properties = {
-    ...schema1.properties,
-    ...schema2.properties,
-  };
+  const properties = mergeOptionalRecords(
+    schema1.properties,
+    schema2.properties,
+  );
 
-  const patternProperties =
-    schema1.patternProperties || schema2.patternProperties
-      ? {
-          ...schema1.patternProperties,
-          ...schema2.patternProperties,
-        }
-      : undefined;
+  const patternProperties = mergeOptionalRecords(
+    schema1.patternProperties,
+    schema2.patternProperties,
+  );
 
   // @ts-expect-error not relying on natural type flow
   return {
     ...schema1,
     ...schema2,
     required: required.length > 0 ? required : undefined,
-    properties,
+    ...(properties && { properties }),
     ...(patternProperties && { patternProperties }),
   };
 }
