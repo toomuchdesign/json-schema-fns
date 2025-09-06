@@ -117,7 +117,6 @@ describe('mergeObjectProperties', () => {
     const actual = mergeObjectProperties(schema1, schema2);
     const expected = {
       type: 'object',
-      required: undefined,
       properties: {
         a: { type: 'string' },
         b: { type: 'number' },
@@ -152,7 +151,6 @@ describe('mergeObjectProperties', () => {
       const actual = mergeObjectProperties(schema1, schema2);
       const expected = {
         type: 'object',
-        required: undefined,
         properties: {
           a: { type: 'string' },
           b: { type: 'number' },
@@ -184,7 +182,6 @@ describe('mergeObjectProperties', () => {
     const actual = mergeObjectProperties(schema1, schema2);
     const expected = {
       type: 'object',
-      required: undefined,
       properties: {
         a: { type: 'string' },
         b: { type: 'number' },

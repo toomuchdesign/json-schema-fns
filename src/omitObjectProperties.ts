@@ -1,5 +1,9 @@
-import type { Simplify, Merge, UnionToTuple, TupleToUnion } from 'type-fest';
-import type { JSONSchemaObject, RequiredField } from './types';
+import type { Merge, UnionToTuple, TupleToUnion } from 'type-fest';
+import type {
+  JSONSchemaObject,
+  RequiredField,
+  JSONSchemaObjectOutput,
+} from './types';
 import { isObjectType } from './utils';
 
 type OmitFromTuple<Tuple extends readonly unknown[], EntriesToOmit> = Readonly<
@@ -11,7 +15,7 @@ type OmitSchemaProperties<
   Keys extends (keyof Schema['properties'])[],
 > = Merge<
   Schema,
-  Readonly<{
+  {
     properties: Omit<Schema['properties'], Keys[number]>;
     required: RequiredField<
       undefined extends Schema['required']
@@ -22,7 +26,7 @@ type OmitSchemaProperties<
             Keys[number]
           >
     >;
-  }>
+  }
 >;
 
 /**
@@ -34,7 +38,7 @@ export function omitObjectProperties<
 >(
   schema: Schema,
   keysToOmit: Keys,
-): Simplify<OmitSchemaProperties<Schema, Keys>> {
+): JSONSchemaObjectOutput<OmitSchemaProperties<Schema, Keys>> {
   isObjectType(schema);
 
   const required = schema.required
@@ -53,5 +57,3 @@ export function omitObjectProperties<
     properties,
   };
 }
-
-type RRR = OmitFromTuple<['aaa', 'ddd', 'ttt'], 'ttt' | 'sss' | 'aaa'>;

@@ -46,7 +46,6 @@ describe('omitObjectProperties', () => {
     const actual = omitObjectProperties(schema, ['a']);
     const expected = {
       type: 'object',
-      required: undefined,
       properties: {},
       patternProperties: {
         '^S_': { type: 'string' },
@@ -73,7 +72,6 @@ describe('omitObjectProperties', () => {
       const actual = omitObjectProperties(schema, ['a']);
       const expected = {
         type: 'object',
-        required: undefined,
         properties: {
           c: { type: 'string' },
         },

@@ -1,11 +1,9 @@
+import type { Merge, UnionToTuple, TupleToUnion } from 'type-fest';
 import type {
-  Merge,
-  Simplify,
-  UnionToTuple,
-  TupleToUnion,
-  ConditionalExcept,
-} from 'type-fest';
-import type { JSONSchemaObject, RequiredField } from './types';
+  JSONSchemaObject,
+  RequiredField,
+  JSONSchemaObjectOutput,
+} from './types';
 import { isObjectType } from './utils';
 
 type MergeTuples<T1, T2> = readonly [
@@ -29,22 +27,16 @@ type MergeSchemas<
   Schema2 extends JSONSchemaObject,
 > = Merge<
   Merge<Schema1, Schema2>,
-  Readonly<
-    ConditionalExcept<
-      {
-        properties: Merge<Schema1['properties'], Schema2['properties']>;
-        patternProperties: MergeOptionalRecords<
-          Schema1['patternProperties'],
-          Schema2['patternProperties']
-        >;
-      },
-      undefined
-    > & {
-      required: RequiredField<
-        MergeTuples<Schema1['required'], Schema2['required']>
-      >;
-    }
-  >
+  {
+    required: RequiredField<
+      MergeTuples<Schema1['required'], Schema2['required']>
+    >;
+    properties: Merge<Schema1['properties'], Schema2['properties']>;
+    patternProperties: MergeOptionalRecords<
+      Schema1['patternProperties'],
+      Schema2['patternProperties']
+    >;
+  }
 >;
 
 /**
@@ -56,7 +48,7 @@ export function mergeObjectProperties<
 >(
   schema1: Schema1,
   schema2: Schema2,
-): Simplify<MergeSchemas<Schema1, Schema2>> {
+): JSONSchemaObjectOutput<MergeSchemas<Schema1, Schema2>> {
   isObjectType(schema1);
   isObjectType(schema2);
 

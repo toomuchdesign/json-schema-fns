@@ -48,7 +48,6 @@ describe('pickObjectProperties', () => {
     const actual = pickObjectProperties(schema, ['a']);
     const expected = {
       type: 'object',
-      required: undefined,
       properties: {
         a: { type: 'string' },
       },
@@ -77,7 +76,6 @@ describe('pickObjectProperties', () => {
       const actual = pickObjectProperties(schema, ['c']);
       const expected = {
         type: 'object',
-        required: undefined,
         properties: {
           c: { type: 'string' },
         },
