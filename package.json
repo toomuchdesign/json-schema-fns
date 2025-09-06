@@ -1,6 +1,6 @@
 {
   "name": "@toomuchdesign/json-schema-fns",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "JSON Schema utility library with full TypeScript support",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
