@@ -1,6 +1,7 @@
-import { describe, it, expect } from 'vitest';
-import { expectTypeOf } from 'expect-type';
 import deepFreeze from 'deep-freeze';
+import { expectTypeOf } from 'expect-type';
+import { describe, expect, it } from 'vitest';
+
 import { pickObjectProperties } from '../src';
 
 describe('pickObjectProperties', () => {

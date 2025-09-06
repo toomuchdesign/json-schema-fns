@@ -1,4 +1,4 @@
-import type { Simplify, ConditionalExcept } from 'type-fest';
+import type { ConditionalExcept, Simplify } from 'type-fest';
 
 export type JSONSchemaObject = {
   type: 'object';

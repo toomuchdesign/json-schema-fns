@@ -1,8 +1,9 @@
 import type { Merge, TupleToUnion, UnionToTuple } from 'type-fest';
+
 import type {
   JSONSchemaObject,
-  RequiredField,
   JSONSchemaObjectOutput,
+  RequiredField,
 } from './types';
 import { isObjectType } from './utils';
 
