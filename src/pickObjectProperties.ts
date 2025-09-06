@@ -1,15 +1,10 @@
-import type { Simplify, Merge } from 'type-fest';
+import type { Simplify, Merge, TupleToUnion, UnionToTuple } from 'type-fest';
 import type { JSONSchemaObject, RequiredField } from './types';
 import { isObjectType } from './utils';
 
-type PickFromTuple<
-  Tuple extends readonly unknown[],
-  EntriesToKeep extends readonly unknown[],
-> = Tuple extends readonly [infer First, ...infer Rest]
-  ? First extends EntriesToKeep[number]
-    ? readonly [First, ...PickFromTuple<Rest, EntriesToKeep>]
-    : PickFromTuple<Rest, EntriesToKeep>
-  : readonly [];
+type PickFromTuple<Tuple extends readonly unknown[], EntriesToPick> = Readonly<
+  UnionToTuple<Extract<TupleToUnion<Tuple>, EntriesToPick>>
+>;
 
 type PickSchemaProperties<
   Schema extends JSONSchemaObject,
@@ -24,7 +19,7 @@ type PickSchemaProperties<
         : PickFromTuple<
             // @ts-expect-error extends doesn't narrow type
             Schema['required'],
-            Keys
+            Keys[number]
           >
     >;
   }>
