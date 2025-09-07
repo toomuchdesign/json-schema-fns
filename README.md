@@ -19,6 +19,7 @@ npm install @toomuchdesign/json-schema-fns
 - [`omitObjectProperties`](#omitObjectProperties)
 - [`pickObjectProperties`](#pickObjectProperties)
 - [`mergeObjectProperties`](#mergeObjectProperties)
+- [`closeObjectDeep`](#closeObjectDeep)
 
 ### omitObjectProperties
 
@@ -82,6 +83,30 @@ const schema2 = {
 } as const;
 
 const result = mergeObjectProperties(schema1, schema2);
+```
+
+### closeObjectDeep
+
+Close object by recursively setting `additionalProperties` to false.
+
+```ts
+import { closeObjectDeep } from '@toomuchdesign/json-schema-fns';
+
+const schema = {
+  type: 'object',
+  required: ['name'],
+  properties: {
+    name: { type: 'string' },
+    address: {
+      type: 'object',
+      properties: {
+        street: { type: 'string' },
+      },
+    },
+  },
+} as const;
+
+const result = closeObjectDeep(schema);
 ```
 
 ## Similar packages
