@@ -3,6 +3,9 @@ import type { Merge, TupleToUnion, UnionToTuple } from 'type-fest';
 import type { JSONSchemaObject, JSONSchemaObjectOutput } from './types';
 import { isObjectType } from './utils';
 
+/**
+ * Merge and dedupe 2 tuples
+ */
 type MergeTuples<T1, T2> = readonly [
   ...UnionToTuple<TupleToUnion<T1> | TupleToUnion<T2>>,
 ];
@@ -26,7 +29,10 @@ type MergeSchemas<
   Merge<Schema1, Schema2>,
   {
     required: MergeTuples<Schema1['required'], Schema2['required']>;
-    properties: Merge<Schema1['properties'], Schema2['properties']>;
+    properties: MergeOptionalRecords<
+      Schema1['properties'],
+      Schema2['properties']
+    >;
     patternProperties: MergeOptionalRecords<
       Schema1['patternProperties'],
       Schema2['patternProperties']
@@ -78,7 +84,7 @@ export function mergeObjectProperties<
     ...schema1,
     ...schema2,
     required: required.length > 0 ? required : undefined,
-    ...(properties && { properties }),
-    ...(patternProperties && { patternProperties }),
+    properties,
+    patternProperties,
   };
 }

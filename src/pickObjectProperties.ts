@@ -39,6 +39,7 @@ export function pickObjectProperties<
   const required = schema.required
     ? schema.required.filter((key) => keysToPick.includes(key))
     : [];
+
   const properties = Object.fromEntries(
     Object.entries(schema.properties).filter(([key]) =>
       keysToPick.includes(key),

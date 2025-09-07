@@ -63,7 +63,7 @@ describe('pickObjectProperties', () => {
   });
 
   describe('no required props on resulting schema', () => {
-    it('returns undefined required', () => {
+    it('omits required prop', () => {
       const schema = {
         type: 'object',
         required: ['a'],
@@ -75,6 +75,7 @@ describe('pickObjectProperties', () => {
       deepFreeze(schema);
 
       const actual = pickObjectProperties(schema, ['c']);
+
       const expected = {
         type: 'object',
         properties: {

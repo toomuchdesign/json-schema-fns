@@ -1,6 +1,7 @@
 import deepFreeze from 'deep-freeze';
 import { expectTypeOf } from 'expect-type';
 import { describe, expect, it } from 'vitest';
+import { aC } from 'vitest/dist/chunks/reporters.d.BFLkQcL6.js';
 
 import { omitObjectProperties } from '../src';
 
@@ -59,7 +60,7 @@ describe('omitObjectProperties', () => {
   });
 
   describe('no required props on resulting schema', () => {
-    it('returns undefined required', () => {
+    it('omits required prop', () => {
       const schema = {
         type: 'object',
         required: ['a'],

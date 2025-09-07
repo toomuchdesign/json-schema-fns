@@ -132,7 +132,7 @@ describe('mergeObjectProperties', () => {
   });
 
   describe('no required props on resulting schema', () => {
-    it('returns undefined required', () => {
+    it('omits required prop', () => {
       const schema1 = {
         type: 'object',
         properties: {
