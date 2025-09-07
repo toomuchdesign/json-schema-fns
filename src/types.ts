@@ -1,8 +1,16 @@
-// https://github.com/sindresorhus/type-fest/blob/e790c3f166dd95a253ca442b533bf9f9d8ccbe45/source/simplify.d.ts#L58C1-L58C67
-export type Simplify<T> = { [KeyType in keyof T]: T[KeyType] } & {};
+import type { ConditionalExcept, Simplify } from 'type-fest';
 
+// https://github.com/ThomasAribart/json-schema-to-ts/blob/12767c1eab895159c01f5e6898d8e5e711ff9d1c/src/definitions/jsonSchema.ts
 export type JSONSchemaObject = {
   type: 'object';
-  properties: Record<string, unknown>;
   required?: readonly string[];
+  properties?: Readonly<Record<string, unknown>>;
+  patternProperties?: Readonly<Record<string, unknown>>;
 };
+
+export type JSONSchemaObjectOutput<Schema> = Simplify<
+  Readonly<
+    // Remove undefined props and empty arrays
+    ConditionalExcept<Schema, readonly [] | undefined>
+  >
+>;

@@ -1,6 +1,8 @@
-import { describe, it, expect } from 'vitest';
-import { expectTypeOf } from 'expect-type';
 import deepFreeze from 'deep-freeze';
+import { expectTypeOf } from 'expect-type';
+import { describe, expect, it } from 'vitest';
+import { aC } from 'vitest/dist/chunks/reporters.d.BFLkQcL6.js';
+
 import { omitObjectProperties } from '../src';
 
 describe('omitObjectProperties', () => {
@@ -46,7 +48,6 @@ describe('omitObjectProperties', () => {
     const actual = omitObjectProperties(schema, ['a']);
     const expected = {
       type: 'object',
-      required: undefined,
       properties: {},
       patternProperties: {
         '^S_': { type: 'string' },
@@ -58,8 +59,8 @@ describe('omitObjectProperties', () => {
     expectTypeOf(actual).toEqualTypeOf(expected);
   });
 
-  describe('all required props removed', () => {
-    it('returns undefined required', () => {
+  describe('no required props on resulting schema', () => {
+    it('omits required prop', () => {
       const schema = {
         type: 'object',
         required: ['a'],
@@ -73,7 +74,6 @@ describe('omitObjectProperties', () => {
       const actual = omitObjectProperties(schema, ['a']);
       const expected = {
         type: 'object',
-        required: undefined,
         properties: {
           c: { type: 'string' },
         },
@@ -85,7 +85,7 @@ describe('omitObjectProperties', () => {
   });
 
   describe('type !== object', () => {
-    it('returns schema as is', () => {
+    it('throws expected error', () => {
       const schema = {
         type: 'array',
         required: ['a'],
@@ -95,12 +95,10 @@ describe('omitObjectProperties', () => {
       } as const;
       deepFreeze(schema);
 
-      // @ts-expect-error intentionally testing a scenario not allowed by types
-      const actual = omitObjectProperties(schema, ['a']);
-      const expected = actual;
-
-      expect(actual).toEqual(expected);
-      expectTypeOf(actual).toEqualTypeOf(expected);
+      expect(() =>
+        // @ts-expect-error intentionally testing a scenario not allowed by types
+        omitObjectProperties(schema, ['a']),
+      ).toThrow('Schema is expected to have a "type" property set to "object"');
     });
   });
 });

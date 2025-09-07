@@ -39,7 +39,9 @@
   "license": "ISC",
   "devDependencies": {
     "@changesets/cli": "^2.29.6",
+    "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "@tsconfig/node20": "^20.1.6",
+    "@types/deep-freeze": "^0.1.5",
     "@vitest/coverage-v8": "^3.2.4",
     "deep-freeze": "^0.0.1",
     "prettier": "^3.6.2",
@@ -52,6 +54,6 @@
     "pre-commit": "npm run prepare"
   },
   "dependencies": {
-    "@types/deep-freeze": "^0.1.5"
+    "type-fest": "^4.41.0"
   }
 }

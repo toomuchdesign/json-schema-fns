@@ -1,0 +1,1 @@
+export { isObjectType } from './isObjectType';
