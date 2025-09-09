@@ -16,9 +16,7 @@ jobs:
     name: Release new version
     runs-on: ubuntu-latest
     permissions:
-      contents: write # enable pushing changes to the origin
       id-token: write # enable generation of an ID token for publishing
-      pull-requests: write # enable opening a PR for the release
     steps:
       - uses: actions/checkout@v5
         with:
@@ -27,7 +25,6 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version-file: .nvmrc
-          registry-url: https://registry.npmjs.org
 
         # Ensure npm 11.5.1 or later is installed
       - run: npm install -g npm@latest
