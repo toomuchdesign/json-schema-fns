@@ -1,5 +1,11 @@
 # @toomuchdesign/json-schema-fns
 
+## 0.1.3
+
+### Patch Changes
+
+- [#14](https://github.com/toomuchdesign/json-schema-fns/pull/14) [`7431399`](https://github.com/toomuchdesign/json-schema-fns/commit/7431399cfeb0f8c4091b19cf0652cbd770e18a6e) Thanks [@toomuchdesign](https://github.com/toomuchdesign)! - Release with GitHub actions
+
 ## 0.1.2
 
 ### Patch Changes
