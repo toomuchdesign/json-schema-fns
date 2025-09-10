@@ -8,12 +8,6 @@
 
 To guarantee this alignment between runtime behavior and static types, each utility function is covered by both functional and type-level tests, ensuring the schema transformation matches the inferred TypeScript type exactly.
 
-## Installation
-
-```
-npm install @toomuchdesign/json-schema-fns
-```
-
 ## API
 
 - [`omitObjectProperties`](#omitObjectProperties)
