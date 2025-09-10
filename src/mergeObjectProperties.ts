@@ -1,7 +1,7 @@
 import type { Merge, TupleToUnion, UnionToTuple } from 'type-fest';
 
 import type { JSONSchemaObject, JSONSchemaObjectOutput } from './types';
-import { isObjectType } from './utils';
+import { isJSONSchemaObjectType } from './utils';
 
 /**
  * Merge and dedupe 2 tuples
@@ -62,8 +62,8 @@ export function mergeObjectProperties<
   schema1: Schema1,
   schema2: Schema2,
 ): JSONSchemaObjectOutput<MergeSchemas<Schema1, Schema2>> {
-  isObjectType(schema1);
-  isObjectType(schema2);
+  isJSONSchemaObjectType(schema1);
+  isJSONSchemaObjectType(schema2);
 
   const required = [
     ...new Set([...(schema1?.required ?? []), ...(schema2?.required ?? [])]),

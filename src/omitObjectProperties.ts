@@ -1,7 +1,7 @@
 import type { Merge, SetRequired, TupleToUnion, UnionToTuple } from 'type-fest';
 
 import type { JSONSchemaObject, JSONSchemaObjectOutput } from './types';
-import { isObjectType } from './utils';
+import { isJSONSchemaObjectType } from './utils';
 
 type OmitFromTuple<Tuple extends readonly unknown[], EntriesToOmit> = Readonly<
   UnionToTuple<Exclude<TupleToUnion<Tuple>, EntriesToOmit>>
@@ -34,7 +34,7 @@ export function omitObjectProperties<
   schema: Schema,
   keysToOmit: Keys,
 ): JSONSchemaObjectOutput<OmitSchemaProperties<Schema, Keys>> {
-  isObjectType(schema);
+  isJSONSchemaObjectType(schema);
 
   const required = schema.required
     ? schema.required.filter((key) => !keysToOmit.includes(key))

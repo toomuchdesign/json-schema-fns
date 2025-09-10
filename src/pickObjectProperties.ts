@@ -1,7 +1,7 @@
 import type { Merge, SetRequired, TupleToUnion, UnionToTuple } from 'type-fest';
 
 import type { JSONSchemaObject, JSONSchemaObjectOutput } from './types';
-import { isObjectType } from './utils';
+import { isJSONSchemaObjectType } from './utils';
 
 type PickFromTuple<Tuple extends readonly unknown[], EntriesToPick> = Readonly<
   UnionToTuple<Extract<TupleToUnion<Tuple>, EntriesToPick>>
@@ -34,7 +34,7 @@ export function pickObjectProperties<
   schema: Schema,
   keysToPick: Keys,
 ): JSONSchemaObjectOutput<PickSchemaProperties<Schema, Keys>> {
-  isObjectType(schema);
+  isJSONSchemaObjectType(schema);
 
   const required = schema.required
     ? schema.required.filter((key) => keysToPick.includes(key))

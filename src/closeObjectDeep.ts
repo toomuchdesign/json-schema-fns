@@ -1,6 +1,7 @@
 import type { Merge } from 'type-fest';
 
 import type { JSONSchema, JSONSchemaObjectOutput } from './types';
+import { isObject } from './utils';
 
 type DisableAdditionalProperties<Value extends object> =
   'type' extends keyof Value
@@ -17,12 +18,6 @@ type DisableAdditionalPropertiesDeep<
     ? DisableAdditionalPropertiesDeep<Value[Key]>
     : Value[Key];
 };
-
-function isObject(input: unknown): input is Record<string, unknown> {
-  return (
-    typeof input === 'object' && input !== null && input.constructor === Object
-  );
-}
 
 function disableAdditionalPropertiesDeep(item: unknown): unknown {
   if (isObject(item)) {
@@ -46,7 +41,7 @@ function disableAdditionalPropertiesDeep(item: unknown): unknown {
 }
 
 /**
- * Close object by recursively setting `additionalProperties` to false
+ * Close JSON Schema object by recursively setting `additionalProperties` to false
  */
 export function closeObjectDeep<Schema extends JSONSchema>(
   schema: Schema,
