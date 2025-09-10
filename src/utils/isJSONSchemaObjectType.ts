@@ -1,7 +1,7 @@
 /**
  * Assert that provided schema has type equal to "object"
  */
-export function isObjectType(schema: {
+export function isJSONSchemaObjectType(schema: {
   type?: unknown;
 }): asserts schema is { type: 'object' } {
   if (schema.type !== 'object') {

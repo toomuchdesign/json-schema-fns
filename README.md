@@ -20,6 +20,7 @@ npm install @toomuchdesign/json-schema-fns
 - [`pickObjectProperties`](#pickObjectProperties)
 - [`mergeObjectProperties`](#mergeObjectProperties)
 - [`closeObjectDeep`](#closeObjectDeep)
+- [`openObjectDeep`](#openObjectDeep)
 
 ### omitObjectProperties
 
@@ -107,6 +108,32 @@ const schema = {
 } as const;
 
 const result = closeObjectDeep(schema);
+```
+
+### openObjectDeep
+
+Open object by recursively removing `additionalProperties` props.
+
+```ts
+import { openObjectDeep } from '@toomuchdesign/json-schema-fns';
+
+const schema = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['name'],
+  properties: {
+    name: { type: 'string' },
+    address: {
+      type: 'object',
+      additionalProperties: false,
+      properties: {
+        street: { type: 'string' },
+      },
+    },
+  },
+} as const;
+
+const result = openObjectDeep(schema);
 ```
 
 ## Similar packages
