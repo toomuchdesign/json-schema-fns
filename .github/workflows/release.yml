@@ -19,6 +19,7 @@ jobs:
       id-token: write # enable generation of an ID token for publishing
       pull-requests: write
       contents: write
+      actions: write
     steps:
       - uses: actions/checkout@v5
         with:
