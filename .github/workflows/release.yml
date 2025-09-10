@@ -35,7 +35,7 @@ jobs:
 
       - name: Create Release PR or Publish to npm
         # See https://github.com/changesets/action/issues/465
-        uses: changesets/action@v1.5.3
+        uses: changesets/action@v1.4.10
         with:
           publish: npm run release
           commit: 'chore: update version for release'
