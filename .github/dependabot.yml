@@ -19,3 +19,8 @@ updates:
         patterns:
           - 'actions/upload-artifact'
           - 'actions/download-artifact'
+    ignore:
+      # Ignore versions after 1.4x
+      # See https://github.com/changesets/action/issues/465
+      - dependency-name: 'changesets/action'
+        versions: ['>=1.5.0']
