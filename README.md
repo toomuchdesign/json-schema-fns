@@ -19,6 +19,7 @@ npm install @toomuchdesign/json-schema-fns
 - [`omitObjectProperties`](#omitObjectProperties)
 - [`pickObjectProperties`](#pickObjectProperties)
 - [`mergeObjectProperties`](#mergeObjectProperties)
+- [`requireObjectProperties`](#requireObjectProperties)
 - [`closeObjectDeep`](#closeObjectDeep)
 - [`openObjectDeep`](#openObjectDeep)
 
@@ -84,6 +85,26 @@ const schema2 = {
 } as const;
 
 const result = mergeObjectProperties(schema1, schema2);
+```
+
+### requireObjectProperties
+
+Require all properties of a JSON Schema object definition.
+
+```ts
+import { requireObjectProperties } from '@toomuchdesign/json-schema-fns';
+
+const schema = {
+  type: 'object',
+  properties: {
+    a: { type: 'string' },
+    b: { type: 'string' },
+    c: { type: 'string' },
+  },
+  required: ['b'],
+} as const;
+
+const result = requireObjectProperties(schema);
 ```
 
 ### closeObjectDeep

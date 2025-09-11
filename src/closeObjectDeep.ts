@@ -46,6 +46,6 @@ function disableAdditionalPropertiesDeep(item: unknown): unknown {
 export function closeObjectDeep<Schema extends JSONSchema>(
   schema: Schema,
 ): JSONSchemaObjectOutput<DisableAdditionalPropertiesDeep<Schema>> {
-  // @ts-expect-error couldn't get generics to work with json schema
+  // @ts-expect-error not relying on natural type flow
   return disableAdditionalPropertiesDeep(schema);
 }
