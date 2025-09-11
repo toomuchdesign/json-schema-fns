@@ -1,22 +1,24 @@
-name: Release
-
 # Release with OIDC
 # https://github.blog/changelog/2025-07-31-npm-trusted-publishing-with-oidc-is-generally-available/
 # https://docs.npmjs.com/trusted-publishers
+
+name: Release
 
 on:
   push:
     branches:
       - master
 
-concurrency: ${{ github.workflow }}-${{ github.ref }}
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   release:
-    name: Release new version
+    name: Changesets release
     runs-on: ubuntu-latest
     permissions:
-      actions: write
+      actions: write # enable pushing changes to the origin
       contents: write # enable pushing changes to the origin
       id-token: write # enable generation of an ID token for publishing
       pull-requests: write # enable opening a PR for the release
@@ -31,7 +33,7 @@ jobs:
 
         # Ensure npm 11.5.1 or later is installed
       - run: npm install -g npm@latest
-      - run: npm ci
+      - run: npm ci --ignore-scripts
 
       - name: Create Release PR or Publish to npm
         uses: changesets/action@v1
@@ -40,4 +42,4 @@ jobs:
           commit: 'chore: update version for release'
           title: 'chore: update version for release'
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
