@@ -15,7 +15,7 @@
     "version": "git add package.json",
     "postversion": "git push && git push --tags",
     "prepare": "npx simple-git-hooks && npm run source:check && npm run test -- --run && npm run build",
-    "release": "npx changeset publish",
+    "release": "npm run prepare && npx changeset publish",
     "prettier:check": "prettier . --check",
     "prettier:fix": "npm run prettier:check -- --write",
     "type:check": "tsc --noEmit",
@@ -29,9 +29,6 @@
     "typescript",
     "utilities"
   ],
-  "publishConfig": {
-    "access": "public"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/toomuchdesign/json-schema-fns.git"
