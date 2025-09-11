@@ -53,7 +53,7 @@ function mergeOptionalRecords(
 }
 
 /**
- * Merge two JSON Schema object definitions.
+ * Merge two object schemas into one.
  */
 export function mergeObjectProperties<
   Schema1 extends JSONSchemaObject,

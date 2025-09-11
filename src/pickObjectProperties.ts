@@ -25,7 +25,7 @@ type PickSchemaProperties<
 >;
 
 /**
- * Create a new object by picking the specified properties from a JSON Schema object definition.
+ * Pick only specific properties from an object schema.
  */
 export function pickObjectProperties<
   Schema extends SetRequired<JSONSchemaObject, 'properties'>,

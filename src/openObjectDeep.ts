@@ -41,7 +41,7 @@ function omitAdditionalPropertiesDeep(item: unknown): unknown {
 }
 
 /**
- * Open JSON Schema object by recursively removing `additionalProperties` props.
+ * Recursively remove `additionalProperties` from all object schemas.
  */
 export function openObjectDeep<Schema extends JSONSchema>(
   schema: Schema,

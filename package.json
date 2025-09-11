@@ -1,7 +1,7 @@
 {
   "name": "@toomuchdesign/json-schema-fns",
   "version": "0.2.0",
-  "description": "JSON Schema utility library with full TypeScript support",
+  "description": "Immutable, type-safe utilities for transforming and composing JSON Schemas.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "sideEffects": false,

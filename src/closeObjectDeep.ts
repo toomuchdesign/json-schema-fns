@@ -41,7 +41,7 @@ function disableAdditionalPropertiesDeep(item: unknown): unknown {
 }
 
 /**
- * Close JSON Schema object by recursively setting `additionalProperties` to false
+ * Recursively set `additionalProperties: false` on all object schemas
  */
 export function closeObjectDeep<Schema extends JSONSchema>(
   schema: Schema,
