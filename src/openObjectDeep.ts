@@ -46,6 +46,6 @@ function omitAdditionalPropertiesDeep(item: unknown): unknown {
 export function openObjectDeep<Schema extends JSONSchema>(
   schema: Schema,
 ): JSONSchemaObjectOutput<OmitAdditionalPropertiesDeep<Schema>> {
-  // @ts-expect-error couldn't get generics to work with json schema
+  // @ts-expect-error not relying on natural type flow
   return omitAdditionalPropertiesDeep(schema);
 }
