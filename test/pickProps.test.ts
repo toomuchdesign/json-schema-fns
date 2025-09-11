@@ -2,9 +2,9 @@ import deepFreeze from 'deep-freeze';
 import { expectTypeOf } from 'expect-type';
 import { describe, expect, it } from 'vitest';
 
-import { pickObjectProperties } from '../src';
+import { pickProps } from '../src';
 
-describe('pickObjectProperties', () => {
+describe('pickProps', () => {
   it('returns expected schema and types', () => {
     const schema = {
       type: 'object',
@@ -18,7 +18,7 @@ describe('pickObjectProperties', () => {
     } as const;
     deepFreeze(schema);
 
-    const actual = pickObjectProperties(schema, ['a', 'd']);
+    const actual = pickProps(schema, ['a', 'd']);
     const expected = {
       type: 'object',
       required: ['a'],
@@ -46,7 +46,7 @@ describe('pickObjectProperties', () => {
     } as const;
     deepFreeze(schema);
 
-    const actual = pickObjectProperties(schema, ['a']);
+    const actual = pickProps(schema, ['a']);
     const expected = {
       type: 'object',
       properties: {
@@ -74,7 +74,7 @@ describe('pickObjectProperties', () => {
       } as const;
       deepFreeze(schema);
 
-      const actual = pickObjectProperties(schema, ['c']);
+      const actual = pickProps(schema, ['c']);
 
       const expected = {
         type: 'object',
@@ -101,7 +101,7 @@ describe('pickObjectProperties', () => {
 
       expect(() =>
         // @ts-expect-error intentionally testing a scenario not allowed by types
-        pickObjectProperties(schema, ['a']),
+        pickProps(schema, ['a']),
       ).toThrow('Schema is expected to have a "type" property set to "object"');
     });
   });

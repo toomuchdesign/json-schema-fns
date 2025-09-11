@@ -54,8 +54,13 @@ function mergeOptionalRecords(
 
 /**
  * Merge two object schemas into one.
+ *
+ * @example
+ * ```ts
+ * mergeProps(schema1, schema2);
+ * ```
  */
-export function mergeObjectProperties<
+export function mergeProps<
   Schema1 extends JSONSchemaObject,
   Schema2 extends JSONSchemaObject,
 >(

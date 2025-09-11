@@ -3,9 +3,9 @@ import { expectTypeOf } from 'expect-type';
 import type { Merge } from 'type-fest';
 import { describe, expect, it } from 'vitest';
 
-import { requireObjectProperties } from '../src';
+import { requireProps } from '../src';
 
-describe('requireObjectProperties', () => {
+describe('requireProps', () => {
   it('recursively set additionalProperties prop to false', () => {
     const schema = {
       type: 'object',
@@ -24,7 +24,7 @@ describe('requireObjectProperties', () => {
     } as const;
     deepFreeze(schema);
 
-    const actual = requireObjectProperties(schema);
+    const actual = requireProps(schema);
     const expected = {
       type: 'object',
       required: ['a', 'b', 'c', 'd'],
@@ -60,7 +60,7 @@ describe('requireObjectProperties', () => {
       } as const;
       deepFreeze(schema);
 
-      const actual = requireObjectProperties(schema);
+      const actual = requireProps(schema);
       const expected = {
         type: 'object',
       } as const;
@@ -78,7 +78,7 @@ describe('requireObjectProperties', () => {
       } as const;
       deepFreeze(schema);
 
-      const actual = requireObjectProperties(schema);
+      const actual = requireProps(schema);
       const expected = {
         type: 'object',
         properties: {},
@@ -102,7 +102,7 @@ describe('requireObjectProperties', () => {
 
       expect(() =>
         // @ts-expect-error intentionally testing a scenario not allowed by types
-        requireObjectProperties(schema, ['a']),
+        requireProps(schema, ['a']),
       ).toThrow('Schema is expected to have a "type" property set to "object"');
     });
   });

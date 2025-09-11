@@ -1,11 +1,10 @@
 import deepFreeze from 'deep-freeze';
 import { expectTypeOf } from 'expect-type';
 import { describe, expect, it } from 'vitest';
-import { aC } from 'vitest/dist/chunks/reporters.d.BFLkQcL6.js';
 
-import { omitObjectProperties } from '../src';
+import { omitProps } from '../src';
 
-describe('omitObjectProperties', () => {
+describe('omitProps', () => {
   it('returns expected schema and types', () => {
     const schema = {
       type: 'object',
@@ -18,7 +17,7 @@ describe('omitObjectProperties', () => {
     } as const;
     deepFreeze(schema);
 
-    const actual = omitObjectProperties(schema, ['c']);
+    const actual = omitProps(schema, ['c']);
     const expected = {
       type: 'object',
       required: ['a', 'b'],
@@ -45,7 +44,7 @@ describe('omitObjectProperties', () => {
     } as const;
     deepFreeze(schema);
 
-    const actual = omitObjectProperties(schema, ['a']);
+    const actual = omitProps(schema, ['a']);
     const expected = {
       type: 'object',
       properties: {},
@@ -71,7 +70,7 @@ describe('omitObjectProperties', () => {
       } as const;
       deepFreeze(schema);
 
-      const actual = omitObjectProperties(schema, ['a']);
+      const actual = omitProps(schema, ['a']);
       const expected = {
         type: 'object',
         properties: {
@@ -97,7 +96,7 @@ describe('omitObjectProperties', () => {
 
       expect(() =>
         // @ts-expect-error intentionally testing a scenario not allowed by types
-        omitObjectProperties(schema, ['a']),
+        omitProps(schema, ['a']),
       ).toThrow('Schema is expected to have a "type" property set to "object"');
     });
   });

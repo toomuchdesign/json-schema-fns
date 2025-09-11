@@ -42,8 +42,13 @@ function omitAdditionalPropertiesDeep(item: unknown): unknown {
 
 /**
  * Recursively remove `additionalProperties` from all object schemas.
+ *
+ * @example
+ * ```ts
+ * unsealSchema(schema);
+ * ```
  */
-export function openObjectDeep<Schema extends JSONSchema>(
+export function unsealSchema<Schema extends JSONSchema>(
   schema: Schema,
 ): JSONSchemaObjectOutput<OmitAdditionalPropertiesDeep<Schema>> {
   // @ts-expect-error not relying on natural type flow

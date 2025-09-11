@@ -2,4 +2,4 @@
 '@toomuchdesign/json-schema-fns': minor
 ---
 
-Add `requireObjectProperties` function
+Add `requireProps` function

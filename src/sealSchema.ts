@@ -42,8 +42,13 @@ function disableAdditionalPropertiesDeep(item: unknown): unknown {
 
 /**
  * Recursively set `additionalProperties: false` on all object schemas
+ *
+ * @example
+ * ```ts
+ * sealSchema(schema);
+ * ```
  */
-export function closeObjectDeep<Schema extends JSONSchema>(
+export function sealSchema<Schema extends JSONSchema>(
   schema: Schema,
 ): JSONSchemaObjectOutput<DisableAdditionalPropertiesDeep<Schema>> {
   // @ts-expect-error not relying on natural type flow

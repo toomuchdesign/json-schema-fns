@@ -3,20 +3,20 @@ import type { Merge, SetRequired, TupleToUnion, UnionToTuple } from 'type-fest';
 import type { JSONSchemaObject, JSONSchemaObjectOutput } from './types';
 import { isJSONSchemaObjectType } from './utils';
 
-type OmitFromTuple<Tuple extends readonly unknown[], EntriesToOmit> = Readonly<
-  UnionToTuple<Exclude<TupleToUnion<Tuple>, EntriesToOmit>>
+type PickFromTuple<Tuple extends readonly unknown[], EntriesToPick> = Readonly<
+  UnionToTuple<Extract<TupleToUnion<Tuple>, EntriesToPick>>
 >;
 
-type OmitSchemaProperties<
+type PickSchemaProperties<
   Schema extends JSONSchemaObject,
   Keys extends (keyof Schema['properties'])[],
 > = Merge<
   Schema,
   {
-    properties: Omit<Schema['properties'], Keys[number]>;
+    properties: Pick<Schema['properties'], Keys[number]>;
     required: undefined extends Schema['required']
       ? undefined
-      : OmitFromTuple<
+      : PickFromTuple<
           // @ts-expect-error extends doesn't narrow type
           Schema['required'],
           Keys[number]
@@ -25,24 +25,28 @@ type OmitSchemaProperties<
 >;
 
 /**
- * Omit specific properties from an object schema.
+ * Pick only specific properties from an object schema.
+ *
+ * @example
+ * ```ts
+ * pickProps(schema, ['key1', 'key2']);
+ * ```
  */
-export function omitObjectProperties<
+export function pickProps<
   Schema extends SetRequired<JSONSchemaObject, 'properties'>,
   Keys extends (keyof Schema['properties'])[],
 >(
   schema: Schema,
-  keysToOmit: Keys,
-): JSONSchemaObjectOutput<OmitSchemaProperties<Schema, Keys>> {
+  keys: Keys,
+): JSONSchemaObjectOutput<PickSchemaProperties<Schema, Keys>> {
   isJSONSchemaObjectType(schema);
 
   const required = schema.required
-    ? schema.required.filter((key) => !keysToOmit.includes(key))
+    ? schema.required.filter((key) => keys.includes(key))
     : [];
+
   const properties = Object.fromEntries(
-    Object.entries(schema.properties).filter(
-      ([key]) => !keysToOmit.includes(key),
-    ),
+    Object.entries(schema.properties).filter(([key]) => keys.includes(key)),
   );
 
   // @ts-expect-error not relying on natural type flow

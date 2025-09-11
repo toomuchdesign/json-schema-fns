@@ -9,7 +9,7 @@
 It ensures that schema transformations not only update the runtime schema correctly but also preserve accurate TypeScript type inference. This makes it especially useful when paired with tools like [json-schema-to-ts](https://github.com/ThomasAribart/json-schema-to-ts).
 
 ```ts
-import { omitObjectProperties } from '@toomuchdesign/json-schema-fns';
+import { omitProps } from '@toomuchdesign/json-schema-fns';
 import type { FromSchema } from 'json-schema-to-ts';
 
 const userSchema = {
@@ -21,7 +21,7 @@ const userSchema = {
   required: ['id', 'password'],
 } as const;
 
-const publicUserSchema = omitObjectProperties(userSchema, ['password']);
+const publicUserSchema = omitProps(userSchema, ['password']);
 type PublicUser = FromSchema<typeof publicUserSchema>;
 // { id: string }
 ```
@@ -40,19 +40,19 @@ npm install @toomuchdesign/json-schema-fns
 
 ## API
 
-- [`omitObjectProperties`](#omitObjectProperties) – Omit specific properties from an object schema
-- [`pickObjectProperties`](#pickObjectProperties) – Pick only specific properties from an object schema
-- [`mergeObjectProperties`](#mergeObjectProperties) – Merge two object schemas into one
-- [`requireObjectProperties`](#requireObjectProperties) – Mark all properties in an object schema as required
-- [`closeObjectDeep`](#closeObjectDeep) – Recursively set `additionalProperties: false` on all object schemas
-- [`openObjectDeep`](#openObjectDeep) – Recursively remove `additionalProperties` from all object schemas
+- [`omitProps`](#omitProps) – Omit specific properties from an object schema
+- [`pickProps`](#pickProps) – Pick only specific properties from an object schema
+- [`mergeProps`](#mergeProps) – Merge two object schemas into one
+- [`requireProps`](#requireProps) – Mark all properties in an object schema as required
+- [`sealSchema`](#sealSchema) – Recursively set `additionalProperties: false` on all object schemas
+- [`unsealSchema`](#unsealSchema) – Recursively remove `additionalProperties` from all object schemas
 
-### omitObjectProperties
+### omitProps
 
 Omit specific properties from an object schema.
 
 ```ts
-import { omitObjectProperties } from '@toomuchdesign/json-schema-fns';
+import { omitProps } from '@toomuchdesign/json-schema-fns';
 
 const schema = {
   type: 'object',
@@ -63,15 +63,15 @@ const schema = {
   required: ['a', 'b'],
 } as const;
 
-const result = omitObjectProperties(schema, ['b']);
+const result = omitProps(schema, ['b']);
 ```
 
-### pickObjectProperties
+### pickProps
 
 Pick only specific properties from an object schema.
 
 ```ts
-import { pickObjectProperties } from '@toomuchdesign/json-schema-fns';
+import { pickProps } from '@toomuchdesign/json-schema-fns';
 
 const schema = {
   type: 'object',
@@ -82,15 +82,15 @@ const schema = {
   required: ['a', 'b'],
 } as const;
 
-const result = pickObjectProperties(schema, ['b']);
+const result = pickProps(schema, ['b']);
 ```
 
-### mergeObjectProperties
+### mergeProps
 
 Merge two object schemas into one.
 
 ```ts
-import { mergeObjectProperties } from '@toomuchdesign/json-schema-fns';
+import { mergeProps } from '@toomuchdesign/json-schema-fns';
 
 const schema1 = {
   type: 'object',
@@ -108,15 +108,15 @@ const schema2 = {
   required: ['b'],
 } as const;
 
-const result = mergeObjectProperties(schema1, schema2);
+const result = mergeProps(schema1, schema2);
 ```
 
-### requireObjectProperties
+### requireProps
 
 Mark all properties in an object schema as required.
 
 ```ts
-import { requireObjectProperties } from '@toomuchdesign/json-schema-fns';
+import { requireProps } from '@toomuchdesign/json-schema-fns';
 
 const schema = {
   type: 'object',
@@ -128,15 +128,15 @@ const schema = {
   required: ['b'],
 } as const;
 
-const result = requireObjectProperties(schema);
+const result = requireProps(schema);
 ```
 
-### closeObjectDeep
+### sealSchema
 
 Recursively set `additionalProperties: false` on all object schemas.
 
 ```ts
-import { closeObjectDeep } from '@toomuchdesign/json-schema-fns';
+import { sealSchema } from '@toomuchdesign/json-schema-fns';
 
 const schema = {
   type: 'object',
@@ -152,15 +152,15 @@ const schema = {
   },
 } as const;
 
-const result = closeObjectDeep(schema);
+const result = sealSchema(schema);
 ```
 
-### openObjectDeep
+### unsealSchema
 
 Recursively remove `additionalProperties` from all object schemas.
 
 ```ts
-import { openObjectDeep } from '@toomuchdesign/json-schema-fns';
+import { unsealSchema } from '@toomuchdesign/json-schema-fns';
 
 const schema = {
   type: 'object',
@@ -178,7 +178,7 @@ const schema = {
   },
 } as const;
 
-const result = openObjectDeep(schema);
+const result = unsealSchema(schema);
 ```
 
 ## Similar packages
