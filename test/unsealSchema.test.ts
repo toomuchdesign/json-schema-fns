@@ -2,9 +2,9 @@ import deepFreeze from 'deep-freeze';
 import { expectTypeOf } from 'expect-type';
 import { describe, expect, it } from 'vitest';
 
-import { openObjectDeep } from '../src';
+import { unsealSchema } from '../src';
 
-describe('openObjectDeep', () => {
+describe('unsealSchema', () => {
   it('recursively removes additionalProperties props', () => {
     const schema = {
       type: 'object',
@@ -33,7 +33,7 @@ describe('openObjectDeep', () => {
     } as const;
     deepFreeze(schema);
 
-    const actual = openObjectDeep(schema);
+    const actual = unsealSchema(schema);
     const expected = {
       type: 'object',
       properties: {
@@ -116,7 +116,7 @@ describe('openObjectDeep', () => {
       } as const;
       deepFreeze(schema);
 
-      const actual = openObjectDeep(schema);
+      const actual = unsealSchema(schema);
       const expected = {
         type: 'object',
         properties: {
@@ -182,7 +182,7 @@ describe('openObjectDeep', () => {
       } as const;
       deepFreeze(schema);
 
-      const actual = openObjectDeep(schema);
+      const actual = unsealSchema(schema);
       const expected = schema;
 
       expect(actual).toEqual(expected);

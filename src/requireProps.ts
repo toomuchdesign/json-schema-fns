@@ -3,17 +3,22 @@ import type { Merge, UnionToTuple } from 'type-fest';
 import type { JSONSchemaObject, JSONSchemaObjectOutput } from './types';
 import { isJSONSchemaObjectType } from './utils';
 
-type RequireObjectProperties<
+type requireProps<
   Schema extends JSONSchemaObject,
   ObjectProps = keyof Schema['properties'],
 > = Merge<Schema, { required: Readonly<UnionToTuple<ObjectProps>> }>;
 
 /**
  * Mark all properties in an object schema as required.
+ *
+ * @example
+ * ```ts
+ * requireProps(schema);
+ * ```
  */
-export function requireObjectProperties<Schema extends JSONSchemaObject>(
+export function requireProps<Schema extends JSONSchemaObject>(
   schema: Schema,
-): JSONSchemaObjectOutput<RequireObjectProperties<Schema>> {
+): JSONSchemaObjectOutput<requireProps<Schema>> {
   isJSONSchemaObjectType(schema);
 
   const required = schema.properties ? Object.keys(schema.properties) : [];

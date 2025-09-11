@@ -2,9 +2,9 @@ import deepFreeze from 'deep-freeze';
 import { expectTypeOf } from 'expect-type';
 import { describe, expect, it } from 'vitest';
 
-import { mergeObjectProperties } from '../src';
+import { mergeProps } from '../src';
 
-describe('mergeObjectProperties', () => {
+describe('mergeProps', () => {
   it('returns expected schema and types', () => {
     const schema1 = {
       type: 'object',
@@ -36,7 +36,7 @@ describe('mergeObjectProperties', () => {
     deepFreeze(schema1);
     deepFreeze(schema2);
 
-    const actual = mergeObjectProperties(schema1, schema2);
+    const actual = mergeProps(schema1, schema2);
     const expected = {
       type: 'object',
       required: ['a', 'd'],
@@ -80,7 +80,7 @@ describe('mergeObjectProperties', () => {
       deepFreeze(schema1);
       deepFreeze(schema2);
 
-      const actual = mergeObjectProperties(schema1, schema2);
+      const actual = mergeProps(schema1, schema2);
       const expected = {
         type: 'object',
         required: ['a'],
@@ -115,7 +115,7 @@ describe('mergeObjectProperties', () => {
     deepFreeze(schema1);
     deepFreeze(schema2);
 
-    const actual = mergeObjectProperties(schema1, schema2);
+    const actual = mergeProps(schema1, schema2);
     const expected = {
       type: 'object',
       properties: {
@@ -149,7 +149,7 @@ describe('mergeObjectProperties', () => {
       deepFreeze(schema1);
       deepFreeze(schema2);
 
-      const actual = mergeObjectProperties(schema1, schema2);
+      const actual = mergeProps(schema1, schema2);
       const expected = {
         type: 'object',
         properties: {
@@ -180,7 +180,7 @@ describe('mergeObjectProperties', () => {
     deepFreeze(schema1);
     deepFreeze(schema2);
 
-    const actual = mergeObjectProperties(schema1, schema2);
+    const actual = mergeProps(schema1, schema2);
     const expected = {
       type: 'object',
       properties: {
@@ -212,7 +212,7 @@ describe('mergeObjectProperties', () => {
 
       expect(() =>
         // @ts-expect-error intentionally testing a scenario not allowed by types
-        mergeObjectProperties(schema1, schema2),
+        mergeProps(schema1, schema2),
       ).toThrow('Schema is expected to have a "type" property set to "object"');
     });
   });
