@@ -4,9 +4,33 @@
 [![Npm version][npm-version-badge]][npm]
 [![Coveralls][coveralls-badge]][coveralls]
 
-`@toomuchdesign/json-schema-fns` is an utility library designed to manipulate JSON Schema objects in a fully type-safe manner. Its core goal is to ensure that transformations made to JSON Schemas not only update the schema structure correctly but also preserve accurate TypeScript type inference, particularly when used with tools like [json-schema-to-ts](https://github.com/ThomasAribart/json-schema-to-ts).
+`@toomuchdesign/json-schema-fns` is a type-safe immutable utility library for transforming JSON Schemas.
 
-To guarantee this alignment between runtime behavior and static types, each utility function is covered by both functional and type-level tests, ensuring the schema transformation matches the inferred TypeScript type exactly.
+It ensures that schema transformations not only update the runtime schema correctly but also preserve accurate TypeScript type inference. This makes it especially useful when paired with tools like [json-schema-to-ts](https://github.com/ThomasAribart/json-schema-to-ts).
+
+```ts
+import { omitObjectProperties } from '@toomuchdesign/json-schema-fns';
+import type { FromSchema } from 'json-schema-to-ts';
+
+const userSchema = {
+  type: 'object',
+  properties: {
+    id: { type: 'string' },
+    password: { type: 'string' },
+  },
+  required: ['id', 'password'],
+} as const;
+
+const publicUserSchema = omitObjectProperties(userSchema, ['password']);
+type PublicUser = FromSchema<typeof publicUserSchema>;
+// { id: string }
+```
+
+## Why?
+
+Manipulating JSON Schemas directly can be verbose and error-prone.
+
+This library provides small, focused utilities that keep runtime schemas and TypeScript types in sync — especially when paired with [json-schema-to-ts](https://github.com/ThomasAribart/json-schema-to-ts).
 
 ## Installation
 
@@ -16,16 +40,16 @@ npm install @toomuchdesign/json-schema-fns
 
 ## API
 
-- [`omitObjectProperties`](#omitObjectProperties)
-- [`pickObjectProperties`](#pickObjectProperties)
-- [`mergeObjectProperties`](#mergeObjectProperties)
-- [`requireObjectProperties`](#requireObjectProperties)
-- [`closeObjectDeep`](#closeObjectDeep)
-- [`openObjectDeep`](#openObjectDeep)
+- [`omitObjectProperties`](#omitObjectProperties) – Omit specific properties from an object schema
+- [`pickObjectProperties`](#pickObjectProperties) – Pick only specific properties from an object schema
+- [`mergeObjectProperties`](#mergeObjectProperties) – Merge two object schemas into one
+- [`requireObjectProperties`](#requireObjectProperties) – Mark all properties in an object schema as required
+- [`closeObjectDeep`](#closeObjectDeep) – Recursively set `additionalProperties: false` on all object schemas
+- [`openObjectDeep`](#openObjectDeep) – Recursively remove `additionalProperties` from all object schemas
 
 ### omitObjectProperties
 
-Remove specified properties from a JSON Schema object definition.
+Omit specific properties from an object schema.
 
 ```ts
 import { omitObjectProperties } from '@toomuchdesign/json-schema-fns';
@@ -44,7 +68,7 @@ const result = omitObjectProperties(schema, ['b']);
 
 ### pickObjectProperties
 
-Create a new object by picking the specified properties from a JSON Schema object definition.
+Pick only specific properties from an object schema.
 
 ```ts
 import { pickObjectProperties } from '@toomuchdesign/json-schema-fns';
@@ -63,7 +87,7 @@ const result = pickObjectProperties(schema, ['b']);
 
 ### mergeObjectProperties
 
-Create a new object by picking the specified properties from a JSON Schema object definition.
+Merge two object schemas into one.
 
 ```ts
 import { mergeObjectProperties } from '@toomuchdesign/json-schema-fns';
@@ -89,7 +113,7 @@ const result = mergeObjectProperties(schema1, schema2);
 
 ### requireObjectProperties
 
-Require all properties of a JSON Schema object definition.
+Mark all properties in an object schema as required.
 
 ```ts
 import { requireObjectProperties } from '@toomuchdesign/json-schema-fns';
@@ -109,7 +133,7 @@ const result = requireObjectProperties(schema);
 
 ### closeObjectDeep
 
-Close object by recursively setting `additionalProperties` to false.
+Recursively set `additionalProperties: false` on all object schemas.
 
 ```ts
 import { closeObjectDeep } from '@toomuchdesign/json-schema-fns';
@@ -133,7 +157,7 @@ const result = closeObjectDeep(schema);
 
 ### openObjectDeep
 
-Open object by recursively removing `additionalProperties` props.
+Recursively remove `additionalProperties` from all object schemas.
 
 ```ts
 import { openObjectDeep } from '@toomuchdesign/json-schema-fns';
@@ -163,9 +187,9 @@ const result = openObjectDeep(schema);
 
 ## Contributing
 
-Any contribution should be provided with a `changesets` update:
+Contributions are welcome! Before opening a PR, please run:
 
-```
+```bash
 npx changeset
 ```
 

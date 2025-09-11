@@ -25,7 +25,7 @@ type OmitSchemaProperties<
 >;
 
 /**
- * Remove specified properties from a JSON Schema object definition.
+ * Omit specific properties from an object schema.
  */
 export function omitObjectProperties<
   Schema extends SetRequired<JSONSchemaObject, 'properties'>,

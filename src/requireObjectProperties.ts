@@ -9,7 +9,7 @@ type RequireObjectProperties<
 > = Merge<Schema, { required: Readonly<UnionToTuple<ObjectProps>> }>;
 
 /**
- * Require all properties of a JSON Schema object definition.
+ * Mark all properties in an object schema as required.
  */
 export function requireObjectProperties<Schema extends JSONSchemaObject>(
   schema: Schema,
