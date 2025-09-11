@@ -16,9 +16,10 @@ jobs:
     name: Release new version
     runs-on: ubuntu-latest
     permissions:
+      actions: write
+      contents: write # enable pushing changes to the origin
       id-token: write # enable generation of an ID token for publishing
-      pull-requests: write
-      contents: write
+      pull-requests: write # enable opening a PR for the release
     steps:
       - uses: actions/checkout@v5
         with:
@@ -33,8 +34,7 @@ jobs:
       - run: npm ci
 
       - name: Create Release PR or Publish to npm
-        # See https://github.com/changesets/action/issues/465
-        uses: changesets/action@v1.5.3
+        uses: changesets/action@v1
         with:
           publish: npm run release
           commit: 'chore: update version for release'
