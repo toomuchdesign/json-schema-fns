@@ -16,9 +16,10 @@ jobs:
     name: Release new version
     runs-on: ubuntu-latest
     permissions:
+      actions: write
+      contents: write
       id-token: write # enable generation of an ID token for publishing
       pull-requests: write
-      contents: write
     steps:
       - uses: actions/checkout@v5
         with:
@@ -40,4 +41,4 @@ jobs:
           commit: 'chore: update version for release'
           title: 'chore: update version for release'
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
