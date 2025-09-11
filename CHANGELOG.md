@@ -1,5 +1,11 @@
 # @toomuchdesign/json-schema-fns
 
+## 0.2.0
+
+### Minor Changes
+
+- [#24](https://github.com/toomuchdesign/json-schema-fns/pull/24) [`d67c00a`](https://github.com/toomuchdesign/json-schema-fns/commit/d67c00a206a8a4fde1b08e79e205325a9f316286) Thanks [@toomuchdesign](https://github.com/toomuchdesign)! - Add `openObjectDeep`
+
 ## 0.1.3
 
 ### Patch Changes
