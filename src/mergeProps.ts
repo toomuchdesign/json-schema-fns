@@ -29,10 +29,7 @@ type MergeProps<
   Merge<Schema1, Schema2>,
   {
     required: MergeTuples<Schema1['required'], Schema2['required']>;
-    properties: MergeOptionalRecords<
-      Schema1['properties'],
-      Schema2['properties']
-    >;
+    properties: Merge<Schema1['properties'], Schema2['properties']>;
     patternProperties: MergeOptionalRecords<
       Schema1['patternProperties'],
       Schema2['patternProperties']
@@ -74,10 +71,10 @@ export function mergeProps<
     ...new Set([...(schema1?.required ?? []), ...(schema2?.required ?? [])]),
   ];
 
-  const properties = mergeOptionalRecords(
-    schema1.properties,
-    schema2.properties,
-  );
+  const properties = {
+    ...schema1.properties,
+    ...schema2.properties,
+  };
 
   const patternProperties = mergeOptionalRecords(
     schema1.patternProperties,

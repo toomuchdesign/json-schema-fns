@@ -9,23 +9,20 @@ type RequireProps<
   Schema extends JSONSchemaObject,
   Keys extends ObjectKeys[] | undefined = undefined,
   PropertiesKeys = (keyof Schema['properties'])[],
-> =
-  // No keys
-  Keys extends undefined
-    ? Merge<
-        Schema,
-        {
-          required: Readonly<UnionToTuple<TupleToUnion<PropertiesKeys>>>;
-        }
+> = Merge<
+  Schema,
+  {
+    required: Readonly<
+      UnionToTuple<
+        Keys extends undefined
+          ? // If no keys:
+            TupleToUnion<PropertiesKeys>
+          : // If keys provided:
+            TupleToUnion<Schema['required']> | TupleToUnion<Keys>
       >
-    : Merge<
-        Schema,
-        {
-          required: Readonly<
-            UnionToTuple<TupleToUnion<Schema['required']> | TupleToUnion<Keys>>
-          >;
-        }
-      >;
+    >;
+  }
+>;
 
 /**
  * Mark specific properties in an object schema as required.
@@ -45,17 +42,9 @@ export function requireProps<
 ): JSONSchemaObjectOutput<RequireProps<Schema, Keys>> {
   isJSONSchemaObjectType(schema);
 
-  let required: string[] = [];
-  if (keys) {
-    const currentRequired = schema.required ?? [];
-    required.push(
-      ...currentRequired,
-      // @ts-expect-error ddd
-      ...keys,
-    );
-  } else {
-    required = schema.properties ? Object.keys(schema.properties) : [];
-  }
+  let required = keys
+    ? [...new Set([...(schema.required ?? []), ...keys])]
+    : Object.keys(schema.properties);
 
   // @ts-expect-error not relying on natural type flow
   return {

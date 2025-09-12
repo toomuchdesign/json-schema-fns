@@ -193,68 +193,35 @@ describe('mergeProps', () => {
     expectTypeOf(actual).toEqualTypeOf(expected);
   });
 
-  describe('provided schema.properties prop', () => {
-    describe('no properties prop', () => {
-      it('returns expected schema and types', () => {
-        const schema1 = {
-          type: 'object',
-          required: ['a', 'b'],
-        } as const;
+  describe('provided schema.properties prop is empty object', () => {
+    it('returns expected schema and types', () => {
+      const schema1 = {
+        type: 'object',
+        properties: {},
+        required: ['a', 'b'],
+      } as const;
 
-        const schema2 = {
-          type: 'object',
-          properties: {
-            b: { type: 'number' },
-          },
-        } as const;
+      const schema2 = {
+        type: 'object',
+        properties: {
+          b: { type: 'number' },
+        },
+      } as const;
 
-        deepFreeze(schema1);
-        deepFreeze(schema2);
+      deepFreeze(schema1);
+      deepFreeze(schema2);
 
-        const actual = mergeProps(schema1, schema2);
-        const expected = {
-          type: 'object',
-          required: ['a', 'b'],
-          properties: {
-            b: { type: 'number' },
-          },
-        } as const;
+      const actual = mergeProps(schema1, schema2);
+      const expected = {
+        type: 'object',
+        required: ['a', 'b'],
+        properties: {
+          b: { type: 'number' },
+        },
+      } as const;
 
-        expect(actual).toEqual(expected);
-        expectTypeOf(actual).toEqualTypeOf(expected);
-      });
-    });
-
-    describe('empty object', () => {
-      it('returns expected schema and types', () => {
-        const schema1 = {
-          type: 'object',
-          properties: {},
-          required: ['a', 'b'],
-        } as const;
-
-        const schema2 = {
-          type: 'object',
-          properties: {
-            b: { type: 'number' },
-          },
-        } as const;
-
-        deepFreeze(schema1);
-        deepFreeze(schema2);
-
-        const actual = mergeProps(schema1, schema2);
-        const expected = {
-          type: 'object',
-          required: ['a', 'b'],
-          properties: {
-            b: { type: 'number' },
-          },
-        } as const;
-
-        expect(actual).toEqual(expected);
-        expectTypeOf(actual).toEqualTypeOf(expected);
-      });
+      expect(actual).toEqual(expected);
+      expectTypeOf(actual).toEqualTypeOf(expected);
     });
   });
 
@@ -279,6 +246,28 @@ describe('mergeProps', () => {
         // @ts-expect-error intentionally testing a scenario not allowed by types
         mergeProps(schema1, schema2),
       ).toThrow('Schema is expected to have a "type" property set to "object"');
+    });
+  });
+
+  describe('missing properties prop', () => {
+    it('throws expected error', () => {
+      const schema1 = {
+        type: 'object',
+        properties: {
+          a: { type: 'string' },
+        },
+      } as const;
+
+      const schema2 = {
+        type: 'object',
+      } as const;
+      deepFreeze(schema1);
+      deepFreeze(schema2);
+
+      expect(() =>
+        // @ts-expect-error intentionally testing a scenario not allowed by types
+        mergeProps(schema1, schema2),
+      ).toThrow('Schema is expected to have a "properties" property');
     });
   });
 });
