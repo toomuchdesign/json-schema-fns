@@ -3,34 +3,40 @@ import type { Merge, TupleToUnion, UnionToTuple } from 'type-fest';
 import type { JSONSchemaObject, JSONSchemaObjectOutput } from './types';
 import { isJSONSchemaObjectType } from './utils';
 
+type ObjectKeys = string | number | symbol;
+
 type OptionalProps<
   Schema extends JSONSchemaObject,
-  Keys = keyof Schema['properties'],
-> = Keys extends any[]
-  ? Merge<
-      Schema,
-      {
-        required: Readonly<
-          UnionToTuple<
-            Exclude<TupleToUnion<Schema['required']>, TupleToUnion<Keys>>
-          >
+  Keys extends ObjectKeys[] | never[] | undefined = undefined,
+> =
+  // No keys
+  Keys extends undefined
+    ? Omit<Schema, 'required'>
+    : // Empty array keys
+      Keys extends never[]
+      ? Schema
+      : Merge<
+          Schema,
+          {
+            required: Readonly<
+              UnionToTuple<
+                Exclude<TupleToUnion<Schema['required']>, TupleToUnion<Keys>>
+              >
+            >;
+          }
         >;
-      }
-    >
-  : Omit<Schema, 'required'>;
-
 /**
  * Make specific properties in an object schema optional.
  * If no keys are provided, all properties become optional.
  *
  * @example
  * ```ts
- * optionalProps(schema);
+ * optionalProps(schema, ['key1', 'key2']);
  * ```
  */
 export function optionalProps<
   Schema extends JSONSchemaObject,
-  Keys extends (keyof Schema['properties'])[],
+  Keys extends (keyof Schema['properties'])[] | undefined = undefined,
 >(
   schema: Schema,
   keys?: Keys,

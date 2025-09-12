@@ -34,7 +34,7 @@ describe('optionalProps', () => {
     expectTypeOf(actual).toEqualTypeOf(expected);
   });
 
-  describe('no keys provided', () => {
+  describe('no keys argument provided', () => {
     it('removes required field', () => {
       const schema = {
         type: 'object',
@@ -58,10 +58,50 @@ describe('optionalProps', () => {
       expect(actual).toEqual(expected);
       expectTypeOf(actual).toEqualTypeOf(expected);
     });
+
+    describe('provided schema.properties prop', () => {
+      describe('no properties prop', () => {
+        it('removes required field', () => {
+          const schema = {
+            type: 'object',
+            required: ['a', 'b'],
+          } as const;
+          deepFreeze(schema);
+
+          const actual = optionalProps(schema);
+          const expected = {
+            type: 'object',
+          } as const;
+
+          expect(actual).toEqual(expected);
+          expectTypeOf(actual).toEqualTypeOf(expected);
+        });
+      });
+
+      describe('empty object', () => {
+        it('removes required field', () => {
+          const schema = {
+            type: 'object',
+            properties: {},
+            required: ['a', 'b'],
+          } as const;
+          deepFreeze(schema);
+
+          const actual = optionalProps(schema);
+          const expected = {
+            type: 'object',
+            properties: {},
+          } as const;
+
+          expect(actual).toEqual(expected);
+          expectTypeOf(actual).toEqualTypeOf(expected);
+        });
+      });
+    });
   });
 
-  describe('keys as empty array []', () => {
-    it('keeps schema as is', () => {
+  describe('keys argument is empty array []', () => {
+    it('returns schema as is', () => {
       const schema = {
         type: 'object',
         required: ['a', 'b'],
