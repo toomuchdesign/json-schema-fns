@@ -6,83 +6,158 @@ import { describe, expect, it } from 'vitest';
 import { requireProps } from '../src';
 
 describe('requireProps', () => {
-  it('recursively set additionalProperties prop to false', () => {
-    const schema = {
-      type: 'object',
-      required: ['a', 'd'],
-      properties: {
-        a: { type: 'string' },
-        b: { type: 'number' },
-        c: {
-          type: 'object',
-          properties: {
-            street: { type: 'string' },
+  describe('without keys argument', () => {
+    it('sets all properties as required', () => {
+      const schema = {
+        type: 'object',
+        required: ['a', 'd'],
+        properties: {
+          a: { type: 'string' },
+          b: { type: 'number' },
+          c: {
+            type: 'object',
+            properties: {
+              street: { type: 'string' },
+            },
           },
+          d: { type: 'string' },
         },
-        d: { type: 'string' },
-      },
-    } as const;
-    deepFreeze(schema);
+      } as const;
+      deepFreeze(schema);
 
-    const actual = requireProps(schema);
-    const expected = {
-      type: 'object',
-      required: ['a', 'b', 'c', 'd'],
-      properties: {
-        a: { type: 'string' },
-        b: { type: 'number' },
-        c: {
-          type: 'object',
-          properties: {
-            street: { type: 'string' },
+      const actual = requireProps(schema);
+      const expected = {
+        type: 'object',
+        required: ['a', 'b', 'c', 'd'],
+        properties: {
+          a: { type: 'string' },
+          b: { type: 'number' },
+          c: {
+            type: 'object',
+            properties: {
+              street: { type: 'string' },
+            },
           },
+          d: { type: 'string' },
         },
-        d: { type: 'string' },
-      },
-    } as const;
+      } as const;
 
-    // keyof conversion doesn't preserve key order
-    type ExpectedType = Merge<
-      typeof expected,
-      Readonly<{
-        required: readonly ['a', 'd', 'b', 'c'];
-      }>
-    >;
+      // keyof conversion doesn't preserve key order
+      type ExpectedType = Merge<
+        typeof expected,
+        Readonly<{
+          required: readonly ['a', 'd', 'b', 'c'];
+        }>
+      >;
 
-    expect(actual).toEqual(expected);
-    expectTypeOf(actual).toEqualTypeOf<ExpectedType>();
-  });
-
-  describe('provided schema.properties prop', () => {
-    describe('no schema properties', () => {
-      it("doesn't add empty required prop", () => {
-        const schema = {
-          type: 'object',
-        } as const;
-        deepFreeze(schema);
-
-        const actual = requireProps(schema);
-        const expected = {
-          type: 'object',
-        } as const;
-
-        expect(actual).toEqual(expected);
-        expectTypeOf(actual).toEqualTypeOf(expected);
-      });
+      expect(actual).toEqual(expected);
+      expectTypeOf(actual).toEqualTypeOf<ExpectedType>();
     });
 
-    describe('schema properties is empty object', () => {
-      it("doesn't add empty required prop", () => {
+    describe('provided schema.properties prop', () => {
+      describe('no schema properties', () => {
+        it('omits required prop', () => {
+          const schema = {
+            type: 'object',
+          } as const;
+          deepFreeze(schema);
+
+          const actual = requireProps(schema);
+          const expected = {
+            type: 'object',
+          } as const;
+
+          expect(actual).toEqual(expected);
+          expectTypeOf(actual).toEqualTypeOf(expected);
+        });
+      });
+
+      describe('schema properties is empty object', () => {
+        it('omits required prop', () => {
+          const schema = {
+            type: 'object',
+            properties: {},
+          } as const;
+          deepFreeze(schema);
+
+          const actual = requireProps(schema);
+          const expected = {
+            type: 'object',
+            properties: {},
+          } as const;
+
+          expect(actual).toEqual(expected);
+          expectTypeOf(actual).toEqualTypeOf(expected);
+        });
+      });
+    });
+  });
+
+  describe('with keys argument', () => {
+    it('sets provided keys as required', () => {
+      const schema = {
+        type: 'object',
+        required: ['b'],
+        properties: {
+          a: { type: 'string' },
+          b: { type: 'number' },
+          c: {
+            type: 'object',
+            properties: {
+              street: { type: 'string' },
+            },
+          },
+          d: { type: 'string' },
+        },
+      } as const;
+      deepFreeze(schema);
+
+      const actual = requireProps(schema, ['a', 'd']);
+      const expected = {
+        type: 'object',
+        required: ['b', 'a', 'd'],
+        properties: {
+          a: { type: 'string' },
+          b: { type: 'number' },
+          c: {
+            type: 'object',
+            properties: {
+              street: { type: 'string' },
+            },
+          },
+          d: { type: 'string' },
+        },
+      } as const;
+
+      // keyof conversion doesn't preserve key order
+      type ExpectedType = Merge<
+        typeof expected,
+        Readonly<{
+          required: readonly ['a', 'd', 'b'];
+        }>
+      >;
+
+      expect(actual).toEqual(expected);
+      expectTypeOf(actual).toEqualTypeOf<ExpectedType>();
+    });
+
+    describe('missing provided schema.required field', () => {
+      it('adds required property accordingly', () => {
         const schema = {
           type: 'object',
-          properties: {},
+          properties: {
+            a: { type: 'string' },
+          },
         } as const;
         deepFreeze(schema);
 
-        const actual = requireProps(schema);
+        const actual = requireProps(schema, ['a']);
         const expected = {
           type: 'object',
-          properties: {},
+          required: ['a'],
+          properties: {
+            a: { type: 'string' },
+          },
         } as const;
 
         expect(actual).toEqual(expected);
