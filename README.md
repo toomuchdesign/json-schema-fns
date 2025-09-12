@@ -44,6 +44,7 @@ npm install @toomuchdesign/json-schema-fns
 - [`pickProps`](#pickProps) – Pick only specific properties from an object schema
 - [`mergeProps`](#mergeProps) – Merge two object schemas into one
 - [`requireProps`](#requireProps) – Mark all properties in an object schema as required
+- [`optionalProps`](#optionalProps) – Make specific properties in an object schema optional. If no keys provided, all properties become optional.
 - [`sealSchema`](#sealSchema) – Recursively set `additionalProperties: false` on all object schemas
 - [`unsealSchema`](#unsealSchema) – Recursively remove `additionalProperties` from all object schemas
 
@@ -129,6 +130,24 @@ const schema = {
 } as const;
 
 const result = requireProps(schema);
+```
+
+Mark all properties in an object schema as required.
+
+```ts
+import { optionalProps } from '@toomuchdesign/json-schema-fns';
+
+const schema = {
+  type: 'object',
+  properties: {
+    a: { type: 'string' },
+    b: { type: 'string' },
+    c: { type: 'string' },
+  },
+  required: ['b'],
+} as const;
+
+const result = optionalProps(schema, ['b', 'c']);
 ```
 
 ### sealSchema

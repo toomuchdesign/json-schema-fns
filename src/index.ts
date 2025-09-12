@@ -4,3 +4,4 @@ export { mergeProps } from './mergeProps';
 export { sealSchema } from './sealSchema';
 export { unsealSchema } from './unsealSchema';
 export { requireProps } from './requireProps';
+export { optionalProps } from './optionalProps';

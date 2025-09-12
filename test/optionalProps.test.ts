@@ -1,68 +1,58 @@
 import deepFreeze from 'deep-freeze';
 import { expectTypeOf } from 'expect-type';
-import type { Merge } from 'type-fest';
 import { describe, expect, it } from 'vitest';
 
-import { requireProps } from '../src';
+import { optionalProps } from '../src';
 
-describe('requireProps', () => {
-  it('recursively set additionalProperties prop to false', () => {
+describe('optionalProps', () => {
+  it('remove given keys from required field', () => {
     const schema = {
-      type: 'object',
-      required: ['a', 'd'],
-      properties: {
-        a: { type: 'string' },
-        b: { type: 'number' },
-        c: {
-          type: 'object',
-          properties: {
-            street: { type: 'string' },
-          },
-        },
-        d: { type: 'string' },
-      },
-    } as const;
-    deepFreeze(schema);
-
-    const actual = requireProps(schema);
-    const expected = {
       type: 'object',
       required: ['a', 'b', 'c', 'd'],
       properties: {
         a: { type: 'string' },
         b: { type: 'number' },
-        c: {
-          type: 'object',
-          properties: {
-            street: { type: 'string' },
-          },
-        },
+        c: { type: 'number' },
+        d: { type: 'string' },
+      },
+    } as const;
+    deepFreeze(schema);
+
+    const actual = optionalProps(schema, ['b', 'd']);
+    const expected = {
+      type: 'object',
+      required: ['a', 'c'],
+      properties: {
+        a: { type: 'string' },
+        b: { type: 'number' },
+        c: { type: 'number' },
         d: { type: 'string' },
       },
     } as const;
 
-    // keyof conversion doesn't preserve key order
-    type ExpectedType = Merge<
-      typeof expected,
-      Readonly<{
-        required: readonly ['a', 'd', 'b', 'c'];
-      }>
-    >;
-
     expect(actual).toEqual(expected);
-    expectTypeOf(actual).toEqualTypeOf<ExpectedType>();
+    expectTypeOf(actual).toEqualTypeOf(expected);
   });
 
-  describe('no schema properties', () => {
-    it("doesn't add empty required prop", () => {
+  describe('no keys provided', () => {
+    it('removes required field', () => {
       const schema = {
         type: 'object',
+        required: ['a', 'b'],
+        properties: {
+          a: { type: 'string' },
+          b: { type: 'number' },
+        },
       } as const;
       deepFreeze(schema);
 
-      const actual = requireProps(schema);
+      const actual = optionalProps(schema);
       const expected = {
         type: 'object',
+        properties: {
+          a: { type: 'string' },
+          b: { type: 'number' },
+        },
       } as const;
 
       expect(actual).toEqual(expected);
@@ -70,19 +60,20 @@ describe('requireProps', () => {
     });
   });
 
-  describe('schema properties is empty object', () => {
-    it("doesn't add empty required prop", () => {
+  describe('keys as empty array []', () => {
+    it('keeps schema as is', () => {
       const schema = {
         type: 'object',
-        properties: {},
+        required: ['a', 'b'],
+        properties: {
+          a: { type: 'string' },
+          b: { type: 'number' },
+        },
       } as const;
       deepFreeze(schema);
 
-      const actual = requireProps(schema);
-      const expected = {
-        type: 'object',
-        properties: {},
-      } as const;
+      const actual = optionalProps(schema, []);
+      const expected = schema;
 
       expect(actual).toEqual(expected);
       expectTypeOf(actual).toEqualTypeOf(expected);
@@ -102,7 +93,7 @@ describe('requireProps', () => {
 
       expect(() =>
         // @ts-expect-error intentionally testing a scenario not allowed by types
-        requireProps(schema, ['a']),
+        optionalProps(schema, ['a']),
       ).toThrow('Schema is expected to have a "type" property set to "object"');
     });
   });

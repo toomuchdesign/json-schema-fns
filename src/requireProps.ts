@@ -5,8 +5,8 @@ import { isJSONSchemaObjectType } from './utils';
 
 type requireProps<
   Schema extends JSONSchemaObject,
-  ObjectProps = keyof Schema['properties'],
-> = Merge<Schema, { required: Readonly<UnionToTuple<ObjectProps>> }>;
+  Keys = keyof Schema['properties'],
+> = Merge<Schema, { required: Readonly<UnionToTuple<Keys>> }>;
 
 /**
  * Mark all properties in an object schema as required.
