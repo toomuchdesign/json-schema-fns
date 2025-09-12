@@ -120,6 +120,24 @@ describe('optionalProps', () => {
         expectTypeOf(actual).toEqualTypeOf(expected);
       });
     });
+
+    describe('missing provided schema.required field', () => {
+      it('returns schema as is', () => {
+        const schema = {
+          type: 'object',
+          properties: {
+            a: { type: 'string' },
+          },
+        } as const;
+        deepFreeze(schema);
+
+        const actual = optionalProps(schema, ['a']);
+        const expected = schema;
+
+        expect(actual).toEqual(expected);
+        expectTypeOf(actual).toEqualTypeOf(expected);
+      });
+    });
   });
 
   describe('type !== object', () => {

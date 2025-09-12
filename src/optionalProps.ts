@@ -43,9 +43,13 @@ export function optionalProps<
 ): JSONSchemaObjectOutput<OptionalProps<Schema, Keys>> {
   isJSONSchemaObjectType(schema);
 
-  const currentRequired = schema.required ?? [];
+  if (!schema.required) {
+    // @ts-expect-error not relying on natural type flow
+    return schema;
+  }
+
   const required = keys
-    ? currentRequired.filter(
+    ? schema.required.filter(
         (key) =>
           !keys.includes(
             // @ts-expect-error

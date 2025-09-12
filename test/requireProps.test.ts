@@ -93,6 +93,79 @@ describe('requireProps', () => {
     });
   });
 
+  describe('with keys argument', () => {
+    it('sets provided keys as required', () => {
+      const schema = {
+        type: 'object',
+        required: ['b'],
+        properties: {
+          a: { type: 'string' },
+          b: { type: 'number' },
+          c: {
+            type: 'object',
+            properties: {
+              street: { type: 'string' },
+            },
+          },
+          d: { type: 'string' },
+        },
+      } as const;
+      deepFreeze(schema);
+
+      const actual = requireProps(schema, ['a', 'd']);
+      const expected = {
+        type: 'object',
+        required: ['b', 'a', 'd'],
+        properties: {
+          a: { type: 'string' },
+          b: { type: 'number' },
+          c: {
+            type: 'object',
+            properties: {
+              street: { type: 'string' },
+            },
+          },
+          d: { type: 'string' },
+        },
+      } as const;
+
+      // keyof conversion doesn't preserve key order
+      type ExpectedType = Merge<
+        typeof expected,
+        Readonly<{
+          required: readonly ['a', 'd', 'b'];
+        }>
+      >;
+
+      expect(actual).toEqual(expected);
+      expectTypeOf(actual).toEqualTypeOf<ExpectedType>();
+    });
+
+    describe('missing provided schema.required field', () => {
+      it('adds required property accordingly', () => {
+        const schema = {
+          type: 'object',
+          properties: {
+            a: { type: 'string' },
+          },
+        } as const;
+        deepFreeze(schema);
+
+        const actual = requireProps(schema, ['a']);
+        const expected = {
+          type: 'object',
+          required: ['a'],
+          properties: {
+            a: { type: 'string' },
+          },
+        } as const;
+
+        expect(actual).toEqual(expected);
+        expectTypeOf(actual).toEqualTypeOf(expected);
+      });
+    });
+  });
+
   describe('type !== object', () => {
     it('throws expected error', () => {
       const schema = {
