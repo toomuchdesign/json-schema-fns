@@ -22,7 +22,7 @@ type MergeOptionalRecords<
       ? Object2
       : undefined;
 
-type MergeSchemas<
+type MergeProps<
   Schema1 extends JSONSchemaObject,
   Schema2 extends JSONSchemaObject,
 > = Merge<
@@ -66,7 +66,7 @@ export function mergeProps<
 >(
   schema1: Schema1,
   schema2: Schema2,
-): JSONSchemaObjectOutput<MergeSchemas<Schema1, Schema2>> {
+): JSONSchemaObjectOutput<MergeProps<Schema1, Schema2>> {
   isJSONSchemaObjectType(schema1);
   isJSONSchemaObjectType(schema2);
 

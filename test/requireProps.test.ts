@@ -53,39 +53,41 @@ describe('requireProps', () => {
     expectTypeOf(actual).toEqualTypeOf<ExpectedType>();
   });
 
-  describe('no schema properties', () => {
-    it("doesn't add empty required prop", () => {
-      const schema = {
-        type: 'object',
-      } as const;
-      deepFreeze(schema);
+  describe('provided schema.properties prop', () => {
+    describe('no schema properties', () => {
+      it("doesn't add empty required prop", () => {
+        const schema = {
+          type: 'object',
+        } as const;
+        deepFreeze(schema);
 
-      const actual = requireProps(schema);
-      const expected = {
-        type: 'object',
-      } as const;
+        const actual = requireProps(schema);
+        const expected = {
+          type: 'object',
+        } as const;
 
-      expect(actual).toEqual(expected);
-      expectTypeOf(actual).toEqualTypeOf(expected);
+        expect(actual).toEqual(expected);
+        expectTypeOf(actual).toEqualTypeOf(expected);
+      });
     });
-  });
 
-  describe('schema properties is empty object', () => {
-    it("doesn't add empty required prop", () => {
-      const schema = {
-        type: 'object',
-        properties: {},
-      } as const;
-      deepFreeze(schema);
+    describe('schema properties is empty object', () => {
+      it("doesn't add empty required prop", () => {
+        const schema = {
+          type: 'object',
+          properties: {},
+        } as const;
+        deepFreeze(schema);
 
-      const actual = requireProps(schema);
-      const expected = {
-        type: 'object',
-        properties: {},
-      } as const;
+        const actual = requireProps(schema);
+        const expected = {
+          type: 'object',
+          properties: {},
+        } as const;
 
-      expect(actual).toEqual(expected);
-      expectTypeOf(actual).toEqualTypeOf(expected);
+        expect(actual).toEqual(expected);
+        expectTypeOf(actual).toEqualTypeOf(expected);
+      });
     });
   });
 
