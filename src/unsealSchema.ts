@@ -1,20 +1,21 @@
 import type { JSONSchema, JSONSchemaObjectOutput } from './types';
 import { isObject } from './utils';
 
-type OmitAdditionalProperty<Value extends object> = 'type' extends keyof Value
-  ? Value['type'] extends 'object'
-    ? Omit<Value, 'additionalProperties'>
-    : Value
-  : Value;
-
-type OmitAdditionalPropertiesDeep<
-  _Value extends object,
-  Value = OmitAdditionalProperty<_Value>,
-> = {
-  [Key in keyof Value]: Value[Key] extends object
-    ? OmitAdditionalPropertiesDeep<Value[Key]>
-    : Value[Key];
-};
+type OmitAdditionalPropertiesDeep<Value> = Value extends object
+  ? Value extends { type: 'object' }
+    ? // JSON schema object type
+      Readonly<{
+        [Key in keyof Omit<
+          Value,
+          'additionalProperties'
+        >]: OmitAdditionalPropertiesDeep<Value[Key]>;
+      }>
+    : // Any other object/array
+      Readonly<{
+        [Key in keyof Value]: OmitAdditionalPropertiesDeep<Value[Key]>;
+      }>
+  : // Any other primitive
+    Value;
 
 function omitAdditionalPropertiesDeep(item: unknown): unknown {
   if (isObject(item)) {

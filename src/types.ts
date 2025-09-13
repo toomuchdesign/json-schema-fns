@@ -3,6 +3,8 @@ import type {
   OverrideProperties,
   SetRequired,
   Simplify,
+  TupleToUnion,
+  UnionToTuple,
 } from 'type-fest';
 
 // https://github.com/ThomasAribart/json-schema-to-ts/blob/12767c1eab895159c01f5e6898d8e5e711ff9d1c/src/definitions/jsonSchema.ts
@@ -27,3 +29,8 @@ export type JSONSchemaObjectOutput<Schema> = Simplify<
     ConditionalExcept<Schema, readonly [] | undefined>
   >
 >;
+
+export type OmitFromTuple<
+  Tuple extends readonly unknown[] | undefined,
+  EntriesToOmit,
+> = Readonly<UnionToTuple<Exclude<TupleToUnion<Tuple>, EntriesToOmit>>>;

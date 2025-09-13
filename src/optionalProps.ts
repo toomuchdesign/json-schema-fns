@@ -1,6 +1,10 @@
-import type { Merge, TupleToUnion, UnionToTuple } from 'type-fest';
+import type { Merge } from 'type-fest';
 
-import type { JSONSchemaObject, JSONSchemaObjectOutput } from './types';
+import type {
+  JSONSchemaObject,
+  JSONSchemaObjectOutput,
+  OmitFromTuple,
+} from './types';
 import { isJSONSchemaObjectType } from './utils';
 
 type ObjectKeys = string | number | symbol;
@@ -15,11 +19,7 @@ type OptionalProps<
     Merge<
       Schema,
       {
-        required: Readonly<
-          UnionToTuple<
-            Exclude<TupleToUnion<Schema['required']>, TupleToUnion<Keys>>
-          >
-        >;
+        required: OmitFromTuple<Schema['required'], NonNullable<Keys>[number]>;
       }
     >;
 /**
