@@ -1,11 +1,11 @@
 import type { Merge } from 'type-fest';
 
+import { isJSONSchemaObjectType } from './utils';
 import type {
   JSONSchemaObject,
   JSONSchemaObjectOutput,
   OmitFromTuple,
-} from './types';
-import { isJSONSchemaObjectType } from './utils';
+} from './utils/types';
 
 type ObjectKeys = string | number | symbol;
 
