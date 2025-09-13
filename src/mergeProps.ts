@@ -6,20 +6,23 @@ import { isJSONSchemaObjectType } from './utils';
 /**
  * Merge and dedupe 2 tuples
  */
-type MergeTuples<T1, T2> = readonly [
-  ...UnionToTuple<TupleToUnion<T1> | TupleToUnion<T2>>,
-];
+type MergeTuples<T1, T2> = Readonly<
+  UnionToTuple<TupleToUnion<T1> | TupleToUnion<T2>>
+>;
 
+/**
+ * Merge two optional records, keeping `undefined` if both are undefined
+ */
 type MergeOptionalRecords<
-  Object1 extends Record<string, unknown> | undefined,
-  Object2 extends Record<string, unknown> | undefined,
+  A extends Record<string, unknown> | undefined,
+  B extends Record<string, unknown> | undefined,
 > =
-  Object1 extends Record<string, unknown>
-    ? Object2 extends Record<string, unknown>
-      ? Merge<Object1, Object2>
-      : Object1
-    : Object2 extends Record<string, unknown>
-      ? Object2
+  A extends Record<string, unknown>
+    ? B extends Record<string, unknown>
+      ? Merge<A, B>
+      : A
+    : B extends Record<string, unknown>
+      ? B
       : undefined;
 
 type MergeProps<
