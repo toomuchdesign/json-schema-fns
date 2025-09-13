@@ -3,21 +3,23 @@ import type { Merge } from 'type-fest';
 import type { JSONSchema, JSONSchemaObjectOutput } from './types';
 import { isObject } from './utils';
 
-type DisableAdditionalProperties<Value extends object> =
-  'type' extends keyof Value
-    ? Value['type'] extends 'object'
-      ? Merge<Value, Readonly<{ additionalProperties: false }>>
-      : Value
-    : Value;
-
-type DisableAdditionalPropertiesDeep<
-  _Value extends object,
-  Value = DisableAdditionalProperties<_Value>,
-> = {
-  [Key in keyof Value]: Value[Key] extends object
-    ? DisableAdditionalPropertiesDeep<Value[Key]>
-    : Value[Key];
-};
+type DisableAdditionalPropertiesDeep<Value> = Value extends object
+  ? Value extends { type: 'object' }
+    ? // JSON schema object type
+      Readonly<
+        Merge<
+          {
+            [Key in keyof Value]: DisableAdditionalPropertiesDeep<Value[Key]>;
+          },
+          { additionalProperties: false }
+        >
+      >
+    : // Any other object/array
+      Readonly<{
+        [Key in keyof Value]: DisableAdditionalPropertiesDeep<Value[Key]>;
+      }>
+  : // Any other primitive
+    Value;
 
 function disableAdditionalPropertiesDeep(item: unknown): unknown {
   if (isObject(item)) {
