@@ -30,43 +30,23 @@ describe('optionalProps', () => {
       expectTypeOf(actual).toEqualTypeOf(expected);
     });
 
-    describe('provided schema.properties prop', () => {
-      describe('no properties prop', () => {
-        it('removes required field', () => {
-          const schema = {
-            type: 'object',
-            required: ['a', 'b'],
-          } as const;
-          deepFreeze(schema);
+    describe('provided schema.properties prop is empty object', () => {
+      it('removes required field', () => {
+        const schema = {
+          type: 'object',
+          properties: {},
+          required: ['a', 'b'],
+        } as const;
+        deepFreeze(schema);
 
-          const actual = optionalProps(schema);
-          const expected = {
-            type: 'object',
-          } as const;
+        const actual = optionalProps(schema);
+        const expected = {
+          type: 'object',
+          properties: {},
+        } as const;
 
-          expect(actual).toEqual(expected);
-          expectTypeOf(actual).toEqualTypeOf(expected);
-        });
-      });
-
-      describe('empty object', () => {
-        it('removes required field', () => {
-          const schema = {
-            type: 'object',
-            properties: {},
-            required: ['a', 'b'],
-          } as const;
-          deepFreeze(schema);
-
-          const actual = optionalProps(schema);
-          const expected = {
-            type: 'object',
-            properties: {},
-          } as const;
-
-          expect(actual).toEqual(expected);
-          expectTypeOf(actual).toEqualTypeOf(expected);
-        });
+        expect(actual).toEqual(expected);
+        expectTypeOf(actual).toEqualTypeOf(expected);
       });
     });
   });
@@ -155,6 +135,21 @@ describe('optionalProps', () => {
         // @ts-expect-error intentionally testing a scenario not allowed by types
         optionalProps(schema, ['a']),
       ).toThrow('Schema is expected to have a "type" property set to "object"');
+    });
+  });
+
+  describe('missing properties prop', () => {
+    it('throws expected error', () => {
+      const schema = {
+        type: 'object',
+        required: ['a'],
+      } as const;
+      deepFreeze(schema);
+
+      expect(() =>
+        // @ts-expect-error intentionally testing a scenario not allowed by types
+        optionalProps(schema, ['a']),
+      ).toThrow('Schema is expected to have a "properties" property');
     });
   });
 });

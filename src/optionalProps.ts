@@ -8,23 +8,20 @@ type ObjectKeys = string | number | symbol;
 type OptionalProps<
   Schema extends JSONSchemaObject,
   Keys extends ObjectKeys[] | never[] | undefined = undefined,
-> =
-  // No keys
-  Keys extends undefined
-    ? Omit<Schema, 'required'>
-    : // Empty array keys
-      Keys extends never[]
-      ? Schema
-      : Merge<
-          Schema,
-          {
-            required: Readonly<
-              UnionToTuple<
-                Exclude<TupleToUnion<Schema['required']>, TupleToUnion<Keys>>
-              >
-            >;
-          }
+> = Keys extends undefined
+  ? // If no keys:
+    Omit<Schema, 'required'>
+  : // If keys provided:
+    Merge<
+      Schema,
+      {
+        required: Readonly<
+          UnionToTuple<
+            Exclude<TupleToUnion<Schema['required']>, TupleToUnion<Keys>>
+          >
         >;
+      }
+    >;
 /**
  * Make specific properties in an object schema optional.
  * If no keys are provided, all properties become optional.
@@ -49,13 +46,7 @@ export function optionalProps<
   }
 
   const required = keys
-    ? schema.required.filter(
-        (key) =>
-          !keys.includes(
-            // @ts-expect-error
-            key,
-          ),
-      )
+    ? schema.required.filter((key) => !keys.includes(key))
     : [];
 
   // @ts-expect-error not relying on natural type flow

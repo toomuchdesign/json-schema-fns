@@ -100,4 +100,19 @@ describe('omitProps', () => {
       ).toThrow('Schema is expected to have a "type" property set to "object"');
     });
   });
+
+  describe('missing properties prop', () => {
+    it('throws expected error', () => {
+      const schema = {
+        type: 'object',
+        required: ['a'],
+      } as const;
+      deepFreeze(schema);
+
+      expect(() =>
+        // @ts-expect-error intentionally testing a scenario not allowed by types
+        omitProps(schema, ['a']),
+      ).toThrow('Schema is expected to have a "properties" property');
+    });
+  });
 });

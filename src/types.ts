@@ -1,6 +1,7 @@
 import type {
   ConditionalExcept,
   OverrideProperties,
+  SetRequired,
   Simplify,
 } from 'type-fest';
 
@@ -14,7 +15,7 @@ export type JSONSchema = Readonly<{
 }>;
 
 export type JSONSchemaObject = OverrideProperties<
-  JSONSchema,
+  SetRequired<JSONSchema, 'properties'>,
   {
     type: 'object';
   }

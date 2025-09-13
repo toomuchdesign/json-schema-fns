@@ -9,4 +9,8 @@ export function isJSONSchemaObjectType(schema: {
       'Schema is expected to have a "type" property set to "object"',
     );
   }
+
+  if ('properties' in schema === false || !schema.properties) {
+    throw new Error('Schema is expected to have a "properties" property');
+  }
 }
