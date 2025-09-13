@@ -34,3 +34,16 @@ export type OmitFromTuple<
   Tuple extends readonly unknown[] | undefined,
   EntriesToOmit,
 > = Readonly<UnionToTuple<Exclude<TupleToUnion<Tuple>, EntriesToOmit>>>;
+
+export type PickFromTuple<
+  Tuple extends readonly unknown[] | undefined,
+  EntriesToPick,
+> = Readonly<UnionToTuple<Extract<TupleToUnion<Tuple>, EntriesToPick>>>;
+
+/**
+ * Merge and dedupe 2 tuples
+ */
+export type MergeTuples<
+  T1 extends readonly unknown[] | undefined,
+  T2 extends readonly unknown[] | undefined,
+> = Readonly<UnionToTuple<TupleToUnion<T1> | TupleToUnion<T2>>>;
