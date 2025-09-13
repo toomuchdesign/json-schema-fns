@@ -1,5 +1,23 @@
 # @toomuchdesign/json-schema-fns
 
+## 0.3.0
+
+### Minor Changes
+
+- [#50](https://github.com/toomuchdesign/json-schema-fns/pull/50) [`b320542`](https://github.com/toomuchdesign/json-schema-fns/commit/b32054214f4d93dc28c6bf9eb4a34c299236d481) Thanks [@toomuchdesign](https://github.com/toomuchdesign)! - Refactor API:
+  - `omitObjectProperties` --> `omitProps`
+  - `pickObjectProperties` --> `pickProps`
+  - `mergeObjectProperties` --> `mergeProps`
+  - `requireObjectProperties` --> `requireProps`
+  - `closeObjectDeep` --> `sealSchema`
+  - `openObjectDeep` --> `unsealSchema`
+
+- [#51](https://github.com/toomuchdesign/json-schema-fns/pull/51) [`6ac9270`](https://github.com/toomuchdesign/json-schema-fns/commit/6ac9270200ff526cdb44a12341a833a19b8783e8) Thanks [@toomuchdesign](https://github.com/toomuchdesign)! - Add `optionalProps` function
+
+- [#47](https://github.com/toomuchdesign/json-schema-fns/pull/47) [`8400b7d`](https://github.com/toomuchdesign/json-schema-fns/commit/8400b7d187f0c8b42d9a799eb5d1dad421697f3c) Thanks [@toomuchdesign](https://github.com/toomuchdesign)! - Add `requireProps` function
+
+- [#53](https://github.com/toomuchdesign/json-schema-fns/pull/53) [`1077dd7`](https://github.com/toomuchdesign/json-schema-fns/commit/1077dd7e57d0613fd58e0a924defa80e6c341dbe) Thanks [@toomuchdesign](https://github.com/toomuchdesign)! - `requireProps` accept an optional `keys` argument
+
 ## 0.2.0
 
 ### Minor Changes
