@@ -1,25 +1,24 @@
-import type { Merge, TupleToUnion, UnionToTuple } from 'type-fest';
+import type { Merge, UnionToTuple } from 'type-fest';
 
-import type { JSONSchemaObject, JSONSchemaObjectOutput } from './types';
 import { isJSONSchemaObjectType } from './utils';
-
-type ObjectKeys = string | number | symbol;
+import type {
+  JSONSchemaObject,
+  JSONSchemaObjectOutput,
+  MergeTuples,
+} from './utils/types';
 
 type RequireProps<
   Schema extends JSONSchemaObject,
-  Keys extends ObjectKeys[] | undefined = undefined,
-  PropertiesKeys = (keyof Schema['properties'])[],
+  Keys extends (keyof Schema['properties'])[] | undefined = undefined,
 > = Merge<
   Schema,
   {
     required: Readonly<
-      UnionToTuple<
-        Keys extends undefined
-          ? // If no keys:
-            TupleToUnion<PropertiesKeys>
-          : // If keys provided:
-            TupleToUnion<Schema['required']> | TupleToUnion<Keys>
-      >
+      Keys extends undefined
+        ? // If no keys:
+          UnionToTuple<keyof Schema['properties']>
+        : // If keys provided:
+          MergeTuples<Schema['required'], Keys>
     >;
   }
 >;

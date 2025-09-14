@@ -1,11 +1,11 @@
 import type { Merge, SetRequired } from 'type-fest';
 
+import { isJSONSchemaObjectType } from './utils';
 import type {
   JSONSchemaObject,
   JSONSchemaObjectOutput,
   OmitFromTuple,
-} from './types';
-import { isJSONSchemaObjectType } from './utils';
+} from './utils/types';
 
 type OmitSchemaProperties<
   Schema extends JSONSchemaObject,
@@ -14,9 +14,7 @@ type OmitSchemaProperties<
   Schema,
   {
     properties: Omit<Schema['properties'], Keys[number]>;
-    required: undefined extends Schema['required']
-      ? undefined
-      : OmitFromTuple<Schema['required'], Keys[number]>;
+    required: OmitFromTuple<Schema['required'], Keys[number]>;
   }
 >;
 

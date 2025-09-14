@@ -1,5 +1,5 @@
-import type { JSONSchema, JSONSchemaObjectOutput } from './types';
 import { isObject } from './utils';
+import type { JSONSchema, JSONSchemaObjectOutput } from './utils/types';
 
 type OmitAdditionalPropertiesDeep<Value> = Value extends object
   ? Value extends { type: 'object' }

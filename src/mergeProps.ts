@@ -1,14 +1,11 @@
-import type { Merge, TupleToUnion, UnionToTuple } from 'type-fest';
+import type { Merge } from 'type-fest';
 
-import type { JSONSchemaObject, JSONSchemaObjectOutput } from './types';
 import { isJSONSchemaObjectType } from './utils';
-
-/**
- * Merge and dedupe 2 tuples
- */
-type MergeTuples<T1, T2> = Readonly<
-  UnionToTuple<TupleToUnion<T1> | TupleToUnion<T2>>
->;
+import type {
+  JSONSchemaObject,
+  JSONSchemaObjectOutput,
+  MergeTuples,
+} from './utils/types';
 
 /**
  * Merge two optional records, keeping `undefined` if both are undefined
