@@ -114,7 +114,7 @@ const result = mergeProps(schema1, schema2);
 
 ### requireProps
 
-Mark all properties in an object schema as required.
+Mark specific properties in an object schema as required,
 
 ```ts
 import { requireProps } from '@toomuchdesign/json-schema-fns';
@@ -129,10 +129,12 @@ const schema = {
   required: ['b'],
 } as const;
 
-const result = requireProps(schema);
+const result = requireProps(schema, ['a', 'c']);
 ```
 
-Mark all properties in an object schema as required.
+### optionalProps
+
+Make specific properties in an object schema optional.
 
 ```ts
 import { optionalProps } from '@toomuchdesign/json-schema-fns';
@@ -144,7 +146,7 @@ const schema = {
     b: { type: 'string' },
     c: { type: 'string' },
   },
-  required: ['b'],
+  required: ['a', 'b', 'c'],
 } as const;
 
 const result = optionalProps(schema, ['b', 'c']);
