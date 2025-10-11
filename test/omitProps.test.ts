@@ -83,7 +83,7 @@ describe('omitProps', () => {
     });
   });
 
-  describe('type !== object', () => {
+  describe('root type !== object', () => {
     it('throws expected error', () => {
       const schema = {
         type: 'array',

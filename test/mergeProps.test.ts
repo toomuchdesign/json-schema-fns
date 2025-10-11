@@ -67,6 +67,13 @@ describe('mergeProps', () => {
         required: ['a'],
         properties: {
           a: { type: 'string' },
+          b: {
+            oneOf: [
+              {
+                type: 'string',
+              },
+            ],
+          },
         },
       } as const;
 
@@ -75,6 +82,13 @@ describe('mergeProps', () => {
         required: ['a'],
         properties: {
           a: { type: 'number' },
+          b: {
+            oneOf: [
+              {
+                type: 'number',
+              },
+            ],
+          },
         },
       } as const;
       deepFreeze(schema1);
@@ -86,6 +100,13 @@ describe('mergeProps', () => {
         required: ['a'],
         properties: {
           a: { type: 'number' },
+          b: {
+            oneOf: [
+              {
+                type: 'number',
+              },
+            ],
+          },
         },
       } as const;
 
@@ -195,7 +216,7 @@ describe('mergeProps', () => {
     });
   });
 
-  describe('type !== object', () => {
+  describe('root type !== object', () => {
     it('throws expected error', () => {
       const schema1 = {
         type: 'object',
