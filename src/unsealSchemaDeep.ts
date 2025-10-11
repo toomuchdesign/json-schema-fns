@@ -46,10 +46,10 @@ function omitAdditionalPropertiesDeep(item: unknown): unknown {
  *
  * @example
  * ```ts
- * unsealSchema(schema);
+ * unsealSchemaDeep(schema);
  * ```
  */
-export function unsealSchema<Schema extends JSONSchema>(
+export function unsealSchemaDeep<Schema extends JSONSchema>(
   schema: Schema,
 ): JSONSchemaObjectOutput<OmitAdditionalPropertiesDeep<Schema>> {
   // @ts-expect-error not relying on natural type flow
