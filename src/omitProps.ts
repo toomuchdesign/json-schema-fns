@@ -19,7 +19,7 @@ type OmitSchemaProperties<
 >;
 
 /**
- * Omit specific properties from an object schema.
+ * Omit specific `properties` from an object JSON schema.
  *
  * @example
  * ```ts

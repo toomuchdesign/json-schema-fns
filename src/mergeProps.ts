@@ -50,7 +50,8 @@ function mergeOptionalRecords(
 }
 
 /**
- * Merge two object schemas into one.
+ * Merge two object JSON schemas `properties` and `patternProperties` props into one.
+ * If the same property key exists in both schemas, the property from `schema2` takes precedence.
  *
  * @example
  * ```ts

@@ -42,7 +42,7 @@ function omitAdditionalPropertiesDeep(item: unknown): unknown {
 }
 
 /**
- * Recursively remove `additionalProperties` from all object schemas.
+ * Recursively remove `additionalProperties` from all object JSON schema schemas.
  *
  * @example
  * ```ts

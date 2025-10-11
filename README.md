@@ -40,17 +40,17 @@ npm install @toomuchdesign/json-schema-fns
 
 ## API
 
-- [`omitProps`](#omitProps) – Omit specific properties from an object schema
-- [`pickProps`](#pickProps) – Pick only specific properties from an object schema
-- [`mergeProps`](#mergeProps) – Merge two object schemas into one
-- [`requireProps`](#requireProps) – Mark specific properties in an object schema as required. If no keys provided, all properties become required
-- [`optionalProps`](#optionalProps) – Make specific properties in an object schema optional. If no keys provided, all properties become optional
-- [`sealSchemaDeep`](#sealSchemaDeep) – Recursively set `additionalProperties: false` on all object schemas
-- [`unsealSchemaDeep`](#unsealSchemaDeep) – Recursively remove `additionalProperties` from all object schemas
+- [`omitProps`](#omitProps) – Omit specific `properties` from an object JSON schema
+- [`pickProps`](#pickProps) – Pick only specific `properties` from an object JSON schema
+- [`mergeProps`](#mergeProps) – Merge two object JSON schemas `properties` and `patternProperties` props into one. If the same property key exists in both schemas, the property from `schema2` takes precedence
+- [`requireProps`](#requireProps) – Mark specific properties in a object JSON schema as required. If no keys provided, all properties become required
+- [`optionalProps`](#optionalProps) – Make specific properties of a object JSON schema optional. If no keys provided, all properties become optional
+- [`sealSchemaDeep`](#sealSchemaDeep) – Recursively set `additionalProperties: false` on all object JSON schema schemas
+- [`unsealSchemaDeep`](#unsealSchemaDeep) – Recursively remove `additionalProperties` from all object JSON schema schemas
 
 ### omitProps
 
-Omit specific properties from an object schema.
+Omit specific `properties` from an object JSON schema.
 
 ```ts
 import { omitProps } from '@toomuchdesign/json-schema-fns';
@@ -69,7 +69,7 @@ const result = omitProps(schema, ['b']);
 
 ### pickProps
 
-Pick only specific properties from an object schema.
+Pick only specific `properties` from an object JSON schema.
 
 ```ts
 import { pickProps } from '@toomuchdesign/json-schema-fns';
@@ -88,7 +88,7 @@ const result = pickProps(schema, ['b']);
 
 ### mergeProps
 
-Merge two object schemas into one.
+Merge two object JSON schemas `properties` and `patternProperties` props into one. If the same property key exists in both schemas, the property from `schema2` takes precedence.
 
 ```ts
 import { mergeProps } from '@toomuchdesign/json-schema-fns';
@@ -114,7 +114,7 @@ const result = mergeProps(schema1, schema2);
 
 ### requireProps
 
-Mark specific properties in an object schema as required,
+Mark specific properties in a object JSON schema as required. If no keys provided, all properties become required.
 
 ```ts
 import { requireProps } from '@toomuchdesign/json-schema-fns';
@@ -134,7 +134,7 @@ const result = requireProps(schema, ['a', 'c']);
 
 ### optionalProps
 
-Make specific properties in an object schema optional.
+Make specific properties of a object JSON schema optional. If no keys provided, all properties become optional.
 
 ```ts
 import { optionalProps } from '@toomuchdesign/json-schema-fns';
@@ -154,7 +154,7 @@ const result = optionalProps(schema, ['b', 'c']);
 
 ### sealSchemaDeep
 
-Recursively set `additionalProperties: false` on all object schemas.
+Recursively set `additionalProperties: false` on all object JSON schema schemas.
 
 ```ts
 import { sealSchemaDeep } from '@toomuchdesign/json-schema-fns';
@@ -178,7 +178,7 @@ const result = sealSchemaDeep(schema);
 
 ### unsealSchemaDeep
 
-Recursively remove `additionalProperties` from all object schemas.
+Recursively remove `additionalProperties` from all object JSON schema schemas.
 
 ```ts
 import { unsealSchemaDeep } from '@toomuchdesign/json-schema-fns';

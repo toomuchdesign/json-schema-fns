@@ -19,7 +19,7 @@ type PickSchemaProperties<
 >;
 
 /**
- * Pick only specific properties from an object schema.
+ * Pick only specific `properties` from an object JSON schema.
  *
  * @example
  * ```ts

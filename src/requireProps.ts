@@ -24,7 +24,7 @@ type RequireProps<
 >;
 
 /**
- * Mark specific properties in an object schema as required.
+ * Mark specific properties in a object JSON schema as required.
  * If no keys provided, all properties become required
  *
  * @example
