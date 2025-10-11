@@ -47,10 +47,10 @@ function disableAdditionalPropertiesDeep(item: unknown): unknown {
  *
  * @example
  * ```ts
- * sealSchema(schema);
+ * sealSchemaDeep(schema);
  * ```
  */
-export function sealSchema<Schema extends JSONSchema>(
+export function sealSchemaDeep<Schema extends JSONSchema>(
   schema: Schema,
 ): JSONSchemaObjectOutput<DisableAdditionalPropertiesDeep<Schema>> {
   // @ts-expect-error not relying on natural type flow

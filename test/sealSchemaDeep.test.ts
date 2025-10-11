@@ -2,9 +2,9 @@ import deepFreeze from 'deep-freeze';
 import { expectTypeOf } from 'expect-type';
 import { describe, expect, it } from 'vitest';
 
-import { sealSchema } from '../src';
+import { sealSchemaDeep } from '../src';
 
-describe('sealSchema', () => {
+describe('sealSchemaDeep', () => {
   it('recursively set additionalProperties prop to false', () => {
     const schema = {
       type: 'object',
@@ -21,7 +21,7 @@ describe('sealSchema', () => {
     } as const;
     deepFreeze(schema);
 
-    const actual = sealSchema(schema);
+    const actual = sealSchemaDeep(schema);
     const expected = {
       type: 'object',
       required: ['name'],
@@ -90,7 +90,7 @@ describe('sealSchema', () => {
       } as const;
       deepFreeze(schema);
 
-      const actual = sealSchema(schema);
+      const actual = sealSchemaDeep(schema);
       const expected = {
         type: 'object',
         additionalProperties: false,

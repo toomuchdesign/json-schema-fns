@@ -1,7 +1,7 @@
 export { pickProps } from './pickProps';
 export { omitProps } from './omitProps';
 export { mergeProps } from './mergeProps';
-export { sealSchema } from './sealSchema';
-export { unsealSchema } from './unsealSchema';
+export { sealSchemaDeep } from './sealSchemaDeep';
+export { unsealSchemaDeep } from './unsealSchemaDeep';
 export { requireProps } from './requireProps';
 export { optionalProps } from './optionalProps';
