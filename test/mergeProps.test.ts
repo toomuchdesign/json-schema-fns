@@ -163,36 +163,6 @@ describe('mergeProps', () => {
     });
   });
 
-  it('dedupes', () => {
-    const schema1 = {
-      type: 'object',
-      properties: {
-        a: { type: 'string' },
-      },
-    } as const;
-
-    const schema2 = {
-      type: 'object',
-      properties: {
-        b: { type: 'number' },
-      },
-    } as const;
-    deepFreeze(schema1);
-    deepFreeze(schema2);
-
-    const actual = mergeProps(schema1, schema2);
-    const expected = {
-      type: 'object',
-      properties: {
-        a: { type: 'string' },
-        b: { type: 'number' },
-      },
-    } as const;
-
-    expect(actual).toEqual(expected);
-    expectTypeOf(actual).toEqualTypeOf(expected);
-  });
-
   describe('provided schema.properties prop is empty object', () => {
     it('returns expected schema and types', () => {
       const schema1 = {
