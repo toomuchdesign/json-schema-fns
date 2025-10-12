@@ -23,8 +23,8 @@ type OptionalProps<
       }
     >;
 /**
- * Make specific properties in an object schema optional.
- * If no keys are provided, all properties become optional.
+ * Make specific properties of a object JSON schema optional.
+ * If no keys provided, all properties become optional
  *
  * @example
  * ```ts

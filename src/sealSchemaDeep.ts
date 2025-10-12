@@ -43,7 +43,7 @@ function disableAdditionalPropertiesDeep(item: unknown): unknown {
 }
 
 /**
- * Recursively set `additionalProperties: false` on all object schemas
+ * Recursively set `additionalProperties: false` on all object JSON schema schemas.
  *
  * @example
  * ```ts

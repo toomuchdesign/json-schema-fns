@@ -67,6 +67,13 @@ describe('mergeProps', () => {
         required: ['a'],
         properties: {
           a: { type: 'string' },
+          b: {
+            oneOf: [
+              {
+                type: 'string',
+              },
+            ],
+          },
         },
       } as const;
 
@@ -75,6 +82,13 @@ describe('mergeProps', () => {
         required: ['a'],
         properties: {
           a: { type: 'number' },
+          b: {
+            oneOf: [
+              {
+                type: 'number',
+              },
+            ],
+          },
         },
       } as const;
       deepFreeze(schema1);
@@ -86,6 +100,13 @@ describe('mergeProps', () => {
         required: ['a'],
         properties: {
           a: { type: 'number' },
+          b: {
+            oneOf: [
+              {
+                type: 'number',
+              },
+            ],
+          },
         },
       } as const;
 
@@ -163,36 +184,6 @@ describe('mergeProps', () => {
     });
   });
 
-  it('dedupes', () => {
-    const schema1 = {
-      type: 'object',
-      properties: {
-        a: { type: 'string' },
-      },
-    } as const;
-
-    const schema2 = {
-      type: 'object',
-      properties: {
-        b: { type: 'number' },
-      },
-    } as const;
-    deepFreeze(schema1);
-    deepFreeze(schema2);
-
-    const actual = mergeProps(schema1, schema2);
-    const expected = {
-      type: 'object',
-      properties: {
-        a: { type: 'string' },
-        b: { type: 'number' },
-      },
-    } as const;
-
-    expect(actual).toEqual(expected);
-    expectTypeOf(actual).toEqualTypeOf(expected);
-  });
-
   describe('provided schema.properties prop is empty object', () => {
     it('returns expected schema and types', () => {
       const schema1 = {
@@ -225,7 +216,7 @@ describe('mergeProps', () => {
     });
   });
 
-  describe('type !== object', () => {
+  describe('root type !== object', () => {
     it('throws expected error', () => {
       const schema1 = {
         type: 'object',

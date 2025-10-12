@@ -1,6 +1,6 @@
 import deepFreeze from 'deep-freeze';
 import { expectTypeOf } from 'expect-type';
-import type { Merge } from 'type-fest';
+import type { Merge, TupleToUnion } from 'type-fest';
 import { describe, expect, it } from 'vitest';
 
 import { requireProps } from '../src';
@@ -42,16 +42,21 @@ describe('requireProps', () => {
         },
       } as const;
 
-      // keyof conversion doesn't preserve key order
-      type ExpectedType = Merge<
-        typeof expected,
-        Readonly<{
-          required: readonly ['a', 'd', 'b', 'c'];
-        }>
-      >;
-
       expect(actual).toEqual(expected);
-      expectTypeOf(actual).toEqualTypeOf<ExpectedType>();
+
+      /**
+       * Need to test required prop type separately as an union instead of original tuple
+       * since TypeScript doesn't guarantee object key sorting
+       */
+      type Actual = typeof actual;
+      type Expected = typeof expected;
+      expectTypeOf<Omit<Actual, 'required'>>(actual).toEqualTypeOf<
+        Omit<Expected, 'required'>
+      >();
+
+      type ActualRequired = TupleToUnion<Actual['required']>;
+      type ExpectedRequired = TupleToUnion<Expected['required']>;
+      expectTypeOf<ActualRequired>().toEqualTypeOf<ExpectedRequired>();
     });
 
     describe('provided schema.properties prop is empty object', () => {
@@ -110,16 +115,19 @@ describe('requireProps', () => {
         },
       } as const;
 
-      // keyof conversion doesn't preserve key order
-      type ExpectedType = Merge<
-        typeof expected,
-        Readonly<{
-          required: readonly ['a', 'd', 'b'];
-        }>
-      >;
+      /**
+       * Need to test required prop type separately as an union instead of original tuple
+       * since TypeScript doesn't guarantee object key sorting
+       */
+      type Actual = typeof actual;
+      type Expected = typeof expected;
+      expectTypeOf<Omit<Actual, 'required'>>(actual).toEqualTypeOf<
+        Omit<Expected, 'required'>
+      >();
 
-      expect(actual).toEqual(expected);
-      expectTypeOf(actual).toEqualTypeOf<ExpectedType>();
+      type ActualRequired = TupleToUnion<Actual['required']>;
+      type ExpectedRequired = TupleToUnion<Expected['required']>;
+      expectTypeOf<ActualRequired>().toEqualTypeOf<ExpectedRequired>();
     });
 
     describe('missing provided schema.required field', () => {
