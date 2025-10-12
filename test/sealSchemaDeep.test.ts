@@ -1,8 +1,9 @@
 import deepFreeze from 'deep-freeze';
 import { expectTypeOf } from 'expect-type';
+import { pipeWith } from 'pipe-ts';
 import { describe, expect, it } from 'vitest';
 
-import { sealSchemaDeep } from '../src';
+import { pipeSealSchemaDeep, sealSchemaDeep } from '../src';
 
 describe('sealSchemaDeep', () => {
   it('recursively set additionalProperties prop to false', () => {
@@ -145,5 +146,44 @@ describe('sealSchemaDeep', () => {
       expect(actual).toEqual(expected);
       expectTypeOf(actual).toEqualTypeOf(expected);
     });
+  });
+});
+
+describe('pipeSealSchemaDeep', () => {
+  it('returns expected schema and types', () => {
+    const schema = {
+      type: 'object',
+      required: ['name'],
+      properties: {
+        name: { type: 'string' },
+        address: {
+          type: 'object',
+          properties: {
+            street: { type: 'string' },
+          },
+        },
+      },
+    } as const;
+    deepFreeze(schema);
+
+    const actual = pipeWith(schema, pipeSealSchemaDeep());
+    const expected = {
+      type: 'object',
+      required: ['name'],
+      additionalProperties: false,
+      properties: {
+        name: { type: 'string' },
+        address: {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            street: { type: 'string' },
+          },
+        },
+      },
+    } as const;
+
+    expect(actual).toEqual(expected);
+    expectTypeOf(actual).toEqualTypeOf(expected);
   });
 });

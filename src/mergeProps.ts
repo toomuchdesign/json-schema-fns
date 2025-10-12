@@ -59,8 +59,8 @@ function mergeOptionalRecords(
  * ```
  */
 export function mergeProps<
-  Schema1 extends JSONSchemaObject,
-  Schema2 extends JSONSchemaObject,
+  const Schema1 extends JSONSchemaObject,
+  const Schema2 extends JSONSchemaObject,
 >(
   schema1: Schema1,
   schema2: Schema2,
@@ -90,4 +90,21 @@ export function mergeProps<
     properties,
     patternProperties,
   };
+}
+
+/**
+ * Merge two object JSON schemas `properties` and `patternProperties` props into one.
+ * If the same property key exists in both schemas, the property from `schema2` takes precedence.
+ * Wraps `mergeProps` to support function piping.
+ *
+ * @example
+ * ```ts
+ * pipeWith(schema1, pipeMergeProps(schema2));
+ * ```
+ */
+export function pipeMergeProps<
+  const Schema1 extends JSONSchemaObject,
+  const Schema2 extends JSONSchemaObject,
+>(schema2: Schema2) {
+  return (schema1: Schema1) => mergeProps<Schema1, Schema2>(schema1, schema2);
 }

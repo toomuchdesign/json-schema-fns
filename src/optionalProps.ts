@@ -32,8 +32,8 @@ type OptionalProps<
  * ```
  */
 export function optionalProps<
-  Schema extends JSONSchemaObject,
-  Keys extends (keyof Schema['properties'])[] | undefined = undefined,
+  const Schema extends JSONSchemaObject,
+  const Keys extends (keyof Schema['properties'])[] | undefined = undefined,
 >(
   schema: Schema,
   keys?: Keys,
@@ -54,4 +54,21 @@ export function optionalProps<
     ...schema,
     required: required.length > 0 ? required : undefined,
   };
+}
+
+/**
+ * Make specific properties of a object JSON schema optional.
+ * If no keys provided, all properties become optional
+ * Wraps `optionalProps` to support function piping.
+ *
+ * @example
+ * ```ts
+ * pipeWith(schema, pipeOptionalProps(['key1', 'key2']));
+ * ```
+ */
+export function pipeOptionalProps<
+  const Schema extends JSONSchemaObject,
+  const Keys extends (keyof Schema['properties'])[] | undefined = undefined,
+>(keys?: Keys) {
+  return (schema: Schema) => optionalProps<Schema, Keys>(schema, keys);
 }

@@ -27,8 +27,8 @@ type OmitSchemaProperties<
  * ```
  */
 export function omitProps<
-  Schema extends SetRequired<JSONSchemaObject, 'properties'>,
-  Keys extends (keyof Schema['properties'])[],
+  const Schema extends SetRequired<JSONSchemaObject, 'properties'>,
+  const Keys extends (keyof Schema['properties'])[],
 >(
   schema: Schema,
   keys: Keys,
@@ -48,4 +48,20 @@ export function omitProps<
     required: required.length > 0 ? required : undefined,
     properties,
   };
+}
+
+/**
+ * Omit specific `properties` from an object JSON schema.
+ * Wraps `optionalProps` to support function piping.
+ *
+ * @example
+ * ```ts
+ * pipeWith(schema, pipeOmitProps(['key1', 'key2']));
+ * ```
+ */
+export function pipeOmitProps<
+  const Schema extends SetRequired<JSONSchemaObject, 'properties'>,
+  const Keys extends (keyof Schema['properties'])[],
+>(keys: Keys) {
+  return (schema: Schema) => omitProps<Schema, Keys>(schema, keys);
 }

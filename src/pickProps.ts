@@ -27,8 +27,8 @@ type PickSchemaProperties<
  * ```
  */
 export function pickProps<
-  Schema extends SetRequired<JSONSchemaObject, 'properties'>,
-  Keys extends (keyof Schema['properties'])[],
+  const Schema extends SetRequired<JSONSchemaObject, 'properties'>,
+  const Keys extends (keyof Schema['properties'])[],
 >(
   schema: Schema,
   keys: Keys,
@@ -49,4 +49,20 @@ export function pickProps<
     required: required.length > 0 ? required : undefined,
     properties,
   };
+}
+
+/**
+ * Pick only specific `properties` from an object JSON schema.
+ * Wraps `pickProps` to support function piping.
+ *
+ * @example
+ * ```ts
+ * pipeWith(schema, pipePickProps(['key1', 'key2']));
+ * ```
+ */
+export function pipePickProps<
+  const Schema extends SetRequired<JSONSchemaObject, 'properties'>,
+  const Keys extends (keyof Schema['properties'])[],
+>(keys: Keys) {
+  return (schema: Schema) => pickProps<Schema, Keys>(schema, keys);
 }

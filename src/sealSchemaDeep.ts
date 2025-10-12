@@ -50,9 +50,22 @@ function disableAdditionalPropertiesDeep(item: unknown): unknown {
  * sealSchemaDeep(schema);
  * ```
  */
-export function sealSchemaDeep<Schema extends JSONSchema>(
+export function sealSchemaDeep<const Schema extends JSONSchema>(
   schema: Schema,
 ): JSONSchemaObjectOutput<DisableAdditionalPropertiesDeep<Schema>> {
   // @ts-expect-error not relying on natural type flow
   return disableAdditionalPropertiesDeep(schema);
+}
+
+/**
+ * Recursively set `additionalProperties: false` on all object JSON schema schemas.
+ * Wraps `sealSchemaDeep` to support function piping
+ *
+ * @example
+ * ```ts
+ * pipeWith(schema, pipeSealSchemaDeep());
+ * ```
+ */
+export function pipeSealSchemaDeep<const Schema extends JSONSchema>() {
+  return (schema: Schema) => sealSchemaDeep<Schema>(schema);
 }

@@ -1,13 +1,25 @@
+import { pipe as effectPipe } from 'effect/Function';
 import { expectTypeOf } from 'expect-type';
 import { pipeWith } from 'pipe-ts';
+import { pipe as remedaPipe } from 'remeda';
+import { pipeInto } from 'ts-functional-pipe';
 import { describe, expect, it } from 'vitest';
 
-import { mergeProps, omitProps, requireProps, sealSchemaDeep } from '../src';
+import {
+  mergeProps,
+  omitProps,
+  pipeMergeProps,
+  pipeOmitProps,
+  pipeRequireProps,
+  pipeSealSchemaDeep,
+  requireProps,
+  sealSchemaDeep,
+} from '../src';
 
 describe('composition', () => {
-  describe('nested function calls', () => {
+  describe('Functional API', () => {
     it('returns expected schema and types', () => {
-      const schema1 = {
+      const schema = {
         type: 'object',
         required: ['a'],
         properties: {
@@ -15,15 +27,19 @@ describe('composition', () => {
         },
       } as const;
 
-      const schema2 = {
-        type: 'object',
-        properties: {
-          b: { type: 'string' },
-        },
-      } as const;
-
       const actual = sealSchemaDeep(
-        requireProps(omitProps(mergeProps(schema1, schema2), ['a']), ['b']),
+        requireProps(
+          omitProps(
+            mergeProps(schema, {
+              type: 'object',
+              properties: {
+                b: { type: 'string' },
+              },
+            }),
+            ['a'],
+          ),
+          ['b'],
+        ),
       );
 
       const expected = {
@@ -40,42 +56,153 @@ describe('composition', () => {
     });
   });
 
-  describe('pipe-ts piping library', () => {
-    it('returns expected schema and types', () => {
-      const schema1 = {
-        type: 'object',
-        required: ['a'],
-        properties: {
-          a: { type: 'string' },
-        },
-      } as const;
+  describe('Pipeable API', () => {
+    describe('pipe-ts', () => {
+      it('returns expected schema and types', () => {
+        const schema = {
+          type: 'object',
+          required: ['a'],
+          properties: {
+            a: { type: 'string' },
+          },
+        } as const;
 
-      const schema2 = {
-        type: 'object',
-        properties: {
-          b: { type: 'string' },
-        },
-      } as const;
+        const actual = pipeWith(
+          schema,
+          pipeMergeProps({
+            type: 'object',
+            properties: {
+              b: { type: 'string' },
+            },
+          }),
+          pipeOmitProps(['a']),
+          pipeRequireProps(['b']),
+          pipeSealSchemaDeep(),
+        );
 
-      const actual = pipeWith(
-        schema1,
-        (result) => mergeProps(result, schema2),
-        (result) => omitProps(result, ['a']),
-        (result) => requireProps(result, ['b']),
-        (result) => sealSchemaDeep(result),
-      );
+        const expected = {
+          type: 'object',
+          required: ['b'],
+          additionalProperties: false,
+          properties: {
+            b: { type: 'string' },
+          },
+        } as const;
 
-      const expected = {
-        type: 'object',
-        required: ['b'],
-        additionalProperties: false,
-        properties: {
-          b: { type: 'string' },
-        },
-      } as const;
+        expect(actual).toEqual(expected);
+        expectTypeOf(actual).toEqualTypeOf(expected);
+      });
+    });
 
-      expect(actual).toEqual(expected);
-      expectTypeOf(actual).toEqualTypeOf(expected);
+    describe('ts-functional-pipe', () => {
+      it('returns expected schema and types', () => {
+        const schema = {
+          type: 'object',
+          required: ['a'],
+          properties: {
+            a: { type: 'string' },
+          },
+        } as const;
+
+        const actual = pipeInto(
+          schema,
+          pipeMergeProps({
+            type: 'object',
+            properties: {
+              b: { type: 'string' },
+            },
+          }),
+          pipeOmitProps(['a']),
+          pipeRequireProps(['b']),
+          pipeSealSchemaDeep(),
+        );
+
+        const expected = {
+          type: 'object',
+          required: ['b'],
+          additionalProperties: false,
+          properties: {
+            b: { type: 'string' },
+          },
+        } as const;
+
+        expect(actual).toEqual(expected);
+        expectTypeOf(actual).toEqualTypeOf(expected);
+      });
+    });
+
+    describe('effect', () => {
+      it('returns expected schema and types', () => {
+        const schema = {
+          type: 'object',
+          required: ['a'],
+          properties: {
+            a: { type: 'string' },
+          },
+        } as const;
+
+        const actual = effectPipe(
+          schema,
+          pipeMergeProps({
+            type: 'object',
+            properties: {
+              b: { type: 'string' },
+            },
+          }),
+          pipeOmitProps(['a']),
+          pipeRequireProps(['b']),
+          pipeSealSchemaDeep(),
+        );
+
+        const expected = {
+          type: 'object',
+          required: ['b'],
+          additionalProperties: false,
+          properties: {
+            b: { type: 'string' },
+          },
+        } as const;
+
+        expect(actual).toEqual(expected);
+        expectTypeOf(actual).toEqualTypeOf(expected);
+      });
+    });
+
+    describe('remeda', () => {
+      it('returns expected schema and types', () => {
+        const schema = {
+          type: 'object',
+          required: ['a'],
+          properties: {
+            a: { type: 'string' },
+          },
+        } as const;
+
+        const actual = remedaPipe(
+          schema,
+          pipeMergeProps({
+            type: 'object',
+            properties: {
+              b: { type: 'string' },
+            },
+          }),
+          pipeOmitProps(['a']),
+          pipeRequireProps(['b']),
+          pipeSealSchemaDeep(),
+        );
+
+        const expected = {
+          type: 'object',
+          required: ['b'],
+          additionalProperties: false,
+          properties: {
+            b: { type: 'string' },
+          },
+        } as const;
+
+        expect(actual).toEqual(expected);
+        expectTypeOf(actual).toEqualTypeOf(expected);
+      });
     });
   });
 });
