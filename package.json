@@ -1,6 +1,6 @@
 {
   "name": "@toomuchdesign/json-schema-fns",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Immutable, type-safe utilities for transforming and composing JSON Schemas.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

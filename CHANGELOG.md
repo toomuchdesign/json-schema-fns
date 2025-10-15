@@ -1,5 +1,22 @@
 # @toomuchdesign/json-schema-fns
 
+## 0.4.0
+
+### Minor Changes
+
+- [#62](https://github.com/toomuchdesign/json-schema-fns/pull/62) [`e56d85e`](https://github.com/toomuchdesign/json-schema-fns/commit/e56d85e73e38f8e6b820cb32a130742fd15c726d) Thanks [@toomuchdesign](https://github.com/toomuchdesign)! - Rename `unsealSchema` as `unsealSchemaDeep`
+
+- [#65](https://github.com/toomuchdesign/json-schema-fns/pull/65) [`bb22f66`](https://github.com/toomuchdesign/json-schema-fns/commit/bb22f66d84ff66be86b62d2e4432cb5f092fc68a) Thanks [@toomuchdesign](https://github.com/toomuchdesign)! - Add pipe-friendly fns:
+  - `pipeOmitProps`
+  - `pipePickProps`
+  - `pipeMergeProps`
+  - `pipeRequireProps`
+  - `pipeOptionalProps`
+  - `pipeSealSchemaDeep`
+  - `pipeUnsealSchemaDeep`
+
+- [#62](https://github.com/toomuchdesign/json-schema-fns/pull/62) [`e56d85e`](https://github.com/toomuchdesign/json-schema-fns/commit/e56d85e73e38f8e6b820cb32a130742fd15c726d) Thanks [@toomuchdesign](https://github.com/toomuchdesign)! - Rename `sealSchema` as `sealSchemaDeep`
+
 ## 0.3.0
 
 ### Minor Changes
