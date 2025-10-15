@@ -1,8 +1,9 @@
 import deepFreeze from 'deep-freeze';
 import { expectTypeOf } from 'expect-type';
+import { pipeWith } from 'pipe-ts';
 import { describe, expect, it } from 'vitest';
 
-import { pickProps } from '../src';
+import { pickProps, pipePickProps } from '../src';
 
 describe('pickProps', () => {
   it('returns expected schema and types', () => {
@@ -119,5 +120,34 @@ describe('pickProps', () => {
         pickProps(schema, ['a']),
       ).toThrow('Schema is expected to have a "properties" property');
     });
+  });
+});
+
+describe('pipePickProps', () => {
+  it('returns expected schema and types', () => {
+    const schema = {
+      type: 'object',
+      required: ['a', 'b'],
+      properties: {
+        a: { type: 'string' },
+        b: { type: 'number' },
+        c: { type: 'string' },
+        d: { type: 'number' },
+      },
+    } as const;
+    deepFreeze(schema);
+
+    const actual = pipeWith(schema, pipePickProps(['a', 'd']));
+    const expected = {
+      type: 'object',
+      required: ['a'],
+      properties: {
+        a: { type: 'string' },
+        d: { type: 'number' },
+      },
+    } as const;
+
+    expect(actual).toEqual(expected);
+    expectTypeOf(actual).toEqualTypeOf(expected);
   });
 });

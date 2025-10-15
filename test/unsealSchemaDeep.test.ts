@@ -1,8 +1,9 @@
 import deepFreeze from 'deep-freeze';
 import { expectTypeOf } from 'expect-type';
+import { pipeWith } from 'pipe-ts';
 import { describe, expect, it } from 'vitest';
 
-import { unsealSchemaDeep } from '../src';
+import { pipeUnsealSchemaDeep, unsealSchemaDeep } from '../src';
 
 describe('unsealSchemaDeep', () => {
   it('recursively removes additionalProperties props', () => {
@@ -188,5 +189,64 @@ describe('unsealSchemaDeep', () => {
       expect(actual).toEqual(expected);
       expectTypeOf(actual).toEqualTypeOf(expected);
     });
+  });
+});
+
+describe('pipeUnsealSchemaDeep', () => {
+  it('returns expected schema and types', () => {
+    const schema = {
+      type: 'object',
+      properties: {
+        a: {
+          type: 'object',
+          properties: {
+            a: { type: 'string' },
+          },
+        },
+        b: {
+          type: 'object',
+          additionalProperties: true,
+          properties: {
+            b: { type: 'string' },
+          },
+        },
+        c: {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            c: { type: 'string' },
+          },
+        },
+      },
+    } as const;
+    deepFreeze(schema);
+
+    const actual = pipeWith(schema, pipeUnsealSchemaDeep());
+    const expected = {
+      type: 'object',
+      properties: {
+        a: {
+          type: 'object',
+          properties: {
+            a: { type: 'string' },
+          },
+        },
+        b: {
+          type: 'object',
+          properties: {
+            b: { type: 'string' },
+          },
+        },
+        c: {
+          type: 'object',
+          properties: {
+            c: { type: 'string' },
+          },
+        },
+      },
+    } as const;
+
+    expect(actual).toEqual(expected);
+    expectTypeOf(actual).toEqualTypeOf(expected);
   });
 });

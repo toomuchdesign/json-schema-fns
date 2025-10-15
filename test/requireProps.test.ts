@@ -1,9 +1,10 @@
 import deepFreeze from 'deep-freeze';
 import { expectTypeOf } from 'expect-type';
-import type { Merge, TupleToUnion } from 'type-fest';
+import { pipeWith } from 'pipe-ts';
+import type { TupleToUnion } from 'type-fest';
 import { describe, expect, it } from 'vitest';
 
-import { requireProps } from '../src';
+import { pipeRequireProps, requireProps } from '../src';
 
 describe('requireProps', () => {
   describe('without keys argument', () => {
@@ -209,5 +210,57 @@ describe('requireProps', () => {
         requireProps(schema, ['a']),
       ).toThrow('Schema is expected to have a "properties" property');
     });
+  });
+});
+
+describe('pipeRequireProps', () => {
+  it('returns expected schema and types', () => {
+    const schema = {
+      type: 'object',
+      required: ['b'],
+      properties: {
+        a: { type: 'string' },
+        b: { type: 'number' },
+        c: {
+          type: 'object',
+          properties: {
+            street: { type: 'string' },
+          },
+        },
+        d: { type: 'string' },
+      },
+    } as const;
+    deepFreeze(schema);
+
+    const actual = pipeWith(schema, pipeRequireProps(['a', 'd']));
+    const expected = {
+      type: 'object',
+      required: ['b', 'a', 'd'],
+      properties: {
+        a: { type: 'string' },
+        b: { type: 'number' },
+        c: {
+          type: 'object',
+          properties: {
+            street: { type: 'string' },
+          },
+        },
+        d: { type: 'string' },
+      },
+    } as const;
+
+    /**
+     * Need to test required prop type separately as an union instead of original tuple
+     * since TypeScript doesn't guarantee object key sorting
+     */
+    type Actual = typeof actual;
+    type Expected = typeof expected;
+    expectTypeOf<Omit<Actual, 'required'>>(actual).toEqualTypeOf<
+      Omit<Expected, 'required'>
+    >();
+
+    type ActualRequired = TupleToUnion<Actual['required']>;
+    type ExpectedRequired = TupleToUnion<Expected['required']>;
+    expectTypeOf<ActualRequired>().toEqualTypeOf<ExpectedRequired>();
   });
 });

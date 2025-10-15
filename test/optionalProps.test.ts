@@ -1,8 +1,9 @@
 import deepFreeze from 'deep-freeze';
 import { expectTypeOf } from 'expect-type';
+import { pipeWith } from 'pipe-ts';
 import { describe, expect, it } from 'vitest';
 
-import { optionalProps } from '../src';
+import { optionalProps, pipeOptionalProps } from '../src';
 
 describe('optionalProps', () => {
   describe('without keys argument', () => {
@@ -151,5 +152,36 @@ describe('optionalProps', () => {
         optionalProps(schema, ['a']),
       ).toThrow('Schema is expected to have a "properties" property');
     });
+  });
+});
+
+describe('optionalProps', () => {
+  it('remove given keys from required field', () => {
+    const schema = {
+      type: 'object',
+      required: ['a', 'b', 'c', 'd'],
+      properties: {
+        a: { type: 'string' },
+        b: { type: 'number' },
+        c: { type: 'number' },
+        d: { type: 'string' },
+      },
+    } as const;
+    deepFreeze(schema);
+
+    const actual = pipeWith(schema, pipeOptionalProps(['b', 'd']));
+    const expected = {
+      type: 'object',
+      required: ['a', 'c'],
+      properties: {
+        a: { type: 'string' },
+        b: { type: 'number' },
+        c: { type: 'number' },
+        d: { type: 'string' },
+      },
+    } as const;
+
+    expect(actual).toEqual(expected);
+    expectTypeOf(actual).toEqualTypeOf(expected);
   });
 });

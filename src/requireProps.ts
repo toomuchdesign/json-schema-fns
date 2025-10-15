@@ -33,8 +33,8 @@ type RequireProps<
  * ```
  */
 export function requireProps<
-  Schema extends JSONSchemaObject,
-  Keys extends (keyof Schema['properties'])[] | undefined = undefined,
+  const Schema extends JSONSchemaObject,
+  const Keys extends (keyof Schema['properties'])[] | undefined = undefined,
 >(
   schema: Schema,
   keys?: Keys,
@@ -50,4 +50,21 @@ export function requireProps<
     ...schema,
     required: required.length > 0 ? required : undefined,
   };
+}
+
+/**
+ * Mark specific properties in a object JSON schema as required.
+ * If no keys provided, all properties become required.
+ * Wraps `sealSchemaDeep` to support function piping.
+ *
+ * @example
+ * ```ts
+ * pipeWith(schema, pipeRequireProps(['key1', 'key2']));
+ * ```
+ */
+export function pipeRequireProps<
+  const Schema extends JSONSchemaObject,
+  const Keys extends (keyof Schema['properties'])[] | undefined = undefined,
+>(keys?: Keys) {
+  return (schema: Schema) => requireProps<Schema, Keys>(schema, keys);
 }

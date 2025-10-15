@@ -1,8 +1,9 @@
 import deepFreeze from 'deep-freeze';
 import { expectTypeOf } from 'expect-type';
+import { pipeWith } from 'pipe-ts';
 import { describe, expect, it } from 'vitest';
 
-import { mergeProps } from '../src';
+import { mergeProps, pipeMergeProps } from '../src';
 
 describe('mergeProps', () => {
   it('returns expected schema and types', () => {
@@ -260,5 +261,62 @@ describe('mergeProps', () => {
         mergeProps(schema1, schema2),
       ).toThrow('Schema is expected to have a "properties" property');
     });
+  });
+});
+
+describe('pipeMergeProps', () => {
+  it('returns expected schema and types', () => {
+    const schema1 = {
+      type: 'object',
+      required: ['a'],
+      properties: {
+        a: { type: 'string' },
+        b: { type: 'number' },
+      },
+      patternProperties: {
+        a: {
+          type: 'string',
+        },
+      },
+    } as const;
+
+    const schema2 = {
+      type: 'object',
+      required: ['d'],
+      properties: {
+        c: { type: 'string' },
+        d: { type: 'number' },
+      },
+      patternProperties: {
+        b: {
+          type: 'number',
+        },
+      },
+    } as const;
+    deepFreeze(schema1);
+    deepFreeze(schema2);
+
+    const actual = pipeWith(schema1, pipeMergeProps(schema2));
+    const expected = {
+      type: 'object',
+      required: ['a', 'd'],
+      properties: {
+        a: { type: 'string' },
+        b: { type: 'number' },
+        c: { type: 'string' },
+        d: { type: 'number' },
+      },
+      patternProperties: {
+        a: {
+          type: 'string',
+        },
+        b: {
+          type: 'number',
+        },
+      },
+    } as const;
+
+    expect(actual).toEqual(expected);
+    expectTypeOf(actual).toEqualTypeOf(expected);
   });
 });

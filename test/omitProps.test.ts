@@ -1,8 +1,9 @@
 import deepFreeze from 'deep-freeze';
 import { expectTypeOf } from 'expect-type';
+import { pipeWith } from 'pipe-ts';
 import { describe, expect, it } from 'vitest';
 
-import { omitProps } from '../src';
+import { omitProps, pipeOmitProps } from '../src';
 
 describe('omitProps', () => {
   it('returns expected schema and types', () => {
@@ -114,5 +115,33 @@ describe('omitProps', () => {
         omitProps(schema, ['a']),
       ).toThrow('Schema is expected to have a "properties" property');
     });
+  });
+});
+
+describe('pipeOmitProps', () => {
+  it('returns expected schema and types', () => {
+    const schema = {
+      type: 'object',
+      required: ['a', 'b', 'c'],
+      properties: {
+        a: { type: 'string' },
+        b: { type: 'number' },
+        c: { type: 'string' },
+      },
+    } as const;
+    deepFreeze(schema);
+
+    const actual = pipeWith(schema, pipeOmitProps(['c']));
+    const expected = {
+      type: 'object',
+      required: ['a', 'b'],
+      properties: {
+        a: { type: 'string' },
+        b: { type: 'number' },
+      },
+    } as const;
+
+    expect(actual).toEqual(expected);
+    expectTypeOf(actual).toEqualTypeOf(expected);
   });
 });
