@@ -1,35 +1,20 @@
-import type { Merge } from 'type-fest';
-
 import { isJSONSchemaObjectType } from './utils';
 import type {
   JSONSchemaObject,
   JSONSchemaObjectOutput,
-  MergeTuples,
+  MergeOptionalRecords,
+  MergeOptionalTuples,
+  MergeRecords,
 } from './utils/types';
-
-/**
- * Merge two optional records, keeping `undefined` if both are undefined
- */
-type MergeOptionalRecords<
-  A extends Record<string, unknown> | undefined,
-  B extends Record<string, unknown> | undefined,
-> =
-  A extends Record<string, unknown>
-    ? B extends Record<string, unknown>
-      ? Merge<A, B>
-      : A
-    : B extends Record<string, unknown>
-      ? B
-      : undefined;
 
 type MergeProps<
   Schema1 extends JSONSchemaObject,
   Schema2 extends JSONSchemaObject,
-> = Merge<
-  Merge<Schema1, Schema2>,
+> = MergeRecords<
+  MergeRecords<Schema1, Schema2>,
   {
-    required: MergeTuples<Schema1['required'], Schema2['required']>;
-    properties: Merge<Schema1['properties'], Schema2['properties']>;
+    required: MergeOptionalTuples<Schema1['required'], Schema2['required']>;
+    properties: MergeRecords<Schema1['properties'], Schema2['properties']>;
     patternProperties: MergeOptionalRecords<
       Schema1['patternProperties'],
       Schema2['patternProperties']

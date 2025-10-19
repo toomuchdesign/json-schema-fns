@@ -1,13 +1,15 @@
-import type { Merge } from 'type-fest';
-
 import { isObject } from './utils';
-import type { JSONSchema, JSONSchemaObjectOutput } from './utils/types';
+import type {
+  JSONSchema,
+  JSONSchemaObjectOutput,
+  MergeRecords,
+} from './utils/types';
 
 type DisableAdditionalPropertiesDeep<Value> = Value extends object
   ? Value extends { type: 'object' }
     ? // JSON schema object type
       Readonly<
-        Merge<
+        MergeRecords<
           {
             [Key in keyof Value]: DisableAdditionalPropertiesDeep<Value[Key]>;
           },

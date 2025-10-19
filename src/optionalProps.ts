@@ -1,9 +1,8 @@
-import type { Merge } from 'type-fest';
-
 import { isJSONSchemaObjectType } from './utils';
 import type {
   JSONSchemaObject,
   JSONSchemaObjectOutput,
+  MergeRecords,
   OmitFromTuple,
 } from './utils/types';
 
@@ -16,7 +15,7 @@ type OptionalProps<
   ? // If no keys:
     Omit<Schema, 'required'>
   : // If keys provided:
-    Merge<
+    MergeRecords<
       Schema,
       {
         required: OmitFromTuple<Schema['required'], NonNullable<Keys>[number]>;
