@@ -1,20 +1,21 @@
-import type { Merge, SetRequired } from 'type-fest';
-
 import { isJSONSchemaObjectType } from './utils';
 import type {
   JSONSchemaObject,
   JSONSchemaObjectOutput,
+  MergeRecords,
   PickFromTuple,
 } from './utils/types';
 
 type PickSchemaProperties<
   Schema extends JSONSchemaObject,
-  Keys extends (keyof Schema['properties'])[],
-> = Merge<
+  Keys extends readonly (keyof Schema['properties'])[],
+> = MergeRecords<
   Schema,
   {
     properties: Pick<Schema['properties'], Keys[number]>;
-    required: PickFromTuple<Schema['required'], Keys[number]>;
+    required: Schema['required'] extends readonly string[]
+      ? PickFromTuple<Schema['required'], Keys[number]>
+      : undefined;
   }
 >;
 
@@ -27,7 +28,7 @@ type PickSchemaProperties<
  * ```
  */
 export function pickProps<
-  const Schema extends SetRequired<JSONSchemaObject, 'properties'>,
+  const Schema extends JSONSchemaObject,
   const Keys extends (keyof Schema['properties'])[],
 >(
   schema: Schema,
@@ -61,7 +62,7 @@ export function pickProps<
  * ```
  */
 export function pipePickProps<
-  const Schema extends SetRequired<JSONSchemaObject, 'properties'>,
+  const Schema extends JSONSchemaObject,
   const Keys extends (keyof Schema['properties'])[],
 >(keys: Keys) {
   return (schema: Schema) => pickProps<Schema, Keys>(schema, keys);
