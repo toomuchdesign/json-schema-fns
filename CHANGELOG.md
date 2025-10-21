@@ -1,5 +1,11 @@
 # @toomuchdesign/json-schema-fns
 
+## 0.5.0
+
+### Minor Changes
+
+- [#69](https://github.com/toomuchdesign/json-schema-fns/pull/69) [`7ab3ea6`](https://github.com/toomuchdesign/json-schema-fns/commit/7ab3ea68cad4a7e14f02135e4331cac8f4c7d9b0) Thanks [@toomuchdesign](https://github.com/toomuchdesign)! - Refactor types by reducing complexity and recursion
+
 ## 0.4.0
 
 ### Minor Changes
