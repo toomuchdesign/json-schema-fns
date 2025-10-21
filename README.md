@@ -286,6 +286,7 @@ const result = pipeWith(
 ## Todo
 
 - Replace `type-fest`'s `UnionToTuple` type
+- Consider exposing a pipe utility
 
 ## Contributing
 
