@@ -3,7 +3,7 @@ import type { Simplify } from 'type-fest';
 type UnknownRecord = Record<string, unknown>;
 
 /**
- * Merge two Records into a new type. Keys of the second type overrides keys of the first type.
+ * Merge two Records into a new type. Keys of the second type overrides keys of the first type
  */
 export type MergeRecords<
   Destination extends UnknownRecord,
@@ -23,3 +23,12 @@ export type MergeOptionalRecords<
   : B extends UnknownRecord
     ? B
     : undefined;
+
+/**
+ * Exclude keys from a record that matches the given `Condition`
+ */
+export type OmitByValue<Record extends UnknownRecord, Condition> = {
+  [Key in keyof Record as Record[Key] extends Condition
+    ? never
+    : Key]: Record[Key];
+};

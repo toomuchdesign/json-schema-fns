@@ -1,6 +1,4 @@
-import type { ConditionalExcept } from 'type-fest';
-
-import type { MergeRecords } from './records';
+import type { MergeRecords, OmitByValue } from './records';
 
 // https://github.com/ThomasAribart/json-schema-to-ts/blob/12767c1eab895159c01f5e6898d8e5e711ff9d1c/src/definitions/jsonSchema.ts
 export type JSONSchema = Readonly<{
@@ -19,7 +17,7 @@ export type JSONSchemaObject = MergeRecords<
   }
 >;
 
-export type JSONSchemaObjectOutput<Schema> = Readonly<
+export type JSONSchemaObjectOutput<Schema extends JSONSchema> = Readonly<
   // Remove undefined props and empty arrays
-  ConditionalExcept<Schema, readonly [] | undefined>
+  OmitByValue<Schema, readonly [] | undefined>
 >;
