@@ -1,6 +1,11 @@
-import type { Simplify } from 'type-fest';
-
 type UnknownRecord = Record<string, unknown>;
+
+/**
+ * Flatten the type output to improve type hints shown in editors
+ */
+export type Simplify<T extends UnknownRecord> = {
+  [K in keyof T]: T[K];
+};
 
 /**
  * Merge two Records into a new type. Keys of the second type overrides keys of the first type
@@ -26,6 +31,7 @@ export type MergeOptionalRecords<
 
 /**
  * Exclude keys from a record that matches the given `Condition`
+ * It simplifies the resulting type as a side effect
  */
 export type OmitByValue<Record extends UnknownRecord, Condition> = {
   [Key in keyof Record as Record[Key] extends Condition

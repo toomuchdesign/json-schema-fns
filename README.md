@@ -277,9 +277,15 @@ const result = pipeWith(
 );
 ```
 
-## Similar packages
+## Related projects
 
 - https://github.com/codeperate/json-schema-builder
+- https://github.com/livelybone/union-tuple
+- https://github.com/ksxnodemodules/typescript-tuple
+
+## Todo
+
+- Replace `type-fest`'s `UnionToTuple` type
 
 ## Contributing
 
