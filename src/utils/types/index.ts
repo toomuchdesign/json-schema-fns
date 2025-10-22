@@ -3,7 +3,7 @@ export type {
   JSONSchemaObject,
   JSONSchemaObjectOutput,
 } from './definitions';
-export type { MergeOptionalRecords, MergeRecords } from './records';
+export type { MergeOptionalRecords, MergeRecords, Simplify } from './records';
 export type {
   MergeOptionalTuples,
   MergeTuples,

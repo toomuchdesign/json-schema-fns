@@ -26,5 +26,27 @@ describe('Internal types', () => {
 
       expectTypeOf<Actual>().toEqualTypeOf<Expected>();
     });
+
+    it('preserves readonly attributes', () => {
+      type PositionProps = {
+        top: number;
+        readonly left: number;
+      };
+
+      type SizeProps = {
+        width: number;
+        readonly height: number;
+      };
+
+      type Actual = Simplify<PositionProps & SizeProps>;
+      type Expected = {
+        top: number;
+        readonly left: number;
+        width: number;
+        readonly height: number;
+      };
+
+      expectTypeOf<Actual>().toEqualTypeOf<Expected>();
+    });
   });
 });
