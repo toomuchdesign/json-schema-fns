@@ -3,9 +3,7 @@ type UnknownRecord = Record<string, unknown>;
 /**
  * Flatten the type output to improve type hints shown in editors
  */
-export type Simplify<T extends UnknownRecord> = {
-  [K in keyof T]: T[K];
-};
+export type Simplify<T> = { [KeyType in keyof T]: T[KeyType] } & {};
 
 /**
  * Merge two Records into a new type. Keys of the second type overrides keys of the first type
@@ -31,10 +29,10 @@ export type MergeOptionalRecords<
 
 /**
  * Exclude keys from a record that matches the given `Condition`
- * It simplifies the resulting type as a side effect
+ * It simplifies and makes the resulting type readonly as a side effect (to reduce nested generic)
  */
 export type OmitByValue<Record extends UnknownRecord, Condition> = {
-  [Key in keyof Record as Record[Key] extends Condition
+  readonly [Key in keyof Record as Record[Key] extends Condition
     ? never
     : Key]: Record[Key];
-};
+} & {};

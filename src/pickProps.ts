@@ -1,3 +1,5 @@
+import { Simplify } from 'type-fest';
+
 import { isJSONSchemaObjectType } from './utils';
 import type {
   JSONSchemaObject,
@@ -12,7 +14,7 @@ type PickSchemaProperties<
 > = MergeRecords<
   Schema,
   {
-    properties: Pick<Schema['properties'], Keys[number]>;
+    properties: Simplify<Pick<Schema['properties'], Keys[number]>>;
     required: Schema['required'] extends readonly string[]
       ? PickFromTuple<Schema['required'], Keys[number]>
       : undefined;

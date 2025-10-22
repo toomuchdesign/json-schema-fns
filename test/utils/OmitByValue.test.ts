@@ -17,9 +17,9 @@ describe('Internal types', () => {
       >;
 
       type Expected = {
-        b?: string | undefined;
-        c: number;
-        d: undefined;
+        readonly b?: string | undefined;
+        readonly c: number;
+        readonly d: undefined;
       };
 
       expectTypeOf<Actual>().toEqualTypeOf<Expected>();
@@ -37,7 +37,7 @@ describe('Internal types', () => {
       >;
 
       type Expected = {
-        c: number;
+        readonly c: number;
       };
 
       expectTypeOf<Actual>().toEqualTypeOf<Expected>();

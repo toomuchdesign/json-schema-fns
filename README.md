@@ -288,6 +288,16 @@ const result = pipeWith(
 - Replace `type-fest`'s `UnionToTuple` type
 - Consider exposing a pipe utility
 
+## Dev notes
+
+### Types structure
+
+The types exposed by this library are intentionally simplified to make them more explicit and easier to work with. Specifically, we unwrap generic types only at the top level—this means simplification is applied to non-recursive (non-deep) generics, and nested generic structures are left intact.
+
+As a result, manual validation of output types is required before each release to ensure they match the expected structures. This step is important to prevent subtle type regressions that automated tests may not catch.
+
+If anything in this process is unclear or if there's a better way to integrate type checking into our workflow, feel free to raise it—I'd appreciate any suggestions.
+
 ## Contributing
 
 Contributions are welcome! Before opening a PR, please run:

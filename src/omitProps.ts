@@ -4,6 +4,7 @@ import type {
   JSONSchemaObjectOutput,
   MergeRecords,
   OmitFromTuple,
+  Simplify,
 } from './utils/types';
 
 type OmitSchemaProperties<
@@ -12,7 +13,7 @@ type OmitSchemaProperties<
 > = MergeRecords<
   Schema,
   {
-    properties: Omit<Schema['properties'], Keys[number]>;
+    properties: Simplify<Omit<Schema['properties'], Keys[number]>>;
     required: OmitFromTuple<Schema['required'], Keys[number]>;
   }
 >;
