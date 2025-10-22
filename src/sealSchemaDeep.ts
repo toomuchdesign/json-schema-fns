@@ -17,9 +17,9 @@ type DisableAdditionalPropertiesDeep<Value> = Value extends object
         >
       >
     : // Any other object/array
-      Readonly<{
+      {
         [Key in keyof Value]: DisableAdditionalPropertiesDeep<Value[Key]>;
-      }>
+      }
   : // Any other primitive
     Value;
 

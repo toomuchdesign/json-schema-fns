@@ -1,4 +1,4 @@
-import type { MergeRecords, OmitByValue, Simplify } from './records';
+import type { MergeRecords, OmitByValue } from './records';
 
 // https://github.com/ThomasAribart/json-schema-to-ts/blob/12767c1eab895159c01f5e6898d8e5e711ff9d1c/src/definitions/jsonSchema.ts
 export type JSONSchema = Readonly<{
@@ -17,6 +17,6 @@ export type JSONSchemaObject = MergeRecords<
   }
 >;
 
-export type JSONSchemaObjectOutput<Schema extends JSONSchema> =
+export type JSONSchemaObjectOutput<Schema extends Record<string, unknown>> =
   // Remove undefined props and empty arrays
   OmitByValue<Schema, readonly [] | undefined>;

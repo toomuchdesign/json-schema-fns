@@ -11,7 +11,7 @@ export type Simplify<T> = { [KeyType in keyof T]: T[KeyType] } & {};
 export type MergeRecords<
   Destination extends UnknownRecord,
   Source extends UnknownRecord,
-> = Simplify<Omit<Destination, keyof Source> & Source>;
+> = Omit<Destination, keyof Source> & Source;
 
 /**
  * Merge two optional records, keeping `undefined` if both are undefined

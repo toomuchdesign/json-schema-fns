@@ -32,11 +32,9 @@ export type PickFromTuple<
 export type MergeTuples<
   T1 extends StringTuple,
   T2 extends StringTuple,
-> = Readonly<
-  UnionToTuple<
-    // Transform tuples to union to remove duplicates
-    T1[number] | T2[number]
-  >
+> = UnionToTuple<
+  // Transform tuples to union to remove duplicates
+  T1[number] | T2[number]
 >;
 
 /**
@@ -51,4 +49,4 @@ export type MergeOptionalTuples<
     : T1
   : T2 extends StringTuple
     ? T2
-    : [];
+    : readonly [];
