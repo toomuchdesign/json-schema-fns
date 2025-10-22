@@ -13,7 +13,9 @@ type MergeProps<
 > = MergeRecords<
   MergeRecords<Schema1, Schema2>,
   {
-    required: MergeOptionalTuples<Schema1['required'], Schema2['required']>;
+    required: Readonly<
+      MergeOptionalTuples<Schema1['required'], Schema2['required']>
+    >;
     properties: MergeRecords<Schema1['properties'], Schema2['properties']>;
     patternProperties: MergeOptionalRecords<
       Schema1['patternProperties'],

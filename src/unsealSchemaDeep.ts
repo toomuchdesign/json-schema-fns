@@ -4,16 +4,16 @@ import type { JSONSchema, JSONSchemaObjectOutput } from './utils/types';
 type OmitAdditionalPropertiesDeep<Value> = Value extends object
   ? Value extends { type: 'object' }
     ? // JSON schema object type
-      Readonly<{
+      {
         [Key in keyof Omit<
           Value,
           'additionalProperties'
         >]: OmitAdditionalPropertiesDeep<Value[Key]>;
-      }>
+      }
     : // Any other object/array
-      Readonly<{
+      {
         [Key in keyof Value]: OmitAdditionalPropertiesDeep<Value[Key]>;
-      }>
+      }
   : // Any other primitive
     Value;
 
