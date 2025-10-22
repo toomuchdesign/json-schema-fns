@@ -206,7 +206,7 @@ const result = unsealSchemaDeep(schema);
 
 In addition to the standard functional API, `json-schema-fns` also offers a composition-friendly counterpart that enables schema transformations through a pipeable interface. [Live demo ⚡](https://stackblitz.com/edit/vitejs-vite-aglzxc19?file=src%2Fpipe.ts&view=editor)
 
-> Note: piping currently easily hits TypeScript's internal recursion limits producing the following error: `TS2589: Type instantiation is excessively deep and possibly infinite`
+> Note: piping could lead TypeScript to hit its internal recursion limits producing the following error: `TS2589: Type instantiation is excessively deep and possibly infinite`
 
 > Note: the library does not include its own pipe utility. You are free to use any composition library you prefer, such as [pipe-ts](https://www.npmjs.com/package/pipe-ts), [ts-functional-pipe](https://www.npmjs.com/package/ts-functional-pipe) or even bigger libraries like [effect](https://www.npmjs.com/package/effect) or [remeda](https://www.npmjs.com/package/remeda). See [composition tests](./test/composition.test.ts).
 
