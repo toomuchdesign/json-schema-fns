@@ -50,7 +50,7 @@ npm install @toomuchdesign/json-schema-fns
 
 ### omitProps
 
-Omit specific `properties` from an object JSON schema.
+Omit specific `properties` from an object JSON schema. [Live demo ⚡](https://stackblitz.com/edit/vitejs-vite-aglzxc19?file=src%2FomitProps.ts&view=editor)
 
 ```ts
 import { omitProps } from '@toomuchdesign/json-schema-fns';
@@ -69,7 +69,7 @@ const result = omitProps(schema, ['b']);
 
 ### pickProps
 
-Pick only specific `properties` from an object JSON schema.
+Pick only specific `properties` from an object JSON schema. [Live demo ⚡](https://stackblitz.com/edit/vitejs-vite-aglzxc19?file=src%2FpickProps.ts&view=editor)
 
 ```ts
 import { pickProps } from '@toomuchdesign/json-schema-fns';
@@ -88,7 +88,7 @@ const result = pickProps(schema, ['b']);
 
 ### mergeProps
 
-Merge two object JSON schemas `properties` and `patternProperties` props into one. If the same property key exists in both schemas, the property from `schema2` takes precedence.
+Merge two object JSON schemas `properties` and `patternProperties` props into one. If the same property key exists in both schemas, the property from `schema2` takes precedence. [Live demo ⚡](https://stackblitz.com/edit/vitejs-vite-aglzxc19?file=src%2FmergeProps.ts&view=editor)
 
 ```ts
 import { mergeProps } from '@toomuchdesign/json-schema-fns';
@@ -114,7 +114,7 @@ const result = mergeProps(schema1, schema2);
 
 ### requireProps
 
-Mark specific properties in a object JSON schema as required. If no keys provided, all properties become required.
+Mark specific properties in a object JSON schema as required. If no keys provided, all properties become required. [Live demo ⚡](https://stackblitz.com/edit/vitejs-vite-aglzxc19?file=src%2FrequireProps.ts&view=editor)
 
 ```ts
 import { requireProps } from '@toomuchdesign/json-schema-fns';
@@ -134,7 +134,7 @@ const result = requireProps(schema, ['a', 'c']);
 
 ### optionalProps
 
-Make specific properties of a object JSON schema optional. If no keys provided, all properties become optional.
+Make specific properties of a object JSON schema optional. If no keys provided, all properties become optional. [Live demo ⚡](https://stackblitz.com/edit/vitejs-vite-aglzxc19?file=src%2FoptionalProps.ts&view=editor)
 
 ```ts
 import { optionalProps } from '@toomuchdesign/json-schema-fns';
@@ -154,7 +154,7 @@ const result = optionalProps(schema, ['b', 'c']);
 
 ### sealSchemaDeep
 
-Recursively set `additionalProperties: false` on all object JSON schema schemas.
+Recursively set `additionalProperties: false` on all object JSON schema schemas. [Live demo ⚡](https://stackblitz.com/edit/vitejs-vite-aglzxc19?file=src%2FsealSchemaDeep.ts&view=editor)
 
 ```ts
 import { sealSchemaDeep } from '@toomuchdesign/json-schema-fns';
@@ -178,7 +178,7 @@ const result = sealSchemaDeep(schema);
 
 ### unsealSchemaDeep
 
-Recursively remove `additionalProperties` from all object JSON schema schemas.
+Recursively remove `additionalProperties` from all object JSON schema schemas. [Live demo ⚡](https://stackblitz.com/edit/vitejs-vite-aglzxc19?file=src%2FunsealSchemaDeep.ts&view=editor)
 
 ```ts
 import { unsealSchemaDeep } from '@toomuchdesign/json-schema-fns';
@@ -202,11 +202,13 @@ const schema = {
 const result = unsealSchemaDeep(schema);
 ```
 
-## Composition & pipe-friendly API
+## Composition & pipe-friendly API (experimental)
 
-In addition to the standard functional API, `json-schema-fns` also offers a composition-friendly counterpart that enables schema transformations through a pipeable interface.
+In addition to the standard functional API, `json-schema-fns` also offers a composition-friendly counterpart that enables schema transformations through a pipeable interface. [Live demo ⚡](https://stackblitz.com/edit/vitejs-vite-aglzxc19?file=src%2Fpipe.ts&view=editor)
 
-> Note: The library does not include its own pipe utility. You are free to use any composition library you prefer, such as [pipe-ts](https://www.npmjs.com/package/pipe-ts), [ts-functional-pipe](https://www.npmjs.com/package/ts-functional-pipe) or even bigger libraries like [effect](https://www.npmjs.com/package/effect) or [remeda](https://www.npmjs.com/package/remeda). See [composition tests](./test/composition.test.ts).
+> Note: piping currently easily hits TypeScript's internal recursion limits producing the following error: `TS2589: Type instantiation is excessively deep and possibly infinite`
+
+> Note: the library does not include its own pipe utility. You are free to use any composition library you prefer, such as [pipe-ts](https://www.npmjs.com/package/pipe-ts), [ts-functional-pipe](https://www.npmjs.com/package/ts-functional-pipe) or even bigger libraries like [effect](https://www.npmjs.com/package/effect) or [remeda](https://www.npmjs.com/package/remeda). See [composition tests](./test/composition.test.ts).
 
 ### Functional API Example
 
