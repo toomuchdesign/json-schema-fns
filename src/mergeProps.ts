@@ -5,6 +5,7 @@ import type {
   MergeOptionalRecords,
   MergeOptionalTuples,
   MergeRecords,
+  Simplify,
 } from './utils/types';
 
 type MergeProps<
@@ -13,13 +14,19 @@ type MergeProps<
 > = MergeRecords<
   MergeRecords<Schema1, Schema2>,
   {
-    required: Readonly<
+    readonly required: Readonly<
       MergeOptionalTuples<Schema1['required'], Schema2['required']>
     >;
-    properties: MergeRecords<Schema1['properties'], Schema2['properties']>;
-    patternProperties: MergeOptionalRecords<
-      Schema1['patternProperties'],
-      Schema2['patternProperties']
+    readonly properties: Simplify<
+      Readonly<MergeRecords<Schema1['properties'], Schema2['properties']>>
+    >;
+    readonly patternProperties: Simplify<
+      Readonly<
+        MergeOptionalRecords<
+          Schema1['patternProperties'],
+          Schema2['patternProperties']
+        >
+      >
     >;
   }
 >;

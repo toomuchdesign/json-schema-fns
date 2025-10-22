@@ -8,11 +8,13 @@ import type {
 type DisableAdditionalPropertiesDeep<Value> = Value extends object
   ? Value extends { type: 'object' }
     ? // JSON schema object type
-      MergeRecords<
-        {
-          [Key in keyof Value]: DisableAdditionalPropertiesDeep<Value[Key]>;
-        },
-        { readonly additionalProperties: false }
+      Readonly<
+        MergeRecords<
+          {
+            [Key in keyof Value]: DisableAdditionalPropertiesDeep<Value[Key]>;
+          },
+          { additionalProperties: false }
+        >
       >
     : // Any other object/array
       {

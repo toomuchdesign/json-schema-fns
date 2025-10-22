@@ -49,4 +49,4 @@ export type MergeOptionalTuples<
     : T1
   : T2 extends StringTuple
     ? T2
-    : [];
+    : readonly [];
