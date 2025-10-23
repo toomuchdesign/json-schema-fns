@@ -1,5 +1,21 @@
 # @toomuchdesign/json-schema-fns
 
+## 0.6.0
+
+### Minor Changes
+
+- [#76](https://github.com/toomuchdesign/json-schema-fns/pull/76) [`9fd6d31`](https://github.com/toomuchdesign/json-schema-fns/commit/9fd6d318d85287eb9022dc115058e44010c2cc83) Thanks [@toomuchdesign](https://github.com/toomuchdesign)! - Remove unnecessary `Readonly` invocations
+
+- [#78](https://github.com/toomuchdesign/json-schema-fns/pull/78) [`6291bc5`](https://github.com/toomuchdesign/json-schema-fns/commit/6291bc51dcfe5d84bd9c2baaf0e4e9d5022afd90) Thanks [@toomuchdesign](https://github.com/toomuchdesign)! - Simplify `sealSchemaDeep` output type
+
+- [#78](https://github.com/toomuchdesign/json-schema-fns/pull/78) [`6291bc5`](https://github.com/toomuchdesign/json-schema-fns/commit/6291bc51dcfe5d84bd9c2baaf0e4e9d5022afd90) Thanks [@toomuchdesign](https://github.com/toomuchdesign)! - Remove unnecessary `JSONSchemaObjectOutput` invoceations
+
+- [#76](https://github.com/toomuchdesign/json-schema-fns/pull/76) [`9fd6d31`](https://github.com/toomuchdesign/json-schema-fns/commit/9fd6d318d85287eb9022dc115058e44010c2cc83) Thanks [@toomuchdesign](https://github.com/toomuchdesign)! - Remove unnecessary `Simplify` invocations
+
+### Patch Changes
+
+- [`c37c539`](https://github.com/toomuchdesign/json-schema-fns/commit/c37c539a19819ebcb71a4a466d7aba1e462fddc1) Thanks [@toomuchdesign](https://github.com/toomuchdesign)! - Fix type output simplification
+
 ## 0.5.0
 
 ### Minor Changes
