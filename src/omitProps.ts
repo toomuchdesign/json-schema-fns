@@ -1,7 +1,7 @@
 import { isJSONSchemaObjectType } from './utils';
 import type {
+  CompactSchema,
   JSONSchemaObject,
-  JSONSchemaObjectOutput,
   MergeRecords,
   OmitFromTuple,
   Simplify,
@@ -29,7 +29,7 @@ type OmitProps<
 export function omitProps<
   const Schema extends JSONSchemaObject,
   const Keys extends (keyof Schema['properties'])[],
->(schema: Schema, keys: Keys): JSONSchemaObjectOutput<OmitProps<Schema, Keys>> {
+>(schema: Schema, keys: Keys): CompactSchema<OmitProps<Schema, Keys>> {
   isJSONSchemaObjectType(schema);
 
   const required = schema.required

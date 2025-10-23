@@ -1,7 +1,7 @@
 import { isJSONSchemaObjectType } from './utils';
 import type {
+  CompactSchema,
   JSONSchemaObject,
-  JSONSchemaObjectOutput,
   MergeOptionalRecords,
   MergeOptionalTuples,
   MergeRecords,
@@ -58,7 +58,7 @@ export function mergeProps<
 >(
   schema1: Schema1,
   schema2: Schema2,
-): JSONSchemaObjectOutput<MergeProps<Schema1, Schema2>> {
+): CompactSchema<MergeProps<Schema1, Schema2>> {
   isJSONSchemaObjectType(schema1);
   isJSONSchemaObjectType(schema2);
 

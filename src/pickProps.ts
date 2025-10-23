@@ -1,7 +1,7 @@
 import { isJSONSchemaObjectType } from './utils';
 import type {
+  CompactSchema,
   JSONSchemaObject,
-  JSONSchemaObjectOutput,
   MergeRecords,
   PickFromTuple,
   Simplify,
@@ -31,7 +31,7 @@ type PickProps<
 export function pickProps<
   const Schema extends JSONSchemaObject,
   const Keys extends (keyof Schema['properties'])[],
->(schema: Schema, keys: Keys): JSONSchemaObjectOutput<PickProps<Schema, Keys>> {
+>(schema: Schema, keys: Keys): CompactSchema<PickProps<Schema, Keys>> {
   isJSONSchemaObjectType(schema);
 
   const required = schema.required

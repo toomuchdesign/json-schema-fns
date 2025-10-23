@@ -2,8 +2,8 @@ import type { UnionToTuple } from 'type-fest';
 
 import { isJSONSchemaObjectType } from './utils';
 import type {
+  CompactSchema,
   JSONSchemaObject,
-  JSONSchemaObjectOutput,
   MergeOptionalTuples,
   MergeRecords,
 } from './utils/types';
@@ -36,10 +36,7 @@ type RequireProps<
 export function requireProps<
   const Schema extends JSONSchemaObject,
   const Keys extends (keyof Schema['properties'])[] | undefined = undefined,
->(
-  schema: Schema,
-  keys?: Keys,
-): JSONSchemaObjectOutput<RequireProps<Schema, Keys>> {
+>(schema: Schema, keys?: Keys): CompactSchema<RequireProps<Schema, Keys>> {
   isJSONSchemaObjectType(schema);
 
   let required = keys
