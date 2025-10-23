@@ -1,5 +1,5 @@
 import { isObject } from './utils';
-import type { JSONSchema, JSONSchemaObjectOutput } from './utils/types';
+import type { JSONSchema } from './utils/types';
 
 type OmitAdditionalPropertiesDeep<Value> = Value extends object
   ? Value extends { type: 'object' }
@@ -51,7 +51,7 @@ function omitAdditionalPropertiesDeep(item: unknown): unknown {
  */
 export function unsealSchemaDeep<const Schema extends JSONSchema>(
   schema: Schema,
-): JSONSchemaObjectOutput<OmitAdditionalPropertiesDeep<Schema>> {
+): OmitAdditionalPropertiesDeep<Schema> {
   // @ts-expect-error not relying on natural type flow
   return omitAdditionalPropertiesDeep(schema);
 }
