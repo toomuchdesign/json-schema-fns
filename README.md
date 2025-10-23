@@ -210,43 +210,6 @@ In addition to the standard functional API, `json-schema-fns` also offers a comp
 
 > Note: the library does not include its own pipe utility. You are free to use any composition library you prefer, such as [pipe-ts](https://www.npmjs.com/package/pipe-ts), [ts-functional-pipe](https://www.npmjs.com/package/ts-functional-pipe) or even bigger libraries like [effect](https://www.npmjs.com/package/effect) or [remeda](https://www.npmjs.com/package/remeda). See [composition tests](./test/composition.test.ts).
 
-### Functional API Example
-
-```ts
-import {
-  mergeProps,
-  omitProps,
-  requireProps,
-  sealSchemaDeep,
-} from '@toomuchdesign/json-schema-fns';
-
-const schema = {
-  type: 'object',
-  properties: {
-    a: { type: 'string' },
-    b: { type: 'string' },
-  },
-  required: ['a'],
-} as const;
-
-const result = sealSchemaDeep(
-  requireProps(
-    omitProps(
-      mergeProps(schema, {
-        type: 'object',
-        properties: {
-          c: { type: 'string' },
-        },
-      }),
-      ['a'],
-    ),
-    ['b'],
-  ),
-);
-```
-
-### Pipeable API Example
-
 ```ts
 import {
   pipeMergeProps,
