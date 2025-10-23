@@ -7,7 +7,7 @@ import type {
   Simplify,
 } from './utils/types';
 
-type OmitSchemaProperties<
+type OmitProps<
   Schema extends JSONSchemaObject,
   Keys extends (keyof Schema['properties'])[],
 > = MergeRecords<
@@ -29,10 +29,7 @@ type OmitSchemaProperties<
 export function omitProps<
   const Schema extends JSONSchemaObject,
   const Keys extends (keyof Schema['properties'])[],
->(
-  schema: Schema,
-  keys: Keys,
-): JSONSchemaObjectOutput<OmitSchemaProperties<Schema, Keys>> {
+>(schema: Schema, keys: Keys): JSONSchemaObjectOutput<OmitProps<Schema, Keys>> {
   isJSONSchemaObjectType(schema);
 
   const required = schema.required

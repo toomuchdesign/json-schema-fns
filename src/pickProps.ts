@@ -7,7 +7,7 @@ import type {
   Simplify,
 } from './utils/types';
 
-type PickSchemaProperties<
+type PickProps<
   Schema extends JSONSchemaObject,
   Keys extends readonly (keyof Schema['properties'])[],
 > = MergeRecords<
@@ -31,10 +31,7 @@ type PickSchemaProperties<
 export function pickProps<
   const Schema extends JSONSchemaObject,
   const Keys extends (keyof Schema['properties'])[],
->(
-  schema: Schema,
-  keys: Keys,
-): JSONSchemaObjectOutput<PickSchemaProperties<Schema, Keys>> {
+>(schema: Schema, keys: Keys): JSONSchemaObjectOutput<PickProps<Schema, Keys>> {
   isJSONSchemaObjectType(schema);
 
   const required = schema.required

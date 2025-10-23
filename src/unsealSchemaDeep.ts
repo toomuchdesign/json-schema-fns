@@ -1,18 +1,17 @@
 import { isObject } from './utils';
 import type { JSONSchema } from './utils/types';
 
-type OmitAdditionalPropertiesDeep<Value> = Value extends object
+type UnsealSchemaDeep<Value> = Value extends object
   ? Value extends { type: 'object' }
     ? // JSON schema object type
       {
-        [Key in keyof Omit<
-          Value,
-          'additionalProperties'
-        >]: OmitAdditionalPropertiesDeep<Value[Key]>;
+        [Key in keyof Omit<Value, 'additionalProperties'>]: UnsealSchemaDeep<
+          Value[Key]
+        >;
       }
     : // Any other object/array
       {
-        [Key in keyof Value]: OmitAdditionalPropertiesDeep<Value[Key]>;
+        [Key in keyof Value]: UnsealSchemaDeep<Value[Key]>;
       }
   : // Any other primitive
     Value;
@@ -51,7 +50,7 @@ function omitAdditionalPropertiesDeep(item: unknown): unknown {
  */
 export function unsealSchemaDeep<const Schema extends JSONSchema>(
   schema: Schema,
-): OmitAdditionalPropertiesDeep<Schema> {
+): UnsealSchemaDeep<Schema> {
   // @ts-expect-error not relying on natural type flow
   return omitAdditionalPropertiesDeep(schema);
 }
