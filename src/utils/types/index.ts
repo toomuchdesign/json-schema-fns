@@ -10,4 +10,4 @@ export type { MergeTuples } from './MergeTuples';
 export type { OmitFromTuple } from './OmitFromTuple';
 export type { PickFromTuple } from './PickFromTuple';
 
-export type { JSONSchemaObjectOutput } from './JSONSchemaObjectOutput';
+export type { CompactSchema } from './CompactSchema';

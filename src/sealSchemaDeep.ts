@@ -1,24 +1,20 @@
 import { isObject } from './utils';
-import type {
-  JSONSchema,
-  JSONSchemaObjectOutput,
-  MergeRecords,
-} from './utils/types';
+import type { JSONSchema, MergeRecords, Simplify } from './utils/types';
 
-type DisableAdditionalPropertiesDeep<Value> = Value extends object
+type SealSchemaDeep<Value> = Value extends object
   ? Value extends { type: 'object' }
     ? // JSON schema object type
-      Readonly<
+      Simplify<
         MergeRecords<
           {
-            [Key in keyof Value]: DisableAdditionalPropertiesDeep<Value[Key]>;
+            [Key in keyof Value]: SealSchemaDeep<Value[Key]>;
           },
-          { additionalProperties: false }
+          { readonly additionalProperties: false }
         >
       >
     : // Any other object/array
       {
-        [Key in keyof Value]: DisableAdditionalPropertiesDeep<Value[Key]>;
+        [Key in keyof Value]: SealSchemaDeep<Value[Key]>;
       }
   : // Any other primitive
     Value;
@@ -54,7 +50,7 @@ function disableAdditionalPropertiesDeep(item: unknown): unknown {
  */
 export function sealSchemaDeep<const Schema extends JSONSchema>(
   schema: Schema,
-): JSONSchemaObjectOutput<DisableAdditionalPropertiesDeep<Schema>> {
+): SealSchemaDeep<Schema> {
   // @ts-expect-error not relying on natural type flow
   return disableAdditionalPropertiesDeep(schema);
 }
