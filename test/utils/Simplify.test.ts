@@ -1,7 +1,7 @@
 import { expectTypeOf } from 'expect-type';
 import { describe, it } from 'vitest';
 
-import type { Simplify } from '../../src/utils/types/records';
+import type { Simplify } from '../../src/utils/types';
 
 describe('Internal types', () => {
   describe('Simplify', () => {

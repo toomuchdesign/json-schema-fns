@@ -1,7 +1,7 @@
 import { expectTypeOf } from 'expect-type';
 import { describe, it } from 'vitest';
 
-import type { OmitByValue } from '../../src/utils/types/records';
+import type { OmitByValue } from '../../src/utils/types';
 
 describe('Internal types', () => {
   describe('OmitByValue', () => {

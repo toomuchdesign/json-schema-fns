@@ -1,11 +1,10 @@
-import { Simplify } from 'type-fest';
-
 import { isJSONSchemaObjectType } from './utils';
 import type {
   JSONSchemaObject,
   JSONSchemaObjectOutput,
   MergeRecords,
   PickFromTuple,
+  Simplify,
 } from './utils/types';
 
 type PickSchemaProperties<
