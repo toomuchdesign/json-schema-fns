@@ -1,4 +1,4 @@
-export function isObject(input: unknown): input is Record<string, unknown> {
+export function isRecord(input: unknown): input is Record<string, unknown> {
   return (
     typeof input === 'object' && input !== null && input.constructor === Object
   );

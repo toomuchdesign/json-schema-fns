@@ -1,2 +1,2 @@
 export { isJSONSchemaObjectType } from './isJSONSchemaObjectType';
-export { isObject } from './isObject';
+export { isRecord } from './isRecord';

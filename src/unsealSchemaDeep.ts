@@ -1,25 +1,67 @@
-import { isObject } from './utils';
-import type { JSONSchema } from './utils/types';
+import { isRecord } from './utils';
+import type { JSONSchema, UnknownArray, UnknownRecord } from './utils/types';
 
-type UnsealSchemaDeep<Value> = Value extends object
+// https://json-schema.org/understanding-json-schema/reference/combining
+const arrayCombinators = ['allOf', 'anyOf', 'oneOf'] as const;
+const objectCombinators = ['not'] as const;
+
+type ArrayCombinators = (typeof arrayCombinators)[number];
+type ObjectCombinators = (typeof objectCombinators)[number];
+
+type UnsealSchemaDeep<
+  Value,
+  ItemPropName extends PropertyKey | undefined,
+> = Value extends UnknownRecord
   ? Value extends { type: 'object' }
-    ? // JSON schema object type
+    ? // Value is JSON schema object
+      /**
+       * Skip JSON schema object combinators (stop iteration)
+       * @TODO consider skipping additionalProperties only on root child object
+       */
+      ItemPropName extends ObjectCombinators
+      ? Value
+      : {
+          [Key in keyof Omit<Value, 'additionalProperties'>]: UnsealSchemaDeep<
+            Value[Key],
+            Key
+          >;
+        }
+    : // Value is any other object
       {
-        [Key in keyof Omit<Value, 'additionalProperties'>]: UnsealSchemaDeep<
-          Value[Key]
-        >;
+        [Key in keyof Value]: UnsealSchemaDeep<Value[Key], Key>;
       }
-    : // Any other object/array
-      {
-        [Key in keyof Value]: UnsealSchemaDeep<Value[Key]>;
-      }
-  : // Any other primitive
-    Value;
+  : Value extends UnknownArray
+    ? // Value is array
+      /**
+       * Skip JSON schema array combinators (stop iteration)
+       * @TODO consider skipping additionalProperties only on root child object
+       */
+      ItemPropName extends ArrayCombinators
+      ? Value
+      : {
+          [Key in keyof Value]: UnsealSchemaDeep<Value[Key], Key>;
+        }
+    : // Any other primitive
+      Value;
 
-function omitAdditionalPropertiesDeep(item: unknown): unknown {
-  if (isObject(item)) {
+function omitAdditionalPropertiesDeep(
+  item: unknown,
+  itemPropName?: string,
+): unknown {
+  if (isRecord(item)) {
     if (item.type === 'object') {
       if ('additionalProperties' in item) {
+        /**
+         * Skip JSON schema object combinators (stop iteration)
+         * @TODO consider skipping additionalProperties only on root child object
+         */
+        if (
+          itemPropName &&
+          objectCombinators.includes(itemPropName as ObjectCombinators)
+        ) {
+          return item;
+        }
+
         const { additionalProperties, ...rest } = item;
         item = rest;
       }
@@ -28,13 +70,24 @@ function omitAdditionalPropertiesDeep(item: unknown): unknown {
     return Object.fromEntries(
       // @ts-expect-error couldn't get generics to work with json schema
       Object.entries(item).map(([key, value]) => {
-        return [key, omitAdditionalPropertiesDeep(value)];
+        return [key, omitAdditionalPropertiesDeep(value, key)];
       }),
     );
   }
 
   if (Array.isArray(item)) {
-    return item.map(omitAdditionalPropertiesDeep);
+    /**
+     * Skip JSON schema array combinators (stop iteration)
+     * @TODO consider skipping additionalProperties only on root child object
+     */
+    if (
+      itemPropName &&
+      arrayCombinators.includes(itemPropName as ArrayCombinators)
+    ) {
+      return item;
+    }
+
+    return item.map((item) => omitAdditionalPropertiesDeep(item, itemPropName));
   }
 
   return item;
@@ -43,6 +96,9 @@ function omitAdditionalPropertiesDeep(item: unknown): unknown {
 /**
  * Recursively remove `additionalProperties` from all object JSON schema schemas.
  *
+ * It does not modify [JSON Schema combinators](https://json-schema.org/understanding-json-schema/reference/combining) such as `allOf`, `anyOf`, `oneOf`, or `not`.
+ * This ensures that the logical combination of schemas remains intact and that the semantics of the schema are not altered in any way.
+ *
  * @example
  * ```ts
  * unsealSchemaDeep(schema);
@@ -50,7 +106,7 @@ function omitAdditionalPropertiesDeep(item: unknown): unknown {
  */
 export function unsealSchemaDeep<const Schema extends JSONSchema>(
   schema: Schema,
-): UnsealSchemaDeep<Schema> {
+): UnsealSchemaDeep<Schema, undefined> {
   // @ts-expect-error not relying on natural type flow
   return omitAdditionalPropertiesDeep(schema);
 }

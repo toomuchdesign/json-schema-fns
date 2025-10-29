@@ -70,7 +70,8 @@ describe('unsealSchemaDeep', () => {
         additionalProperties: false,
         properties: {
           level_1: {
-            oneOf: [
+            type: 'array',
+            items: [
               {
                 type: 'string',
               },
@@ -90,7 +91,8 @@ describe('unsealSchemaDeep', () => {
                     additionalProperties: false,
                     properties: {
                       level_3: {
-                        oneOf: [
+                        type: 'array',
+                        items: [
                           {
                             type: 'object',
                             additionalProperties: false,
@@ -122,7 +124,8 @@ describe('unsealSchemaDeep', () => {
         type: 'object',
         properties: {
           level_1: {
-            oneOf: [
+            type: 'array',
+            items: [
               {
                 type: 'string',
               },
@@ -139,7 +142,8 @@ describe('unsealSchemaDeep', () => {
                     type: 'object',
                     properties: {
                       level_3: {
-                        oneOf: [
+                        type: 'array',
+                        items: [
                           {
                             type: 'object',
                             properties: {
@@ -165,6 +169,309 @@ describe('unsealSchemaDeep', () => {
 
       expect(actual).toEqual(expected);
       expectTypeOf(actual).toEqualTypeOf(expected);
+    });
+  });
+
+  describe('combinators', () => {
+    describe('allOf', () => {
+      it('skips additionalProperties setting on direct object children', () => {});
+      const schema = {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          allOfProperty: {
+            allOf: [
+              {
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                  a: {
+                    type: 'object',
+                    additionalProperties: false,
+                    properties: {
+                      aa: { type: 'string' },
+                    },
+                  },
+                },
+              },
+              {
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                  b: {
+                    type: 'object',
+                    additionalProperties: false,
+                    properties: {
+                      bb: { type: 'number' },
+                    },
+                  },
+                },
+              },
+            ],
+          },
+        },
+      } as const;
+
+      deepFreeze(schema);
+
+      const actual = unsealSchemaDeep(schema);
+      const expected = {
+        type: 'object',
+        properties: {
+          allOfProperty: {
+            allOf: [
+              {
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                  a: {
+                    type: 'object',
+                    additionalProperties: false,
+                    properties: {
+                      aa: { type: 'string' },
+                    },
+                  },
+                },
+              },
+              {
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                  b: {
+                    type: 'object',
+                    additionalProperties: false,
+                    properties: {
+                      bb: { type: 'number' },
+                    },
+                  },
+                },
+              },
+            ],
+          },
+        },
+      } as const;
+
+      expect(actual).toEqual(expected);
+      expectTypeOf(actual).toEqualTypeOf(expected);
+    });
+
+    describe('anyOf', () => {
+      it('skips additionalProperties setting on direct object children', () => {
+        const schema = {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            anyOfProperty: {
+              anyOf: [
+                {
+                  type: 'object',
+                  additionalProperties: false,
+                  properties: {
+                    a: {
+                      type: 'object',
+                      additionalProperties: false,
+                      properties: {
+                        aa: { type: 'string' },
+                      },
+                    },
+                  },
+                },
+                {
+                  type: 'object',
+                  additionalProperties: false,
+                  properties: {
+                    b: {
+                      type: 'object',
+                      additionalProperties: false,
+                      properties: {
+                        bb: { type: 'number' },
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        } as const;
+
+        deepFreeze(schema);
+
+        const actual = unsealSchemaDeep(schema);
+        const expected = {
+          type: 'object',
+          properties: {
+            anyOfProperty: {
+              anyOf: [
+                {
+                  type: 'object',
+                  additionalProperties: false,
+                  properties: {
+                    a: {
+                      type: 'object',
+                      additionalProperties: false,
+                      properties: {
+                        aa: { type: 'string' },
+                      },
+                    },
+                  },
+                },
+                {
+                  type: 'object',
+                  additionalProperties: false,
+                  properties: {
+                    b: {
+                      type: 'object',
+                      additionalProperties: false,
+                      properties: {
+                        bb: { type: 'number' },
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        } as const;
+
+        expect(actual).toEqual(expected);
+        expectTypeOf(actual).toEqualTypeOf(expected);
+      });
+    });
+
+    describe('oneOf', () => {
+      it('skips additionalProperties setting on direct object children', () => {
+        const schema = {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            oneOfProperty: {
+              oneOf: [
+                {
+                  type: 'object',
+                  additionalProperties: false,
+                  properties: {
+                    a: {
+                      type: 'object',
+                      additionalProperties: false,
+                      properties: {
+                        aa: { type: 'string' },
+                      },
+                    },
+                  },
+                },
+                {
+                  type: 'object',
+                  additionalProperties: false,
+                  properties: {
+                    b: {
+                      type: 'object',
+                      additionalProperties: false,
+                      properties: {
+                        bb: { type: 'number' },
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        } as const;
+
+        deepFreeze(schema);
+
+        const actual = unsealSchemaDeep(schema);
+        const expected = {
+          type: 'object',
+          properties: {
+            oneOfProperty: {
+              oneOf: [
+                {
+                  type: 'object',
+                  additionalProperties: false,
+                  properties: {
+                    a: {
+                      type: 'object',
+                      additionalProperties: false,
+                      properties: {
+                        aa: { type: 'string' },
+                      },
+                    },
+                  },
+                },
+                {
+                  type: 'object',
+                  additionalProperties: false,
+                  properties: {
+                    b: {
+                      type: 'object',
+                      additionalProperties: false,
+                      properties: {
+                        bb: { type: 'number' },
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        } as const;
+
+        expect(actual).toEqual(expected);
+        expectTypeOf(actual).toEqualTypeOf(expected);
+      });
+    });
+
+    describe('not', () => {
+      it('skips additionalProperties setting on direct object children', () => {
+        const schema = {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            notProperty: {
+              not: {
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                  a: {
+                    type: 'object',
+                    additionalProperties: false,
+                    properties: {
+                      aa: { type: 'string' },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        } as const;
+
+        deepFreeze(schema);
+
+        const actual = unsealSchemaDeep(schema);
+        const expected = {
+          type: 'object',
+          properties: {
+            notProperty: {
+              not: {
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                  a: {
+                    type: 'object',
+                    additionalProperties: false,
+                    properties: {
+                      aa: { type: 'string' },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        } as const;
+
+        expect(actual).toEqual(expected);
+        expectTypeOf(actual).toEqualTypeOf(expected);
+      });
     });
   });
 

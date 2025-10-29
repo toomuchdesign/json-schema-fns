@@ -422,6 +422,41 @@ describe('sealSchemaDeep', () => {
       });
     });
   });
+
+  describe('JSON Schema object with additionalProperties prop', () => {
+    it('does not affect object properties', () => {
+      const schema = {
+        type: 'object',
+        properties: {
+          a: {
+            type: 'object',
+            properties: {
+              additionalProperties: { type: 'boolean' },
+            },
+          },
+        },
+      } as const;
+      deepFreeze(schema);
+
+      const actual = sealSchemaDeep(schema);
+      const expected = {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          a: {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+              additionalProperties: { type: 'boolean' },
+            },
+          },
+        },
+      } as const;
+
+      expect(actual).toEqual(expected);
+      expectTypeOf(actual).toEqualTypeOf(expected);
+    });
+  });
 });
 
 describe('pipeSealSchemaDeep', () => {

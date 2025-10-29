@@ -1,4 +1,4 @@
-import { isObject } from './utils';
+import { isRecord } from './utils';
 import type {
   JSONSchema,
   MergeRecords,
@@ -16,7 +16,7 @@ type ObjectCombinators = (typeof objectCombinators)[number];
 
 type SealSchemaDeep<
   Value,
-  ItemPropName extends PropertyKey | undefined = undefined,
+  ItemPropName extends PropertyKey | undefined,
 > = Value extends UnknownRecord
   ? Value extends { type: 'object' }
     ? // Value is JSON schema object
@@ -56,7 +56,7 @@ function disableAdditionalPropertiesDeep(
   item: unknown,
   itemPropName?: string,
 ): unknown {
-  if (isObject(item)) {
+  if (isRecord(item)) {
     if (item.type === 'object') {
       /**
        * Skip JSON schema object combinators (stop iteration)
@@ -113,7 +113,7 @@ function disableAdditionalPropertiesDeep(
  */
 export function sealSchemaDeep<const Schema extends JSONSchema>(
   schema: Schema,
-): SealSchemaDeep<Schema> {
+): SealSchemaDeep<Schema, undefined> {
   // @ts-expect-error not relying on natural type flow
   return disableAdditionalPropertiesDeep(schema);
 }
