@@ -21,7 +21,9 @@ type SealSchemaDeep<
   ? // Value is JSON schema object
     /**
      * Skip JSON schema object combinators (stop iteration)
-     * @TODO consider skipping additionalProperties only on root child object
+     * @TODO consider skipping additionalProperties handling only on root child object
+     * @TODO Update handling to remove additionalProperties only if the relevant JSON Schema keyword (e.g. "not")
+     * is used as a schema combinator rather than as a regular property
      */
     ItemPropName extends ObjectCombinators
     ? Value
@@ -42,7 +44,7 @@ type SealSchemaDeep<
       ? // Value is array
         /**
          * Skip JSON schema array combinators (stop iteration)
-         * @TODO consider skipping additionalProperties only on root child object
+         * @TODO consider skipping additionalProperties handling only on root child object
          */
         ItemPropName extends ArrayCombinators
         ? Value
@@ -60,7 +62,9 @@ function disableAdditionalPropertiesDeep(
     if (item.type === 'object') {
       /**
        * Skip JSON schema object combinators (stop iteration)
-       * @TODO consider skipping additionalProperties only on root child object
+       * @TODO consider skipping additionalProperties handling only on root child object
+       * @TODO Update handling to remove additionalProperties only if the relevant JSON Schema keyword (e.g. "not")
+       * is used as a schema combinator rather than as a regular property
        */
       if (
         itemPropName &&
@@ -83,7 +87,7 @@ function disableAdditionalPropertiesDeep(
   if (Array.isArray(item)) {
     /**
      * Skip JSON schema array combinators (stop iteration)
-     * @TODO consider skipping additionalProperties only on root child object
+     * @TODO consider skipping additionalProperties handling only on root child object
      */
     if (
       itemPropName &&

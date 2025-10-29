@@ -293,7 +293,6 @@ describe('unsealSchemaDeep', () => {
             },
           },
         } as const;
-
         deepFreeze(schema);
 
         const actual = unsealSchemaDeep(schema);
@@ -376,7 +375,6 @@ describe('unsealSchemaDeep', () => {
             },
           },
         } as const;
-
         deepFreeze(schema);
 
         const actual = unsealSchemaDeep(schema);
@@ -444,7 +442,6 @@ describe('unsealSchemaDeep', () => {
             },
           },
         } as const;
-
         deepFreeze(schema);
 
         const actual = unsealSchemaDeep(schema);
@@ -473,17 +470,81 @@ describe('unsealSchemaDeep', () => {
         expectTypeOf(actual).toEqualTypeOf(expected);
       });
     });
+
+    describe('JSON Schema object with JSON schema combinator prop names', () => {
+      it.fails('changes object properties', () => {
+        const schema = {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            anyOf: {
+              type: 'object',
+              additionalProperties: false,
+              properties: {
+                a: {
+                  type: 'string',
+                },
+              },
+            },
+            not: {
+              type: 'object',
+              additionalProperties: false,
+              properties: {
+                a: {
+                  type: 'string',
+                },
+              },
+            },
+          },
+        } as const;
+        deepFreeze(schema);
+
+        const actual = unsealSchemaDeep(schema);
+        const expected = {
+          type: 'object',
+          properties: {
+            anyOf: {
+              type: 'object',
+              properties: {
+                a: {
+                  type: 'string',
+                },
+              },
+            },
+            /**
+             * Currently, we don’t specifically distinguish between "not" used as an object property
+             * and "not" used as a JSON Schema combinator.
+             */
+            not: {
+              type: 'object',
+              properties: {
+                a: {
+                  type: 'string',
+                },
+              },
+            },
+          },
+        } as const;
+
+        expect(actual).toEqual(expected);
+        // @ts-expect-error
+        expectTypeOf(actual).toEqualTypeOf(expected);
+      });
+    });
   });
 
-  describe('JSON Schema object with additionalProperties prop', () => {
-    it('does not affect object properties', () => {
+  describe('JSON Schema object with additionalProperties prop name', () => {
+    it('does not change object properties', () => {
       const schema = {
         type: 'object',
         properties: {
           a: {
             type: 'object',
             properties: {
-              additionalProperties: { type: 'boolean' },
+              additionalProperties: {
+                // This object should not be touched no matter the prop name
+                type: 'boolean',
+              },
             },
           },
         },
