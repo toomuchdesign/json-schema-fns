@@ -143,7 +143,7 @@ describe('sealSchemaDeep', () => {
 
   describe('combinators', () => {
     describe('allOf', () => {
-      it('skips additionalProperties setting on direct object children', () => {});
+      it('ignores combinator schemas', () => {});
       const schema = {
         type: 'object',
         properties: {
@@ -219,7 +219,7 @@ describe('sealSchemaDeep', () => {
     });
 
     describe('anyOf', () => {
-      it('skips additionalProperties setting on direct object children', () => {
+      it('ignores combinator schemas', () => {
         const schema = {
           type: 'object',
           properties: {
@@ -296,7 +296,7 @@ describe('sealSchemaDeep', () => {
     });
 
     describe('oneOf', () => {
-      it('skips additionalProperties setting on direct object children', () => {
+      it('ignores combinator schemas', () => {
         const schema = {
           type: 'object',
           properties: {
@@ -373,7 +373,7 @@ describe('sealSchemaDeep', () => {
     });
 
     describe('not', () => {
-      it('skips additionalProperties setting on direct object children', () => {
+      it('ignores combinator schemas', () => {
         const schema = {
           type: 'object',
           properties: {
