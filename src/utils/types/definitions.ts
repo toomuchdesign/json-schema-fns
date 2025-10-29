@@ -21,3 +21,4 @@ export type JSONSchemaObject = Simplify<
 
 export type StringTuple = readonly string[];
 export type UnknownRecord = Record<string, unknown>;
+export type UnknownArray = readonly unknown[];

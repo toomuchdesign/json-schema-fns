@@ -49,7 +49,8 @@ describe('sealSchemaDeep', () => {
         type: 'object',
         properties: {
           level_1: {
-            oneOf: [
+            type: 'array',
+            items: [
               {
                 type: 'string',
               },
@@ -63,25 +64,21 @@ describe('sealSchemaDeep', () => {
                 type: 'object',
                 properties: {
                   level_2: {
-                    type: 'object',
-                    properties: {
-                      level_3: {
-                        oneOf: [
-                          {
-                            type: 'object',
-                            properties: {
-                              level_4: { type: 'string' },
-                            },
-                          },
-                          {
-                            type: 'object',
-                            properties: {
-                              level_4: { type: 'string' },
-                            },
-                          },
-                        ],
+                    type: 'array',
+                    items: [
+                      {
+                        type: 'object',
+                        properties: {
+                          level_3: { type: 'string' },
+                        },
                       },
-                    },
+                      {
+                        type: 'object',
+                        properties: {
+                          level_3: { type: 'string' },
+                        },
+                      },
+                    ],
                   },
                 },
               },
@@ -97,7 +94,8 @@ describe('sealSchemaDeep', () => {
         additionalProperties: false,
         properties: {
           level_1: {
-            oneOf: [
+            type: 'array',
+            items: [
               {
                 type: 'string',
               },
@@ -113,28 +111,23 @@ describe('sealSchemaDeep', () => {
                 additionalProperties: false,
                 properties: {
                   level_2: {
-                    type: 'object',
-                    additionalProperties: false,
-                    properties: {
-                      level_3: {
-                        oneOf: [
-                          {
-                            type: 'object',
-                            additionalProperties: false,
-                            properties: {
-                              level_4: { type: 'string' },
-                            },
-                          },
-                          {
-                            type: 'object',
-                            additionalProperties: false,
-                            properties: {
-                              level_4: { type: 'string' },
-                            },
-                          },
-                        ],
+                    type: 'array',
+                    items: [
+                      {
+                        type: 'object',
+                        additionalProperties: false,
+                        properties: {
+                          level_3: { type: 'string' },
+                        },
                       },
-                    },
+                      {
+                        type: 'object',
+                        additionalProperties: false,
+                        properties: {
+                          level_3: { type: 'string' },
+                        },
+                      },
+                    ],
                   },
                 },
               },
@@ -149,9 +142,8 @@ describe('sealSchemaDeep', () => {
   });
 
   describe('combinators', () => {
-    describe('allOf, anyOf, oneOf, not', () => {
+    describe('allOf', () => {
       it('skips additionalProperties setting on direct object children', () => {});
-
       const schema = {
         type: 'object',
         properties: {
@@ -181,71 +173,6 @@ describe('sealSchemaDeep', () => {
               },
             ],
           },
-          anyOfProperty: {
-            anyOf: [
-              {
-                type: 'object',
-                properties: {
-                  a: {
-                    type: 'object',
-                    properties: {
-                      aa: { type: 'string' },
-                    },
-                  },
-                },
-              },
-              {
-                type: 'object',
-                properties: {
-                  b: {
-                    type: 'object',
-                    properties: {
-                      bb: { type: 'number' },
-                    },
-                  },
-                },
-              },
-            ],
-          },
-          oneOfProperty: {
-            oneOf: [
-              {
-                type: 'object',
-                properties: {
-                  a: {
-                    type: 'object',
-                    properties: {
-                      aa: { type: 'string' },
-                    },
-                  },
-                },
-              },
-              {
-                type: 'object',
-                properties: {
-                  b: {
-                    type: 'object',
-                    properties: {
-                      bb: { type: 'number' },
-                    },
-                  },
-                },
-              },
-            ],
-          },
-          notProperty: {
-            not: {
-              type: 'object',
-              properties: {
-                a: {
-                  type: 'object',
-                  properties: {
-                    aa: { type: 'string' },
-                  },
-                },
-              },
-            },
-          },
         },
       } as const;
 
@@ -263,7 +190,7 @@ describe('sealSchemaDeep', () => {
                 properties: {
                   a: {
                     type: 'object',
-                    additionalProperties: false,
+                    // additionalProperties: false,
                     properties: {
                       aa: { type: 'string' },
                     },
@@ -275,7 +202,7 @@ describe('sealSchemaDeep', () => {
                 properties: {
                   b: {
                     type: 'object',
-                    additionalProperties: false,
+                    // additionalProperties: false,
                     properties: {
                       bb: { type: 'number' },
                     },
@@ -283,82 +210,216 @@ describe('sealSchemaDeep', () => {
                 },
               },
             ],
-          },
-          anyOfProperty: {
-            anyOf: [
-              {
-                type: 'object',
-                properties: {
-                  a: {
-                    type: 'object',
-                    additionalProperties: false,
-                    properties: {
-                      aa: { type: 'string' },
-                    },
-                  },
-                },
-              },
-              {
-                type: 'object',
-                properties: {
-                  b: {
-                    type: 'object',
-                    additionalProperties: false,
-                    properties: {
-                      bb: { type: 'number' },
-                    },
-                  },
-                },
-              },
-            ],
-          },
-          oneOfProperty: {
-            oneOf: [
-              {
-                type: 'object',
-                properties: {
-                  a: {
-                    type: 'object',
-                    additionalProperties: false,
-                    properties: {
-                      aa: { type: 'string' },
-                    },
-                  },
-                },
-              },
-              {
-                type: 'object',
-                properties: {
-                  b: {
-                    type: 'object',
-                    additionalProperties: false,
-                    properties: {
-                      bb: { type: 'number' },
-                    },
-                  },
-                },
-              },
-            ],
-          },
-          notProperty: {
-            not: {
-              type: 'object',
-              properties: {
-                a: {
-                  type: 'object',
-                  additionalProperties: false,
-                  properties: {
-                    aa: { type: 'string' },
-                  },
-                },
-              },
-            },
           },
         },
       } as const;
 
       expect(actual).toEqual(expected);
       expectTypeOf(actual).toEqualTypeOf(expected);
+    });
+
+    describe('anyOf', () => {
+      it('skips additionalProperties setting on direct object children', () => {
+        const schema = {
+          type: 'object',
+          properties: {
+            anyOfProperty: {
+              anyOf: [
+                {
+                  type: 'object',
+                  properties: {
+                    a: {
+                      type: 'object',
+                      properties: {
+                        aa: { type: 'string' },
+                      },
+                    },
+                  },
+                },
+                {
+                  type: 'object',
+                  properties: {
+                    b: {
+                      type: 'object',
+                      properties: {
+                        bb: { type: 'number' },
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        } as const;
+
+        deepFreeze(schema);
+
+        const actual = sealSchemaDeep(schema);
+        const expected = {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            anyOfProperty: {
+              anyOf: [
+                {
+                  type: 'object',
+                  properties: {
+                    a: {
+                      type: 'object',
+                      // additionalProperties: false,
+                      properties: {
+                        aa: { type: 'string' },
+                      },
+                    },
+                  },
+                },
+                {
+                  type: 'object',
+                  properties: {
+                    b: {
+                      type: 'object',
+                      // additionalProperties: false,
+                      properties: {
+                        bb: { type: 'number' },
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        } as const;
+
+        expect(actual).toEqual(expected);
+        expectTypeOf(actual).toEqualTypeOf(expected);
+      });
+    });
+
+    describe('oneOf', () => {
+      it('skips additionalProperties setting on direct object children', () => {
+        const schema = {
+          type: 'object',
+          properties: {
+            oneOfProperty: {
+              oneOf: [
+                {
+                  type: 'object',
+                  properties: {
+                    a: {
+                      type: 'object',
+                      properties: {
+                        aa: { type: 'string' },
+                      },
+                    },
+                  },
+                },
+                {
+                  type: 'object',
+                  properties: {
+                    b: {
+                      type: 'object',
+                      properties: {
+                        bb: { type: 'number' },
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        } as const;
+
+        deepFreeze(schema);
+
+        const actual = sealSchemaDeep(schema);
+        const expected = {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            oneOfProperty: {
+              oneOf: [
+                {
+                  type: 'object',
+                  properties: {
+                    a: {
+                      type: 'object',
+                      // additionalProperties: false,
+                      properties: {
+                        aa: { type: 'string' },
+                      },
+                    },
+                  },
+                },
+                {
+                  type: 'object',
+                  properties: {
+                    b: {
+                      type: 'object',
+                      // additionalProperties: false,
+                      properties: {
+                        bb: { type: 'number' },
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        } as const;
+
+        expect(actual).toEqual(expected);
+        expectTypeOf(actual).toEqualTypeOf(expected);
+      });
+    });
+
+    describe('not', () => {
+      it('skips additionalProperties setting on direct object children', () => {
+        const schema = {
+          type: 'object',
+          properties: {
+            notProperty: {
+              not: {
+                type: 'object',
+                properties: {
+                  a: {
+                    type: 'object',
+                    properties: {
+                      aa: { type: 'string' },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        } as const;
+
+        deepFreeze(schema);
+
+        const actual = sealSchemaDeep(schema);
+        const expected = {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            notProperty: {
+              not: {
+                type: 'object',
+                properties: {
+                  a: {
+                    type: 'object',
+                    // additionalProperties: false,
+                    properties: {
+                      aa: { type: 'string' },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        } as const;
+
+        expect(actual).toEqual(expected);
+        expectTypeOf(actual).toEqualTypeOf(expected);
+      });
     });
   });
 });

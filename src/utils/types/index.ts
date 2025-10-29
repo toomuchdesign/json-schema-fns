@@ -1,4 +1,9 @@
-export type { JSONSchema, JSONSchemaObject } from './definitions';
+export type {
+  JSONSchema,
+  JSONSchemaObject,
+  UnknownArray,
+  UnknownRecord,
+} from './definitions';
 
 export type { OmitByValue } from './OmitByValue';
 export type { MergeOptionalRecords } from './MergeOptionalRecords';

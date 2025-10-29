@@ -1,40 +1,100 @@
 import { isObject } from './utils';
-import type { JSONSchema, MergeRecords, Simplify } from './utils/types';
+import type {
+  JSONSchema,
+  MergeRecords,
+  Simplify,
+  UnknownArray,
+  UnknownRecord,
+} from './utils/types';
 
-type SealSchemaDeep<Value> = Value extends object
+// https://json-schema.org/understanding-json-schema/reference/combining
+const arrayCombinators = ['allOf', 'anyOf', 'oneOf'] as const;
+const objectCombinators = ['not'] as const;
+
+type ArrayCombinators = (typeof arrayCombinators)[number];
+type ObjectCombinators = (typeof objectCombinators)[number];
+
+type SealSchemaDeep<
+  Value,
+  ItemPropName extends PropertyKey | undefined = undefined,
+> = Value extends UnknownRecord
   ? Value extends { type: 'object' }
-    ? // JSON schema object type
-      Simplify<
-        MergeRecords<
-          {
-            [Key in keyof Value]: SealSchemaDeep<Value[Key]>;
-          },
-          { readonly additionalProperties: false }
+    ? // Value is JSON schema object
+      /**
+       * Skip JSON schema object combinators (stop iteration)
+       * @TODO consider skipping additionalProperties only on root child object
+       */
+      ItemPropName extends ObjectCombinators
+      ? Value
+      : Simplify<
+          MergeRecords<
+            {
+              [Key in keyof Value]: SealSchemaDeep<Value[Key], Key>;
+            },
+            { readonly additionalProperties: false }
+          >
         >
-      >
-    : // Any other object/array
+    : // Value is any other object
       {
-        [Key in keyof Value]: SealSchemaDeep<Value[Key]>;
+        [Key in keyof Value]: SealSchemaDeep<Value[Key], Key>;
       }
-  : // Any other primitive
-    Value;
+  : Value extends UnknownArray
+    ? // Value is array
+      /**
+       * Skip JSON schema array combinators (stop iteration)
+       * @TODO consider skipping additionalProperties only on root child object
+       */
+      ItemPropName extends ArrayCombinators
+      ? Value
+      : {
+          [Key in keyof Value]: SealSchemaDeep<Value[Key], Key>;
+        }
+    : // Any other primitive
+      Value;
 
-function disableAdditionalPropertiesDeep(item: unknown): unknown {
+function disableAdditionalPropertiesDeep(
+  item: unknown,
+  itemPropName?: string,
+): unknown {
   if (isObject(item)) {
     if (item.type === 'object') {
+      /**
+       * Skip JSON schema object combinators (stop iteration)
+       * @TODO consider skipping additionalProperties only on root child object
+       */
+      if (
+        itemPropName &&
+        objectCombinators.includes(itemPropName as ObjectCombinators)
+      ) {
+        return item;
+      }
+
       item = { ...item, additionalProperties: false };
     }
 
     return Object.fromEntries(
       // @ts-expect-error couldn't get generics to work with json schema
       Object.entries(item).map(([key, value]) => {
-        return [key, disableAdditionalPropertiesDeep(value)];
+        return [key, disableAdditionalPropertiesDeep(value, key)];
       }),
     );
   }
 
   if (Array.isArray(item)) {
-    return item.map(disableAdditionalPropertiesDeep);
+    /**
+     * Skip JSON schema array combinators (stop iteration)
+     * @TODO consider skipping additionalProperties only on root child object
+     */
+    if (
+      itemPropName &&
+      arrayCombinators.includes(itemPropName as ArrayCombinators)
+    ) {
+      return item;
+    }
+
+    return item.map((item) =>
+      disableAdditionalPropertiesDeep(item, itemPropName),
+    );
   }
 
   return item;
@@ -42,6 +102,9 @@ function disableAdditionalPropertiesDeep(item: unknown): unknown {
 
 /**
  * Recursively set `additionalProperties: false` on all object JSON schema schemas.
+ *
+ * It does not modify [JSON Schema combinators](https://json-schema.org/understanding-json-schema/reference/combining) such as `allOf`, `anyOf`, `oneOf`, or `not`.
+ * This ensures that the logical combination of schemas remains intact and that the semantics of the schema are not altered in any way.
  *
  * @example
  * ```ts
