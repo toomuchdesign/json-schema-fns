@@ -17,40 +17,40 @@ type ObjectCombinators = (typeof objectCombinators)[number];
 type SealSchemaDeep<
   Value,
   ItemPropName extends PropertyKey | undefined,
-> = Value extends UnknownRecord
-  ? Value extends { type: 'object' }
-    ? // Value is JSON schema object
-      /**
-       * Skip JSON schema object combinators (stop iteration)
-       * @TODO consider skipping additionalProperties only on root child object
-       */
-      ItemPropName extends ObjectCombinators
-      ? Value
-      : Simplify<
-          MergeRecords<
-            {
-              [Key in keyof Value]: SealSchemaDeep<Value[Key], Key>;
-            },
-            { readonly additionalProperties: false }
-          >
+> = Value extends { type: 'object' }
+  ? // Value is JSON schema object
+    /**
+     * Skip JSON schema object combinators (stop iteration)
+     * @TODO consider skipping additionalProperties only on root child object
+     */
+    ItemPropName extends ObjectCombinators
+    ? Value
+    : Simplify<
+        MergeRecords<
+          {
+            [Key in keyof Value]: SealSchemaDeep<Value[Key], Key>;
+          },
+          { readonly additionalProperties: false }
         >
-    : // Value is any other object
+      >
+  : Value extends UnknownRecord
+    ? // Value is any other object
       {
         [Key in keyof Value]: SealSchemaDeep<Value[Key], Key>;
       }
-  : Value extends UnknownArray
-    ? // Value is array
-      /**
-       * Skip JSON schema array combinators (stop iteration)
-       * @TODO consider skipping additionalProperties only on root child object
-       */
-      ItemPropName extends ArrayCombinators
-      ? Value
-      : {
-          [Key in keyof Value]: SealSchemaDeep<Value[Key], Key>;
-        }
-    : // Any other primitive
-      Value;
+    : Value extends UnknownArray
+      ? // Value is array
+        /**
+         * Skip JSON schema array combinators (stop iteration)
+         * @TODO consider skipping additionalProperties only on root child object
+         */
+        ItemPropName extends ArrayCombinators
+        ? Value
+        : {
+            [Key in keyof Value]: SealSchemaDeep<Value[Key], Key>;
+          }
+      : // Value is any other primitive
+        Value;
 
 function disableAdditionalPropertiesDeep(
   item: unknown,
