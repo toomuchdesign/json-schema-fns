@@ -49,7 +49,8 @@ describe('sealSchemaDeep', () => {
         type: 'object',
         properties: {
           level_1: {
-            oneOf: [
+            type: 'array',
+            items: [
               {
                 type: 'string',
               },
@@ -63,25 +64,21 @@ describe('sealSchemaDeep', () => {
                 type: 'object',
                 properties: {
                   level_2: {
-                    type: 'object',
-                    properties: {
-                      level_3: {
-                        oneOf: [
-                          {
-                            type: 'object',
-                            properties: {
-                              level_4: { type: 'string' },
-                            },
-                          },
-                          {
-                            type: 'object',
-                            properties: {
-                              level_4: { type: 'string' },
-                            },
-                          },
-                        ],
+                    type: 'array',
+                    items: [
+                      {
+                        type: 'object',
+                        properties: {
+                          level_3: { type: 'string' },
+                        },
                       },
-                    },
+                      {
+                        type: 'object',
+                        properties: {
+                          level_3: { type: 'string' },
+                        },
+                      },
+                    ],
                   },
                 },
               },
@@ -97,7 +94,8 @@ describe('sealSchemaDeep', () => {
         additionalProperties: false,
         properties: {
           level_1: {
-            oneOf: [
+            type: 'array',
+            items: [
               {
                 type: 'string',
               },
@@ -113,32 +111,405 @@ describe('sealSchemaDeep', () => {
                 additionalProperties: false,
                 properties: {
                   level_2: {
-                    type: 'object',
-                    additionalProperties: false,
-                    properties: {
-                      level_3: {
-                        oneOf: [
-                          {
-                            type: 'object',
-                            additionalProperties: false,
-                            properties: {
-                              level_4: { type: 'string' },
-                            },
-                          },
-                          {
-                            type: 'object',
-                            additionalProperties: false,
-                            properties: {
-                              level_4: { type: 'string' },
-                            },
-                          },
-                        ],
+                    type: 'array',
+                    items: [
+                      {
+                        type: 'object',
+                        additionalProperties: false,
+                        properties: {
+                          level_3: { type: 'string' },
+                        },
                       },
+                      {
+                        type: 'object',
+                        additionalProperties: false,
+                        properties: {
+                          level_3: { type: 'string' },
+                        },
+                      },
+                    ],
+                  },
+                },
+              },
+            ],
+          },
+        },
+      } as const;
+
+      expect(actual).toEqual(expected);
+      expectTypeOf(actual).toEqualTypeOf(expected);
+    });
+  });
+
+  describe('combinators', () => {
+    describe('allOf', () => {
+      it('ignores combinator schemas', () => {});
+      const schema = {
+        type: 'object',
+        properties: {
+          allOfProperty: {
+            allOf: [
+              {
+                type: 'object',
+                properties: {
+                  a: {
+                    type: 'object',
+                    properties: {
+                      aa: { type: 'string' },
+                    },
+                  },
+                },
+              },
+              {
+                type: 'object',
+                properties: {
+                  b: {
+                    type: 'object',
+                    properties: {
+                      bb: { type: 'number' },
                     },
                   },
                 },
               },
             ],
+          },
+        },
+      } as const;
+
+      deepFreeze(schema);
+
+      const actual = sealSchemaDeep(schema);
+      const expected = {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          allOfProperty: {
+            allOf: [
+              {
+                type: 'object',
+                properties: {
+                  a: {
+                    type: 'object',
+                    // additionalProperties: false,
+                    properties: {
+                      aa: { type: 'string' },
+                    },
+                  },
+                },
+              },
+              {
+                type: 'object',
+                properties: {
+                  b: {
+                    type: 'object',
+                    // additionalProperties: false,
+                    properties: {
+                      bb: { type: 'number' },
+                    },
+                  },
+                },
+              },
+            ],
+          },
+        },
+      } as const;
+
+      expect(actual).toEqual(expected);
+      expectTypeOf(actual).toEqualTypeOf(expected);
+    });
+
+    describe('anyOf', () => {
+      it('ignores combinator schemas', () => {
+        const schema = {
+          type: 'object',
+          properties: {
+            anyOfProperty: {
+              anyOf: [
+                {
+                  type: 'object',
+                  properties: {
+                    a: {
+                      type: 'object',
+                      properties: {
+                        aa: { type: 'string' },
+                      },
+                    },
+                  },
+                },
+                {
+                  type: 'object',
+                  properties: {
+                    b: {
+                      type: 'object',
+                      properties: {
+                        bb: { type: 'number' },
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        } as const;
+        deepFreeze(schema);
+
+        const actual = sealSchemaDeep(schema);
+        const expected = {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            anyOfProperty: {
+              anyOf: [
+                {
+                  type: 'object',
+                  properties: {
+                    a: {
+                      type: 'object',
+                      // additionalProperties: false,
+                      properties: {
+                        aa: { type: 'string' },
+                      },
+                    },
+                  },
+                },
+                {
+                  type: 'object',
+                  properties: {
+                    b: {
+                      type: 'object',
+                      // additionalProperties: false,
+                      properties: {
+                        bb: { type: 'number' },
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        } as const;
+
+        expect(actual).toEqual(expected);
+        expectTypeOf(actual).toEqualTypeOf(expected);
+      });
+    });
+
+    describe('oneOf', () => {
+      it('ignores combinator schemas', () => {
+        const schema = {
+          type: 'object',
+          properties: {
+            oneOfProperty: {
+              oneOf: [
+                {
+                  type: 'object',
+                  properties: {
+                    a: {
+                      type: 'object',
+                      properties: {
+                        aa: { type: 'string' },
+                      },
+                    },
+                  },
+                },
+                {
+                  type: 'object',
+                  properties: {
+                    b: {
+                      type: 'object',
+                      properties: {
+                        bb: { type: 'number' },
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        } as const;
+        deepFreeze(schema);
+
+        const actual = sealSchemaDeep(schema);
+        const expected = {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            oneOfProperty: {
+              oneOf: [
+                {
+                  type: 'object',
+                  properties: {
+                    a: {
+                      type: 'object',
+                      // additionalProperties: false,
+                      properties: {
+                        aa: { type: 'string' },
+                      },
+                    },
+                  },
+                },
+                {
+                  type: 'object',
+                  properties: {
+                    b: {
+                      type: 'object',
+                      // additionalProperties: false,
+                      properties: {
+                        bb: { type: 'number' },
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        } as const;
+
+        expect(actual).toEqual(expected);
+        expectTypeOf(actual).toEqualTypeOf(expected);
+      });
+    });
+
+    describe('not', () => {
+      it('ignores combinator schemas', () => {
+        const schema = {
+          type: 'object',
+          properties: {
+            notProperty: {
+              not: {
+                type: 'object',
+                properties: {
+                  a: {
+                    type: 'object',
+                    properties: {
+                      aa: { type: 'string' },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        } as const;
+        deepFreeze(schema);
+
+        const actual = sealSchemaDeep(schema);
+        const expected = {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            notProperty: {
+              not: {
+                type: 'object',
+                properties: {
+                  a: {
+                    type: 'object',
+                    // additionalProperties: false,
+                    properties: {
+                      aa: { type: 'string' },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        } as const;
+
+        expect(actual).toEqual(expected);
+        expectTypeOf(actual).toEqualTypeOf(expected);
+      });
+    });
+
+    describe('JSON Schema object with JSON schema combinator prop names', () => {
+      it.fails('changes object properties', () => {
+        const schema = {
+          type: 'object',
+          properties: {
+            anyOf: {
+              type: 'object',
+              properties: {
+                a: {
+                  type: 'string',
+                },
+              },
+            },
+            not: {
+              type: 'object',
+              properties: {
+                a: {
+                  type: 'string',
+                },
+              },
+            },
+          },
+        } as const;
+        deepFreeze(schema);
+
+        const actual = sealSchemaDeep(schema);
+        const expected = {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            anyOf: {
+              type: 'object',
+              additionalProperties: false,
+              properties: {
+                a: {
+                  type: 'string',
+                },
+              },
+            },
+            /**
+             * Currently, we don’t specifically distinguish between "not" used as an object property
+             * and "not" used as a JSON Schema combinator.
+             */
+            not: {
+              type: 'object',
+              additionalProperties: false,
+              properties: {
+                a: {
+                  type: 'string',
+                },
+              },
+            },
+          },
+        } as const;
+
+        expect(actual).toEqual(expected);
+        // @ts-expect-error
+        expectTypeOf(actual).toEqualTypeOf(expected);
+      });
+    });
+  });
+
+  describe('JSON Schema object with additionalProperties prop name', () => {
+    it('does not change object properties', () => {
+      const schema = {
+        type: 'object',
+        properties: {
+          a: {
+            type: 'object',
+            properties: {
+              additionalProperties: {
+                // This object should not be changed no matter the prop name
+                type: 'boolean',
+              },
+            },
+          },
+        },
+      } as const;
+      deepFreeze(schema);
+
+      const actual = sealSchemaDeep(schema);
+      const expected = {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          a: {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+              additionalProperties: { type: 'boolean' },
+            },
           },
         },
       } as const;

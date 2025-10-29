@@ -156,6 +156,8 @@ const result = optionalProps(schema, ['b', 'c']);
 
 Recursively set `additionalProperties: false` on all object JSON schema schemas. [Live demo ⚡](https://stackblitz.com/edit/vitejs-vite-aglzxc19?file=src%2FsealSchemaDeep.ts&view=editor)
 
+It does not modify [JSON Schema combinators](https://json-schema.org/understanding-json-schema/reference/combining) such as `allOf`, `anyOf`, `oneOf`, or `not`. This ensures that the logical combination of schemas remains intact and that the semantics of the schema are not altered in any way.
+
 ```ts
 import { sealSchemaDeep } from '@toomuchdesign/json-schema-fns';
 
@@ -179,6 +181,8 @@ const result = sealSchemaDeep(schema);
 ### unsealSchemaDeep
 
 Recursively remove `additionalProperties` from all object JSON schema schemas. [Live demo ⚡](https://stackblitz.com/edit/vitejs-vite-aglzxc19?file=src%2FunsealSchemaDeep.ts&view=editor)
+
+It does not modify [JSON Schema combinators](https://json-schema.org/understanding-json-schema/reference/combining) such as `allOf`, `anyOf`, `oneOf`, or `not`. This ensures that the logical combination of schemas remains intact and that the semantics of the schema are not altered in any way.
 
 ```ts
 import { unsealSchemaDeep } from '@toomuchdesign/json-schema-fns';
