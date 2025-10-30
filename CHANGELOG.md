@@ -1,5 +1,13 @@
 # @toomuchdesign/json-schema-fns
 
+## 0.6.1
+
+### Patch Changes
+
+- [#85](https://github.com/toomuchdesign/json-schema-fns/pull/85) [`452602c`](https://github.com/toomuchdesign/json-schema-fns/commit/452602cc43e72df1b790d969799dae60a81c7ab6) Thanks [@toomuchdesign](https://github.com/toomuchdesign)! - `unsealSchemaDeep`: do not modify `allOf`, `anyOf`, `oneOf`, or `not` values
+
+- [#85](https://github.com/toomuchdesign/json-schema-fns/pull/85) [`452602c`](https://github.com/toomuchdesign/json-schema-fns/commit/452602cc43e72df1b790d969799dae60a81c7ab6) Thanks [@toomuchdesign](https://github.com/toomuchdesign)! - `sealSchemaDeep`: do not modify `allOf`, `anyOf`, `oneOf`, or `not` values
+
 ## 0.6.0
 
 ### Minor Changes
