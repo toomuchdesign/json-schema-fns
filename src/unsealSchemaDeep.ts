@@ -1,12 +1,11 @@
-import { isRecord } from './utils';
-import type { JSONSchema, UnknownArray, UnknownRecord } from './utils/types';
-
-// https://json-schema.org/understanding-json-schema/reference/combining
-const arrayCombinators = ['allOf', 'anyOf', 'oneOf'] as const;
-const objectCombinators = ['not'] as const;
-
-type ArrayCombinators = (typeof arrayCombinators)[number];
-type ObjectCombinators = (typeof objectCombinators)[number];
+import { isArrayCombinator, isObjectCombinator, isRecord } from './utils';
+import type {
+  ArrayCombinators,
+  JSONSchema,
+  ObjectCombinators,
+  UnknownArray,
+  UnknownRecord,
+} from './utils/types';
 
 type UnsealSchemaDeep<
   Value,
@@ -59,10 +58,7 @@ function omitAdditionalPropertiesDeep(
          * @TODO Update handling to remove additionalProperties only if the relevant JSON Schema keyword (e.g. "not")
          * is used as a schema combinator rather than as a regular property
          */
-        if (
-          itemPropName &&
-          objectCombinators.includes(itemPropName as ObjectCombinators)
-        ) {
+        if (itemPropName && isObjectCombinator(itemPropName)) {
           return item;
         }
 
@@ -84,10 +80,7 @@ function omitAdditionalPropertiesDeep(
      * Skip JSON schema array combinators (stop iteration)
      * @TODO consider skipping additionalProperties handling only on root child object
      */
-    if (
-      itemPropName &&
-      arrayCombinators.includes(itemPropName as ArrayCombinators)
-    ) {
+    if (itemPropName && isArrayCombinator(itemPropName)) {
       return item;
     }
 
