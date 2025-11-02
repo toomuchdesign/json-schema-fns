@@ -9,11 +9,11 @@ export type JSONSchemaType =
   | 'array'
   | 'null';
 
-// https://github.com/ThomasAribart/json-schema-to-ts/blob/12767c1eab895159c01f5e6898d8e5e711ff9d1c/src/definitions/jsonSchema.ts
+// import type { JSONSchema } from 'json-schema-to-ts';
 export type JSONSchema =
   | boolean
   | Readonly<{
-      type: JSONSchemaType;
+      type?: JSONSchemaType;
       required?: readonly string[];
       properties?: Readonly<Record<string, unknown>>;
       patternProperties?: Readonly<Record<string, unknown>>;

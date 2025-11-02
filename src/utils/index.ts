@@ -1,7 +1,14 @@
 export { isJSONSchemaObjectType } from './isJSONSchemaObjectType';
 export { isRecord } from './isRecord';
-export { isArrayCombinator, type ArrayCombinators } from './isArrayCombinator';
 export {
-  isObjectCombinator,
+  isArrayCombinatorKeyword,
+  type ArrayCombinators,
+} from './isArrayCombinatorKeyword';
+export {
+  isObjectCombinatorKeyword,
   type ObjectCombinators,
-} from './isObjectCombinator';
+} from './isObjectCombinatorKeyword';
+export {
+  isObjectPropertiesDefinitionKeyword,
+  type ObjectPropertiesDefinitionKeyword,
+} from './isObjectPropertiesDefinitionKeyword';
