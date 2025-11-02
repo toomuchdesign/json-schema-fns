@@ -5,6 +5,12 @@ export type {
   UnknownRecord,
 } from './definitions';
 
+export type {
+  ArrayCombinators,
+  ObjectCombinators,
+  ObjectPropertiesDefinitionKeyword,
+} from '../../utils';
+
 export type { OmitByValue } from './OmitByValue';
 export type { MergeOptionalRecords } from './MergeOptionalRecords';
 export type { MergeRecords } from './MergeRecords';

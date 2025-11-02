@@ -371,56 +371,96 @@ describe('sealSchemaDeep', () => {
     });
 
     describe('not', () => {
-      it('ignores combinator schemas', () => {
-        const schema = {
-          type: 'object',
-          properties: {
-            notProperty: {
-              not: {
-                type: 'object',
-                properties: {
-                  a: {
-                    type: 'object',
-                    properties: {
-                      aa: { type: 'string' },
+      describe('as root definition', () => {
+        it('ignores combinator schemas', () => {
+          const schema = {
+            not: {
+              type: 'object',
+              properties: {
+                a: {
+                  type: 'object',
+                  properties: {
+                    aa: { type: 'string' },
+                  },
+                },
+              },
+            },
+          } as const;
+          deepFreeze(schema);
+
+          const actual = sealSchemaDeep(schema);
+          const expected = {
+            not: {
+              type: 'object',
+              properties: {
+                a: {
+                  type: 'object',
+                  // additionalProperties: false,
+                  properties: {
+                    aa: { type: 'string' },
+                  },
+                },
+              },
+            },
+          } as const;
+
+          expect(actual).toEqual(expected);
+          expectTypeOf(actual).toEqualTypeOf(expected);
+        });
+      });
+
+      describe('as object property definition', () => {
+        it('ignores combinator schemas', () => {
+          const schema = {
+            type: 'object',
+            properties: {
+              notProperty: {
+                not: {
+                  type: 'object',
+                  properties: {
+                    a: {
+                      type: 'object',
+                      properties: {
+                        aa: { type: 'string' },
+                      },
                     },
                   },
                 },
               },
             },
-          },
-        } as const;
-        deepFreeze(schema);
+          } as const;
+          deepFreeze(schema);
 
-        const actual = sealSchemaDeep(schema);
-        const expected = {
-          type: 'object',
-          additionalProperties: false,
-          properties: {
-            notProperty: {
-              not: {
-                type: 'object',
-                properties: {
-                  a: {
-                    type: 'object',
-                    // additionalProperties: false,
-                    properties: {
-                      aa: { type: 'string' },
+          const actual = sealSchemaDeep(schema);
+          const expected = {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+              notProperty: {
+                not: {
+                  type: 'object',
+                  properties: {
+                    a: {
+                      type: 'object',
+                      // additionalProperties: false,
+                      properties: {
+                        aa: { type: 'string' },
+                      },
                     },
                   },
                 },
               },
             },
-          },
-        } as const;
+          } as const;
 
-        expect(actual).toEqual(expected);
-        expectTypeOf(actual).toEqualTypeOf(expected);
+          expect(actual).toEqual(expected);
+          expectTypeOf(actual).toEqualTypeOf(expected);
+        });
       });
     });
 
     describe('JSON Schema object with JSON schema combinator prop names', () => {
-      it.fails('changes object properties', () => {
+      it('changes object properties', () => {
         const schema = {
           type: 'object',
           properties: {
@@ -458,10 +498,6 @@ describe('sealSchemaDeep', () => {
                 },
               },
             },
-            /**
-             * Currently, we don’t specifically distinguish between "not" used as an object property
-             * and "not" used as a JSON Schema combinator.
-             */
             not: {
               type: 'object',
               additionalProperties: false,
@@ -475,7 +511,6 @@ describe('sealSchemaDeep', () => {
         } as const;
 
         expect(actual).toEqual(expected);
-        // @ts-expect-error
         expectTypeOf(actual).toEqualTypeOf(expected);
       });
     });

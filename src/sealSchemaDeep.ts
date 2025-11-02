@@ -1,85 +1,99 @@
-import { isRecord } from './utils';
+import {
+  isArrayCombinatorKeyword,
+  isObjectCombinatorKeyword,
+  isObjectPropertiesDefinitionKeyword,
+  isRecord,
+} from './utils';
 import type {
+  ArrayCombinators,
   JSONSchema,
   MergeRecords,
+  ObjectCombinators,
+  ObjectPropertiesDefinitionKeyword,
   Simplify,
   UnknownArray,
   UnknownRecord,
 } from './utils/types';
 
-// https://json-schema.org/understanding-json-schema/reference/combining
-const arrayCombinators = ['allOf', 'anyOf', 'oneOf'] as const;
-const objectCombinators = ['not'] as const;
-
-type ArrayCombinators = (typeof arrayCombinators)[number];
-type ObjectCombinators = (typeof objectCombinators)[number];
-
 type SealSchemaDeep<
   Value,
-  ItemPropName extends PropertyKey | undefined,
-> = Value extends { type: 'object' }
-  ? // Value is JSON schema object
-    /**
-     * Skip JSON schema object combinators (stop iteration)
-     * @TODO consider skipping additionalProperties handling only on root child object
-     * @TODO Update handling to remove additionalProperties only if the relevant JSON Schema keyword (e.g. "not")
-     * is used as a schema combinator rather than as a regular property
-     */
-    ItemPropName extends ObjectCombinators
-    ? Value
-    : Simplify<
-        MergeRecords<
-          {
-            [Key in keyof Value]: SealSchemaDeep<Value[Key], Key>;
-          },
-          { readonly additionalProperties: false }
-        >
-      >
-  : Value extends UnknownRecord
-    ? // Value is any other object
-      {
-        [Key in keyof Value]: SealSchemaDeep<Value[Key], Key>;
-      }
-    : Value extends UnknownArray
-      ? // Value is array
+  ItemKey extends PropertyKey | undefined,
+  ParentItemKey extends PropertyKey | undefined,
+  // Check if current item is an object definition property
+  IsObjectProperty = ParentItemKey extends ObjectPropertiesDefinitionKeyword
+    ? true
+    : false,
+> = Value extends UnknownRecord
+  ? ItemKey extends ObjectCombinators
+    ? IsObjectProperty extends false
+      ? // Value key is schema object combinators
         /**
-         * Skip JSON schema array combinators (stop iteration)
+         * Skip JSON schema object combinators (stop iteration)
          * @TODO consider skipping additionalProperties handling only on root child object
          */
-        ItemPropName extends ArrayCombinators
-        ? Value
-        : {
-            [Key in keyof Value]: SealSchemaDeep<Value[Key], Key>;
-          }
-      : // Value is any other primitive
-        Value;
+        Value
+      : // Value key is schema object combinator, but it’s being used in an object definition context
+        Simplify<
+          MergeRecords<
+            {
+              [Key in keyof Value]: SealSchemaDeep<Value[Key], Key, ItemKey>;
+            },
+            { readonly additionalProperties: false }
+          >
+        >
+    : Value extends { type: 'object' }
+      ? // Value is JSON schema object
+        Simplify<
+          MergeRecords<
+            {
+              [Key in keyof Value]: SealSchemaDeep<Value[Key], Key, ItemKey>;
+            },
+            { readonly additionalProperties: false }
+          >
+        >
+      : // Value is any other object
+        {
+          [Key in keyof Value]: SealSchemaDeep<Value[Key], Key, ItemKey>;
+        }
+  : Value extends UnknownArray
+    ? // Value is array
+      /**
+       * Skip JSON schema array combinators (stop iteration)
+       * @TODO consider skipping additionalProperties handling only on root child object
+       */
+      ItemKey extends ArrayCombinators
+      ? Value
+      : {
+          [Key in keyof Value]: SealSchemaDeep<Value[Key], Key, ItemKey>;
+        }
+    : // Value is any other primitive
+      Value;
 
 function disableAdditionalPropertiesDeep(
   item: unknown,
-  itemPropName?: string,
+  itemKey = '',
+  parentItemKey = '',
 ): unknown {
   if (isRecord(item)) {
-    if (item.type === 'object') {
-      /**
-       * Skip JSON schema object combinators (stop iteration)
-       * @TODO consider skipping additionalProperties handling only on root child object
-       * @TODO Update handling to remove additionalProperties only if the relevant JSON Schema keyword (e.g. "not")
-       * is used as a schema combinator rather than as a regular property
-       */
-      if (
-        itemPropName &&
-        objectCombinators.includes(itemPropName as ObjectCombinators)
-      ) {
-        return item;
-      }
+    // Check if current item is an object definition property
+    const isObjectProperty = isObjectPropertiesDefinitionKeyword(parentItemKey);
 
+    /**
+     * Skip JSON schema object combinators (stop iteration)
+     * @TODO consider skipping additionalProperties handling only on root child object
+     */
+    if (isObjectCombinatorKeyword(itemKey) && !isObjectProperty) {
+      return item;
+    }
+
+    if (item.type === 'object') {
       item = { ...item, additionalProperties: false };
     }
 
     return Object.fromEntries(
       // @ts-expect-error couldn't get generics to work with json schema
       Object.entries(item).map(([key, value]) => {
-        return [key, disableAdditionalPropertiesDeep(value, key)];
+        return [key, disableAdditionalPropertiesDeep(value, key, itemKey)];
       }),
     );
   }
@@ -89,15 +103,12 @@ function disableAdditionalPropertiesDeep(
      * Skip JSON schema array combinators (stop iteration)
      * @TODO consider skipping additionalProperties handling only on root child object
      */
-    if (
-      itemPropName &&
-      arrayCombinators.includes(itemPropName as ArrayCombinators)
-    ) {
+    if (isArrayCombinatorKeyword(itemKey)) {
       return item;
     }
 
     return item.map((item) =>
-      disableAdditionalPropertiesDeep(item, itemPropName),
+      disableAdditionalPropertiesDeep(item, 'index', itemKey),
     );
   }
 
@@ -117,7 +128,7 @@ function disableAdditionalPropertiesDeep(
  */
 export function sealSchemaDeep<const Schema extends JSONSchema>(
   schema: Schema,
-): SealSchemaDeep<Schema, undefined> {
+): SealSchemaDeep<Schema, undefined, undefined> {
   // @ts-expect-error not relying on natural type flow
   return disableAdditionalPropertiesDeep(schema);
 }
