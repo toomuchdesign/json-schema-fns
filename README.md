@@ -46,7 +46,7 @@ npm install @toomuchdesign/json-schema-fns
 - [`requireProps`](#requireProps) – Mark specific properties in a object JSON schema as required. If no keys provided, all properties become required
 - [`optionalProps`](#optionalProps) – Make specific properties of a object JSON schema optional. If no keys provided, all properties become optional
 - [`sealSchemaDeep`](#sealSchemaDeep) – Recursively set `additionalProperties: false` on all object JSON schema schemas
-- [`unsealSchemaDeep`](#unsealSchemaDeep) – Recursively remove `additionalProperties` from all object JSON schema schemas
+- [`unsealSchemaDeep`](#unsealSchemaDeep) – Recursively remove `additionalProperties` and `unevaluatedProperties` keywords from all object JSON schema schemas
 
 ### omitProps
 
@@ -180,7 +180,7 @@ const result = sealSchemaDeep(schema);
 
 ### unsealSchemaDeep
 
-Recursively remove `additionalProperties` from all object JSON schema schemas. [Live demo ⚡](https://stackblitz.com/edit/vitejs-vite-aglzxc19?file=src%2FunsealSchemaDeep.ts&view=editor)
+Recursively remove `additionalProperties` and `unevaluatedProperties` keywords from all object JSON schema schemas. [Live demo ⚡](https://stackblitz.com/edit/vitejs-vite-aglzxc19?file=src%2FunsealSchemaDeep.ts&view=editor)
 
 It does not modify [JSON Schema combinators](https://json-schema.org/understanding-json-schema/reference/combining) such as `allOf`, `anyOf`, `oneOf`, or `not`. This ensures that the logical combination of schemas remains intact and that the semantics of the schema are not altered in any way.
 
