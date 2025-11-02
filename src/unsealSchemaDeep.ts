@@ -47,7 +47,7 @@ type UnsealSchemaDeep<
 
 function omitAdditionalPropertiesDeep(
   item: unknown,
-  itemPropName?: string,
+  itemPropName = '',
 ): unknown {
   if (isRecord(item)) {
     if (item.type === 'object') {
@@ -58,7 +58,7 @@ function omitAdditionalPropertiesDeep(
          * @TODO Update handling to remove additionalProperties only if the relevant JSON Schema keyword (e.g. "not")
          * is used as a schema combinator rather than as a regular property
          */
-        if (itemPropName && isObjectCombinator(itemPropName)) {
+        if (isObjectCombinator(itemPropName)) {
           return item;
         }
 
@@ -80,7 +80,7 @@ function omitAdditionalPropertiesDeep(
      * Skip JSON schema array combinators (stop iteration)
      * @TODO consider skipping additionalProperties handling only on root child object
      */
-    if (itemPropName && isArrayCombinator(itemPropName)) {
+    if (isArrayCombinator(itemPropName)) {
       return item;
     }
 
