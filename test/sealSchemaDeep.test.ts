@@ -19,6 +19,15 @@ describe('sealSchemaDeep', () => {
           },
         },
       },
+      patternProperties: {
+        name: { type: 'string' },
+        address: {
+          type: 'object',
+          properties: {
+            street: { type: 'string' },
+          },
+        },
+      },
     } as const;
     deepFreeze(schema);
 
@@ -28,6 +37,16 @@ describe('sealSchemaDeep', () => {
       required: ['name'],
       additionalProperties: false,
       properties: {
+        name: { type: 'string' },
+        address: {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            street: { type: 'string' },
+          },
+        },
+      },
+      patternProperties: {
         name: { type: 'string' },
         address: {
           type: 'object',
@@ -160,13 +179,19 @@ describe('sealSchemaDeep', () => {
                   },
                 },
               },
+            ],
+          },
+        },
+        patternProperties: {
+          allOfProperty: {
+            allOf: [
               {
                 type: 'object',
                 properties: {
-                  b: {
+                  a: {
                     type: 'object',
                     properties: {
-                      bb: { type: 'number' },
+                      aa: { type: 'string' },
                     },
                   },
                 },
@@ -190,21 +215,25 @@ describe('sealSchemaDeep', () => {
                 properties: {
                   a: {
                     type: 'object',
-                    // additionalProperties: false,
                     properties: {
                       aa: { type: 'string' },
                     },
                   },
                 },
               },
+            ],
+          },
+        },
+        patternProperties: {
+          allOfProperty: {
+            allOf: [
               {
                 type: 'object',
                 properties: {
-                  b: {
+                  a: {
                     type: 'object',
-                    // additionalProperties: false,
                     properties: {
-                      bb: { type: 'number' },
+                      aa: { type: 'string' },
                     },
                   },
                 },
@@ -265,7 +294,6 @@ describe('sealSchemaDeep', () => {
                   properties: {
                     a: {
                       type: 'object',
-                      // additionalProperties: false,
                       properties: {
                         aa: { type: 'string' },
                       },
@@ -277,7 +305,6 @@ describe('sealSchemaDeep', () => {
                   properties: {
                     b: {
                       type: 'object',
-                      // additionalProperties: false,
                       properties: {
                         bb: { type: 'number' },
                       },
@@ -341,7 +368,6 @@ describe('sealSchemaDeep', () => {
                   properties: {
                     a: {
                       type: 'object',
-                      // additionalProperties: false,
                       properties: {
                         aa: { type: 'string' },
                       },
@@ -353,7 +379,6 @@ describe('sealSchemaDeep', () => {
                   properties: {
                     b: {
                       type: 'object',
-                      // additionalProperties: false,
                       properties: {
                         bb: { type: 'number' },
                       },
@@ -384,6 +409,14 @@ describe('sealSchemaDeep', () => {
                   },
                 },
               },
+              patternProperties: {
+                a: {
+                  type: 'object',
+                  properties: {
+                    aa: { type: 'string' },
+                  },
+                },
+              },
             },
           } as const;
           deepFreeze(schema);
@@ -395,7 +428,14 @@ describe('sealSchemaDeep', () => {
               properties: {
                 a: {
                   type: 'object',
-                  // additionalProperties: false,
+                  properties: {
+                    aa: { type: 'string' },
+                  },
+                },
+              },
+              patternProperties: {
+                a: {
+                  type: 'object',
                   properties: {
                     aa: { type: 'string' },
                   },
@@ -442,7 +482,6 @@ describe('sealSchemaDeep', () => {
                   properties: {
                     a: {
                       type: 'object',
-                      // additionalProperties: false,
                       properties: {
                         aa: { type: 'string' },
                       },
@@ -481,6 +520,24 @@ describe('sealSchemaDeep', () => {
               },
             },
           },
+          patternProperties: {
+            anyOf: {
+              type: 'object',
+              properties: {
+                a: {
+                  type: 'string',
+                },
+              },
+            },
+            not: {
+              type: 'object',
+              properties: {
+                a: {
+                  type: 'string',
+                },
+              },
+            },
+          },
         } as const;
         deepFreeze(schema);
 
@@ -500,6 +557,28 @@ describe('sealSchemaDeep', () => {
             },
             not: {
               type: 'object',
+              // This is the reason why we need isObjectPropertiesDefinitionKeyword
+              additionalProperties: false,
+              properties: {
+                a: {
+                  type: 'string',
+                },
+              },
+            },
+          },
+          patternProperties: {
+            anyOf: {
+              type: 'object',
+              additionalProperties: false,
+              properties: {
+                a: {
+                  type: 'string',
+                },
+              },
+            },
+            not: {
+              type: 'object',
+              // This is the reason why we need isObjectPropertiesDefinitionKeyword
               additionalProperties: false,
               properties: {
                 a: {
