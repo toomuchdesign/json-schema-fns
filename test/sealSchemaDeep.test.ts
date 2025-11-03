@@ -63,7 +63,7 @@ describe('sealSchemaDeep', () => {
   });
 
   describe('array prop', () => {
-    it('recursively set additionalProperties prop to false', () => {
+    it('ignores combinator schemas', () => {
       const schema = {
         type: 'object',
         properties: {
@@ -162,236 +162,243 @@ describe('sealSchemaDeep', () => {
 
   describe('combinators', () => {
     describe('allOf', () => {
-      it('ignores combinator schemas', () => {});
-      const schema = {
-        type: 'object',
-        properties: {
-          allOfProperty: {
-            allOf: [
-              {
-                type: 'object',
-                properties: {
-                  a: {
+      describe('as object property definition', () => {
+        it('ignores combinator schemas', () => {
+          const schema = {
+            type: 'object',
+            properties: {
+              allOfProperty: {
+                allOf: [
+                  {
                     type: 'object',
                     properties: {
-                      aa: { type: 'string' },
+                      a: {
+                        type: 'object',
+                        properties: {
+                          aa: { type: 'string' },
+                        },
+                      },
                     },
                   },
-                },
+                ],
               },
-            ],
-          },
-        },
-        patternProperties: {
-          allOfProperty: {
-            allOf: [
-              {
-                type: 'object',
-                properties: {
-                  a: {
+            },
+            patternProperties: {
+              allOfProperty: {
+                allOf: [
+                  {
                     type: 'object',
                     properties: {
-                      aa: { type: 'string' },
+                      a: {
+                        type: 'object',
+                        properties: {
+                          aa: { type: 'string' },
+                        },
+                      },
                     },
                   },
-                },
+                ],
               },
-            ],
-          },
-        },
-      } as const;
+            },
+          } as const;
 
-      deepFreeze(schema);
+          deepFreeze(schema);
 
-      const actual = sealSchemaDeep(schema);
-      const expected = {
-        type: 'object',
-        additionalProperties: false,
-        properties: {
-          allOfProperty: {
-            allOf: [
-              {
-                type: 'object',
-                properties: {
-                  a: {
+          const actual = sealSchemaDeep(schema);
+          const expected = {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+              allOfProperty: {
+                allOf: [
+                  {
                     type: 'object',
                     properties: {
-                      aa: { type: 'string' },
+                      a: {
+                        type: 'object',
+                        properties: {
+                          aa: { type: 'string' },
+                        },
+                      },
                     },
                   },
-                },
+                ],
               },
-            ],
-          },
-        },
-        patternProperties: {
-          allOfProperty: {
-            allOf: [
-              {
-                type: 'object',
-                properties: {
-                  a: {
+            },
+            patternProperties: {
+              allOfProperty: {
+                allOf: [
+                  {
                     type: 'object',
                     properties: {
-                      aa: { type: 'string' },
+                      a: {
+                        type: 'object',
+                        properties: {
+                          aa: { type: 'string' },
+                        },
+                      },
                     },
                   },
-                },
+                ],
               },
-            ],
-          },
-        },
-      } as const;
+            },
+          } as const;
 
-      expect(actual).toEqual(expected);
-      expectTypeOf(actual).toEqualTypeOf(expected);
+          expect(actual).toEqual(expected);
+          expectTypeOf(actual).toEqualTypeOf(expected);
+        });
+      });
     });
 
     describe('anyOf', () => {
-      it('ignores combinator schemas', () => {
-        const schema = {
-          type: 'object',
-          properties: {
-            anyOfProperty: {
-              anyOf: [
-                {
-                  type: 'object',
-                  properties: {
-                    a: {
-                      type: 'object',
-                      properties: {
-                        aa: { type: 'string' },
+      describe('as object property definition', () => {
+        it('ignores combinator schemas', () => {
+          const schema = {
+            type: 'object',
+            properties: {
+              anyOfProperty: {
+                anyOf: [
+                  {
+                    type: 'object',
+                    properties: {
+                      a: {
+                        type: 'object',
+                        properties: {
+                          aa: { type: 'string' },
+                        },
                       },
                     },
                   },
-                },
-                {
-                  type: 'object',
-                  properties: {
-                    b: {
-                      type: 'object',
-                      properties: {
-                        bb: { type: 'number' },
+                  {
+                    type: 'object',
+                    properties: {
+                      b: {
+                        type: 'object',
+                        properties: {
+                          bb: { type: 'number' },
+                        },
                       },
                     },
                   },
-                },
-              ],
+                ],
+              },
             },
-          },
-        } as const;
-        deepFreeze(schema);
+          } as const;
+          deepFreeze(schema);
 
-        const actual = sealSchemaDeep(schema);
-        const expected = {
-          type: 'object',
-          additionalProperties: false,
-          properties: {
-            anyOfProperty: {
-              anyOf: [
-                {
-                  type: 'object',
-                  properties: {
-                    a: {
-                      type: 'object',
-                      properties: {
-                        aa: { type: 'string' },
+          const actual = sealSchemaDeep(schema);
+          const expected = {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+              anyOfProperty: {
+                anyOf: [
+                  {
+                    type: 'object',
+                    properties: {
+                      a: {
+                        type: 'object',
+                        properties: {
+                          aa: { type: 'string' },
+                        },
                       },
                     },
                   },
-                },
-                {
-                  type: 'object',
-                  properties: {
-                    b: {
-                      type: 'object',
-                      properties: {
-                        bb: { type: 'number' },
+                  {
+                    type: 'object',
+                    properties: {
+                      b: {
+                        type: 'object',
+                        properties: {
+                          bb: { type: 'number' },
+                        },
                       },
                     },
                   },
-                },
-              ],
+                ],
+              },
             },
-          },
-        } as const;
+          } as const;
 
-        expect(actual).toEqual(expected);
-        expectTypeOf(actual).toEqualTypeOf(expected);
+          expect(actual).toEqual(expected);
+          expectTypeOf(actual).toEqualTypeOf(expected);
+        });
       });
     });
 
     describe('oneOf', () => {
-      it('ignores combinator schemas', () => {
-        const schema = {
-          type: 'object',
-          properties: {
-            oneOfProperty: {
-              oneOf: [
-                {
-                  type: 'object',
-                  properties: {
-                    a: {
-                      type: 'object',
-                      properties: {
-                        aa: { type: 'string' },
+      describe('as object property definition', () => {
+        it('ignores combinator schemas', () => {
+          const schema = {
+            type: 'object',
+            properties: {
+              oneOfProperty: {
+                oneOf: [
+                  {
+                    type: 'object',
+                    properties: {
+                      a: {
+                        type: 'object',
+                        properties: {
+                          aa: { type: 'string' },
+                        },
                       },
                     },
                   },
-                },
-                {
-                  type: 'object',
-                  properties: {
-                    b: {
-                      type: 'object',
-                      properties: {
-                        bb: { type: 'number' },
+                  {
+                    type: 'object',
+                    properties: {
+                      b: {
+                        type: 'object',
+                        properties: {
+                          bb: { type: 'number' },
+                        },
                       },
                     },
                   },
-                },
-              ],
+                ],
+              },
             },
-          },
-        } as const;
-        deepFreeze(schema);
+          } as const;
+          deepFreeze(schema);
 
-        const actual = sealSchemaDeep(schema);
-        const expected = {
-          type: 'object',
-          additionalProperties: false,
-          properties: {
-            oneOfProperty: {
-              oneOf: [
-                {
-                  type: 'object',
-                  properties: {
-                    a: {
-                      type: 'object',
-                      properties: {
-                        aa: { type: 'string' },
+          const actual = sealSchemaDeep(schema);
+          const expected = {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+              oneOfProperty: {
+                oneOf: [
+                  {
+                    type: 'object',
+                    properties: {
+                      a: {
+                        type: 'object',
+                        properties: {
+                          aa: { type: 'string' },
+                        },
                       },
                     },
                   },
-                },
-                {
-                  type: 'object',
-                  properties: {
-                    b: {
-                      type: 'object',
-                      properties: {
-                        bb: { type: 'number' },
+                  {
+                    type: 'object',
+                    properties: {
+                      b: {
+                        type: 'object',
+                        properties: {
+                          bb: { type: 'number' },
+                        },
                       },
                     },
                   },
-                },
-              ],
+                ],
+              },
             },
-          },
-        } as const;
+          } as const;
 
-        expect(actual).toEqual(expected);
-        expectTypeOf(actual).toEqualTypeOf(expected);
+          expect(actual).toEqual(expected);
+          expectTypeOf(actual).toEqualTypeOf(expected);
+        });
       });
     });
 
