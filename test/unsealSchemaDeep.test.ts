@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 import { pipeUnsealSchemaDeep, unsealSchemaDeep } from '../src';
 
 describe('unsealSchemaDeep', () => {
-  it('recursively removes additionalProperties props', () => {
+  it('recursively removes additionalProperties and unevaluatedProperties props', () => {
     const schema = {
       type: 'object',
       properties: {
@@ -30,13 +30,27 @@ describe('unsealSchemaDeep', () => {
             c: { type: 'string' },
           },
         },
+        d: {
+          type: 'object',
+          unevaluatedProperties: true,
+          properties: {
+            d: { type: 'string' },
+          },
+        },
+        e: {
+          type: 'object',
+          unevaluatedProperties: false,
+          properties: {
+            e: { type: 'string' },
+          },
+        },
       },
       patternProperties: {
-        d: {
+        z: {
           type: 'object',
           additionalProperties: false,
           properties: {
-            d: { type: 'string' },
+            z: { type: 'string' },
           },
         },
       },
@@ -65,12 +79,24 @@ describe('unsealSchemaDeep', () => {
             c: { type: 'string' },
           },
         },
-      },
-      patternProperties: {
         d: {
           type: 'object',
           properties: {
             d: { type: 'string' },
+          },
+        },
+        e: {
+          type: 'object',
+          properties: {
+            e: { type: 'string' },
+          },
+        },
+      },
+      patternProperties: {
+        z: {
+          type: 'object',
+          properties: {
+            z: { type: 'string' },
           },
         },
       },

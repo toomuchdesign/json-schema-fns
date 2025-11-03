@@ -32,20 +32,18 @@ type UnsealSchemaDeep<
         Value
       : // Value key is schema object combinator, but it’s being used in an object definition context
         {
-          [Key in keyof Omit<Value, 'additionalProperties'>]: UnsealSchemaDeep<
-            Value[Key],
-            Key,
-            ItemKey
-          >;
+          [Key in keyof Omit<
+            Value,
+            'additionalProperties' | 'unevaluatedProperties'
+          >]: UnsealSchemaDeep<Value[Key], Key, ItemKey>;
         }
     : Value extends { type: 'object' }
       ? // Value is JSON schema object
         {
-          [Key in keyof Omit<Value, 'additionalProperties'>]: UnsealSchemaDeep<
-            Value[Key],
-            Key,
-            ItemKey
-          >;
+          [Key in keyof Omit<
+            Value,
+            'additionalProperties' | 'unevaluatedProperties'
+          >]: UnsealSchemaDeep<Value[Key], Key, ItemKey>;
         }
       : // Value is any other object
         {
@@ -71,6 +69,8 @@ function omitAdditionalPropertiesDeep(
   parentItemKey = '',
 ): unknown {
   if (isRecord(item)) {
+    let record = item;
+
     // Check if current item is an object definition property
     const isObjectProperty = isObjectPropertiesDefinitionKeyword(parentItemKey);
 
@@ -79,19 +79,21 @@ function omitAdditionalPropertiesDeep(
      * @TODO consider skipping additionalProperties handling only on root child object
      */
     if (isObjectCombinatorKeyword(itemKey) && !isObjectProperty) {
-      return item;
+      return record;
     }
 
-    if (item.type === 'object') {
-      if ('additionalProperties' in item) {
-        const { additionalProperties, ...rest } = item;
-        item = rest;
+    if (record.type === 'object') {
+      if (
+        'additionalProperties' in record ||
+        'unevaluatedProperties' in record
+      ) {
+        const { additionalProperties, unevaluatedProperties, ...rest } = record;
+        record = rest;
       }
     }
 
     return Object.fromEntries(
-      // @ts-expect-error couldn't get generics to work with json schema
-      Object.entries(item).map(([key, value]) => {
+      Object.entries(record).map(([key, value]) => {
         return [key, omitAdditionalPropertiesDeep(value, key, itemKey)];
       }),
     );
@@ -115,7 +117,7 @@ function omitAdditionalPropertiesDeep(
 }
 
 /**
- * Recursively remove `additionalProperties` from all object JSON schema schemas.
+ * Recursively remove `additionalProperties` and `unevaluatedProperties` keywords from all object JSON schema schemas.
  *
  * It does not modify [JSON Schema combinators](https://json-schema.org/understanding-json-schema/reference/combining) such as `allOf`, `anyOf`, `oneOf`, or `not`.
  * This ensures that the logical combination of schemas remains intact and that the semantics of the schema are not altered in any way.
