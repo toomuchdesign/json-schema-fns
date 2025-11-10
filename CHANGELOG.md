@@ -1,5 +1,17 @@
 # @toomuchdesign/json-schema-fns
 
+## 0.7.0
+
+### Minor Changes
+
+- [#92](https://github.com/toomuchdesign/json-schema-fns/pull/92) [`00cf318`](https://github.com/toomuchdesign/json-schema-fns/commit/00cf3180e3c63c31b2c8bf418393add84a2ceca3) Thanks [@toomuchdesign](https://github.com/toomuchdesign)! - `unsealSchemaDeep`: Remove `unevaluatedProperties` along with `additionalProperties`
+
+### Patch Changes
+
+- [#89](https://github.com/toomuchdesign/json-schema-fns/pull/89) [`6e223f9`](https://github.com/toomuchdesign/json-schema-fns/commit/6e223f9c3dd024bc1505e37b693f97c7e272bdd7) Thanks [@toomuchdesign](https://github.com/toomuchdesign)! - `unsealSchemaDeep`: properly discriminate `not` properties being used as JSON schema combinators or object property definitions
+
+- [#89](https://github.com/toomuchdesign/json-schema-fns/pull/89) [`6e223f9`](https://github.com/toomuchdesign/json-schema-fns/commit/6e223f9c3dd024bc1505e37b693f97c7e272bdd7) Thanks [@toomuchdesign](https://github.com/toomuchdesign)! - `sealSchemaDeep`: properly discriminate `not` properties being used as JSON schema combinators or object property definitions
+
 ## 0.6.1
 
 ### Patch Changes
