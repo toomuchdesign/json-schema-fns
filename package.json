@@ -59,8 +59,5 @@
   },
   "simple-git-hooks": {
     "pre-commit": "npm run prepare"
-  },
-  "dependencies": {
-    "type-fest": "^4.41.0"
   }
 }

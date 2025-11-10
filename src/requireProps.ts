@@ -1,11 +1,10 @@
-import type { UnionToTuple } from 'type-fest';
-
 import { isJSONSchemaObjectType } from './utils';
 import type {
   CompactSchema,
   JSONSchemaObject,
   MergeOptionalTuples,
   MergeRecords,
+  UnionToTuple,
 } from './utils/types';
 
 type RequireProps<

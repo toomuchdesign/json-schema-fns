@@ -1,8 +1,7 @@
 import { expectTypeOf } from 'expect-type';
-import { TupleToUnion } from 'type-fest';
 import { describe, it } from 'vitest';
 
-import type { MergeTuples } from '../../src/utils/types';
+import type { MergeTuples, TupleToUnion } from '../../src/utils/types';
 
 describe('Internal types', () => {
   describe('MergeTuples', () => {

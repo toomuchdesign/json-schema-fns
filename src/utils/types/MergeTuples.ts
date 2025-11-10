@@ -1,5 +1,4 @@
-import type { UnionToTuple } from 'type-fest';
-
+import type { UnionToTuple } from './';
 import type { StringTuple } from './definitions';
 
 /**
