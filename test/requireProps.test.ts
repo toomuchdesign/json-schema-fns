@@ -1,10 +1,10 @@
 import deepFreeze from 'deep-freeze';
 import { expectTypeOf } from 'expect-type';
 import { pipeWith } from 'pipe-ts';
-import type { TupleToUnion } from 'type-fest';
 import { describe, expect, it } from 'vitest';
 
 import { pipeRequireProps, requireProps } from '../src';
+import type { TupleToUnion } from '../src/utils/types';
 
 describe('requireProps', () => {
   describe('without keys argument', () => {

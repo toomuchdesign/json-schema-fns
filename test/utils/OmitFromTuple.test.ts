@@ -1,8 +1,7 @@
 import { expectTypeOf } from 'expect-type';
-import { TupleToUnion } from 'type-fest';
 import { describe, it } from 'vitest';
 
-import type { OmitFromTuple } from '../../src/utils/types';
+import type { OmitFromTuple, TupleToUnion } from '../../src/utils/types';
 
 describe('Internal types', () => {
   describe('OmitFromTuple', () => {
