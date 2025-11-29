@@ -26,6 +26,7 @@ jobs:
           node-version-file: '.nvmrc'
 
       - run: npm ci
+      - run: npm run prepare
 
       - uses: actions/upload-artifact@v5
         with:
