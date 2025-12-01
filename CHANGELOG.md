@@ -1,5 +1,11 @@
 # @toomuchdesign/json-schema-fns
 
+## 0.8.0
+
+### Minor Changes
+
+- [#102](https://github.com/toomuchdesign/json-schema-fns/pull/102) [`8cdde3c`](https://github.com/toomuchdesign/json-schema-fns/commit/8cdde3c3719de7bc3d6bde068604349509fa369b) Thanks [@toomuchdesign](https://github.com/toomuchdesign)! - Remove `type-fest` dependency
+
 ## 0.7.0
 
 ### Minor Changes
