@@ -1,0 +1,8 @@
+# Sealing/Unsealing combinators
+
+|         | Seal                                                                                                                       | Unseal                                                                                                                                  |
+| ------- | -------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `anyOf` | ✅ `anyOf` handling should take precedence. Add `additionalProperties` to each option item                                 | ✅ `anyOf` handling should take precedence. Remove `additionalProperties` from each option item                                         |
+| `oneOf` | ✅ `oneOf` handling should take precedence. Add `additionalProperties` to each option item                                 | 🚫 Allowing additional properties would cause validation failure (or/or)                                                                |
+| `allOf` | 🚫 Forbidding additional properties each option item would cause validation failure                                        | ✅ `allOf` handling should take precedence. Remove `additionalProperties` from each option item                                         |
+| `not`   | 🚫 Sealing a `not` schema would make the validation looser since `additionalProperties: false` would not match extra props | 🚫 Unsealing a `not` schema would make the validation stricter since removing `additionalProperties: false` would not match extra props |
