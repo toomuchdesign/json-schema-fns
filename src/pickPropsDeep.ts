@@ -30,27 +30,6 @@ type DeepPaths<Schema> = Schema extends { properties: infer P }
   : never;
 
 /**
- * `true` when any element of `Paths` is exactly `K` (a bare key with no
- * dot-notation sub-path). Drives the "whole wins" rule: if a bare match
- * exists, the key's sub-schema is kept unchanged regardless of any sibling
- * `${K}.${Rest}` paths.
- *
- * @example
- * ```ts
- * // HasExactPath<readonly ['a', 'b.x'], 'a'> → true
- * // HasExactPath<readonly ['a.x'], 'a'>      → false
- * ```
- */
-type HasExactPath<
-  Paths extends readonly string[],
-  K extends string,
-> = Paths extends readonly [infer Head, ...infer Tail extends readonly string[]]
-  ? Head extends K
-    ? true
-    : HasExactPath<Tail, K>
-  : false;
-
-/**
  * `true` when any element of `Paths` touches `K` — either an exact match or a
  * path shaped `${K}.${string}`. Drives the key-inclusion filter in the mapped
  * type: keys not touched by any path are dropped from the resulting schema.
@@ -115,6 +94,9 @@ type TopLevelKeys<Paths extends readonly string[]> = Paths extends readonly [
  * - keep the sub-schema unchanged if any path is exactly `K` (whole wins)
  * - otherwise recurse into the sub-schema with `SubPathsFor<Paths, K>`
  *
+ * The "whole wins" check is inlined as `K extends Paths[number]` — i.e. `K`
+ * appears as a bare entry in the `Paths` tuple.
+ *
  * `required` is narrowed at every level to the keys surviving the filter,
  * and `CompactSchema` strips out empty `required` tuples / `undefined`
  * slots introduced by the narrowing.
@@ -127,17 +109,18 @@ type PickPropsDeep<
     Schema,
     {
       properties: Simplify<{
-        [K in keyof Schema['properties'] as K extends string
-          ? HasPathStartingWith<Paths, K> extends true
-            ? K
+        [Key in keyof Schema['properties'] as Key extends string
+          ? HasPathStartingWith<Paths, Key> extends true
+            ? Key
             : never
-          : never]: K extends string
-          ? HasExactPath<Paths, K> extends true
-            ? Schema['properties'][K]
-            : Schema['properties'][K] extends JSONSchemaObject
-              ? PickPropsDeep<Schema['properties'][K], SubPathsFor<Paths, K>>
-              : Schema['properties'][K]
-          : Schema['properties'][K];
+          : never]: Key extends Paths[number]
+          ? Schema['properties'][Key]
+          : Schema['properties'][Key] extends JSONSchemaObject
+            ? PickPropsDeep<
+                Schema['properties'][Key],
+                SubPathsFor<Paths, Key & string>
+              >
+            : Schema['properties'][Key];
       }>;
       required: Schema['required'] extends readonly string[]
         ? PickFromTuple<Schema['required'], TopLevelKeys<Paths>>
