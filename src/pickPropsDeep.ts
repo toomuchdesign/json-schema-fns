@@ -164,6 +164,6 @@ function pickPropsDeepInternal(
 export function pipePickPropsDeep<
   const Schema extends JSONSchemaObject,
   const Paths extends readonly DeepPaths<Schema>[],
->(paths: Paths) {
+>(paths: Paths): (schema: Schema) => PickPropsDeep<Schema, Paths> {
   return (schema: Schema) => pickPropsDeep<Schema, Paths>(schema, paths);
 }
