@@ -8,7 +8,15 @@ import type {
 } from './utils/types';
 
 /**
- * Union of all valid dot-notation deep-pick paths for a given object JSON schema.
+ * Union of every valid dot-notation deep-pick path reachable through
+ * the `properties` tree of an object JSON schema. Used as the constraint on
+ * the `Paths` parameter so invalid paths fail at the call site.
+ *
+ * @example
+ * ```ts
+ * // Schema: { properties: { a: { type: 'object', properties: { x: ... } }, b: ... } }
+ * // DeepPaths<Schema> → 'a' | 'a.x' | 'b'
+ * ```
  */
 type DeepPaths<Schema> = Schema extends { properties: infer P }
   ? {
@@ -21,6 +29,18 @@ type DeepPaths<Schema> = Schema extends { properties: infer P }
     }[Extract<keyof P, string>]
   : never;
 
+/**
+ * `true` when any element of `Paths` is exactly `K` (a bare key with no
+ * dot-notation sub-path). Drives the "whole wins" rule: if a bare match
+ * exists, the key's sub-schema is kept unchanged regardless of any sibling
+ * `${K}.${Rest}` paths.
+ *
+ * @example
+ * ```ts
+ * // HasExactPath<readonly ['a', 'b.x'], 'a'> → true
+ * // HasExactPath<readonly ['a.x'], 'a'>      → false
+ * ```
+ */
 type HasExactPath<
   Paths extends readonly string[],
   K extends string,
@@ -30,6 +50,17 @@ type HasExactPath<
     : HasExactPath<Tail, K>
   : false;
 
+/**
+ * `true` when any element of `Paths` touches `K` — either an exact match or a
+ * path shaped `${K}.${string}`. Drives the key-inclusion filter in the mapped
+ * type: keys not touched by any path are dropped from the resulting schema.
+ *
+ * @example
+ * ```ts
+ * // HasPathStartingWith<readonly ['a.x', 'b'], 'a'> → true
+ * // HasPathStartingWith<readonly ['a.x', 'b'], 'c'> → false
+ * ```
+ */
 type HasPathStartingWith<
   Paths extends readonly string[],
   K extends string,
@@ -41,6 +72,17 @@ type HasPathStartingWith<
       : HasPathStartingWith<Tail, K>
   : false;
 
+/**
+ * For every path in `Paths` shaped `${K}.${Rest}`, extracts `Rest` into a new
+ * tuple. Order is preserved. Paths that are an exact `K` or that don't start
+ * with `${K}.` are skipped. The resulting tuple is what gets passed to the
+ * recursive call into `Schema['properties'][K]`.
+ *
+ * @example
+ * ```ts
+ * // SubPathsFor<readonly ['a.x', 'a.y.z', 'b'], 'a'> → readonly ['x', 'y.z']
+ * ```
+ */
 type SubPathsFor<
   Paths extends readonly string[],
   K extends string,
@@ -50,6 +92,16 @@ type SubPathsFor<
     : SubPathsFor<Tail, K>
   : readonly [];
 
+/**
+ * Union of the first dot-separated segment of every path in `Paths`.
+ * Used to filter the `required` tuple at the current level: a key is kept in
+ * `required` only if it appears as a top-level segment of some path.
+ *
+ * @example
+ * ```ts
+ * // TopLevelKeys<readonly ['a.x', 'a.y', 'b']> → 'a' | 'b'
+ * ```
+ */
 type TopLevelKeys<Paths extends readonly string[]> = Paths extends readonly [
   infer Head extends string,
   ...infer Tail extends readonly string[],
@@ -57,6 +109,16 @@ type TopLevelKeys<Paths extends readonly string[]> = Paths extends readonly [
   ? (Head extends `${infer H}.${string}` ? H : Head) | TopLevelKeys<Tail>
   : never;
 
+/**
+ * Recursive core type of `pickPropsDeep`. For each property `K` of `Schema`:
+ * - drop `K` entirely if no path touches it (`HasPathStartingWith` is false)
+ * - keep the sub-schema unchanged if any path is exactly `K` (whole wins)
+ * - otherwise recurse into the sub-schema with `SubPathsFor<Paths, K>`
+ *
+ * `required` is narrowed at every level to the keys surviving the filter,
+ * and `CompactSchema` strips out empty `required` tuples / `undefined`
+ * slots introduced by the narrowing.
+ */
 type PickPropsDeep<
   Schema extends JSONSchemaObject,
   Paths extends readonly string[],
