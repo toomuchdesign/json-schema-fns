@@ -99,6 +99,8 @@ export function mergeProps<
 export function pipeMergeProps<
   const Schema1 extends JSONSchemaObject,
   const Schema2 extends JSONSchemaObject,
->(schema2: Schema2) {
+>(
+  schema2: Schema2,
+): (schema1: Schema1) => CompactSchema<MergeProps<Schema1, Schema2>> {
   return (schema1: Schema1) => mergeProps<Schema1, Schema2>(schema1, schema2);
 }

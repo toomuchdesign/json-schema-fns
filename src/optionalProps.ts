@@ -63,6 +63,6 @@ export function optionalProps<
 export function pipeOptionalProps<
   const Schema extends JSONSchemaObject,
   const Keys extends (keyof Schema['properties'])[] | undefined = undefined,
->(keys?: Keys) {
+>(keys?: Keys): (schema: Schema) => CompactSchema<OptionalProps<Schema, Keys>> {
   return (schema: Schema) => optionalProps<Schema, Keys>(schema, keys);
 }

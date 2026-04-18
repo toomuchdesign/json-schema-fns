@@ -59,6 +59,6 @@ export function omitProps<
 export function pipeOmitProps<
   const Schema extends JSONSchemaObject,
   const Keys extends (keyof Schema['properties'])[],
->(keys: Keys) {
+>(keys: Keys): (schema: Schema) => CompactSchema<OmitProps<Schema, Keys>> {
   return (schema: Schema) => omitProps<Schema, Keys>(schema, keys);
 }
