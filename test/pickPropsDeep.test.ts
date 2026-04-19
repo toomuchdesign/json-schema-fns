@@ -602,6 +602,76 @@ describe('pickPropsDeep', () => {
     });
   });
 
+  describe('empty paths', () => {
+    it('returns a schema with no properties and no required', () => {
+      const schema = {
+        type: 'object',
+        required: ['a'],
+        properties: {
+          a: { type: 'string' },
+          b: { type: 'number' },
+        },
+      } as const;
+      deepFreeze(schema);
+
+      const actual = pickPropsDeep(schema, []);
+      const expected = {
+        type: 'object',
+        properties: {},
+      } as const;
+
+      expect(actual).toEqual(expected);
+      expectTypeOf(actual).toEqualTypeOf(expected);
+    });
+  });
+
+  describe('combinators (out of scope)', () => {
+    it('preserves root-level and nested combinators verbatim', () => {
+      const schema = {
+        type: 'object',
+        required: ['a', 'b'],
+        properties: {
+          a: {
+            type: 'object',
+            required: ['x', 'y'],
+            properties: {
+              x: { type: 'string' },
+              y: { type: 'number' },
+            },
+            allOf: [{ type: 'object' }],
+          },
+          b: { type: 'string' },
+        },
+        anyOf: [{ type: 'object' }],
+        oneOf: [{ type: 'object' }],
+        not: { type: 'object' },
+      } as const;
+      deepFreeze(schema);
+
+      const actual = pickPropsDeep(schema, ['a.x']);
+      const expected = {
+        type: 'object',
+        required: ['a'],
+        properties: {
+          a: {
+            type: 'object',
+            required: ['x'],
+            properties: {
+              x: { type: 'string' },
+            },
+            allOf: [{ type: 'object' }],
+          },
+        },
+        anyOf: [{ type: 'object' }],
+        oneOf: [{ type: 'object' }],
+        not: { type: 'object' },
+      } as const;
+
+      expect(actual).toEqual(expected);
+      expectTypeOf(actual).toEqualTypeOf(expected);
+    });
+  });
+
   describe('type !== object', () => {
     it('throws expected error', () => {
       const schema = {
