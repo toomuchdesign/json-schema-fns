@@ -42,18 +42,15 @@ function pickPropsDeepInternal(
     }
   }
 
-  const keptKeys = new Set<string>([
-    ...keepWhole,
-    ...Object.keys(subPathsByKey),
-  ]);
-
   const required = objectSchema.required
-    ? objectSchema.required.filter((key) => keptKeys.has(key))
+    ? objectSchema.required.filter(
+        (key) => keepWhole.has(key) || key in subPathsByKey,
+      )
     : [];
 
   const properties = Object.fromEntries(
     Object.entries(objectSchema.properties)
-      .filter(([key]) => keptKeys.has(key))
+      .filter(([key]) => keepWhole.has(key) || key in subPathsByKey)
       .map(([key, value]) => {
         if (keepWhole.has(key)) {
           return [key, value];
