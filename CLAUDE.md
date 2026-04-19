@@ -33,7 +33,7 @@ Flat "one function per file" under `src/`, **except** [src/pickPropsDeep/](src/p
 
 4. **`@internal` tag for non-public types.** Helpers in [src/pickPropsDeep/types.ts](src/pickPropsDeep/types.ts) are `export`ed so tests can import them, but each carries `@internal` in JSDoc. Don't re-export internals from [src/index.ts](src/index.ts).
 
-5. **JSON Schema combinators are preserved.** Deep functions (`sealSchemaDeep`, `unsealSchemaDeep`) must not recurse into `allOf` / `anyOf` / `oneOf` / `not` arrays unless the key appears inside `properties` / `patternProperties` — see the `isArrayCombinatorKeyword` / `isObjectCombinatorKeyword` guards.
+5. **JSON Schema combinators are preserved.** Deep functions (`sealSchemaDeep`, `unsealSchemaDeep`) must not recurse into `allOf` / `anyOf` / `oneOf` / `not` arrays unless the key appears inside `properties` / `patternProperties` — see the keyword-dispatch check in the `*Child` helper of each file.
 
 ## Test conventions
 
