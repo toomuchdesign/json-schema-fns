@@ -101,7 +101,7 @@ export type FirstPathSegment<Path extends string> =
  * - **Keep whole** when a path is exactly `Key` ("whole wins").
  * - **Recurse** otherwise with `SubPathsFor<Paths, Key>`.
  */
-type PickPropsDeepWith<
+export type PickPropsDeepWith<
   Schema extends JSONSchemaObject,
   Paths extends string,
 > = CompactSchema<
@@ -128,15 +128,3 @@ type PickPropsDeepWith<
     }
   >
 >;
-
-/**
- * @internal
- *
- * Recursively filters a JSON schema's `properties` to those touched by `Paths`.
- * Converts the `Paths` tuple to a union at the boundary and delegates to
- * `PickPropsDeepWith` for all internal work.
- */
-export type PickPropsDeep<
-  Schema extends JSONSchemaObject,
-  Paths extends readonly string[],
-> = PickPropsDeepWith<Schema, Paths[number]>;
