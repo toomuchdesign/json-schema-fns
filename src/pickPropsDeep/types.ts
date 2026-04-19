@@ -51,13 +51,9 @@ export type DeepPaths<Schema> = Schema extends { properties: infer P }
 export type HasPathStartingWith<
   Paths extends readonly string[],
   K extends string,
-> = Paths extends readonly [infer Head, ...infer Tail extends readonly string[]]
-  ? Head extends K
-    ? true
-    : Head extends `${K}.${string}`
-      ? true
-      : HasPathStartingWith<Tail, K>
-  : false;
+> = [Extract<Paths[number], K | `${K}.${string}`>] extends [never]
+  ? false
+  : true;
 
 /**
  * @internal
@@ -83,6 +79,23 @@ export type SubPathsFor<
 /**
  * @internal
  *
+ * Extracts the first dot-separated segment of a string. Returns the string
+ * unchanged when it contains no dot. Distributes over unions.
+ *
+ * @example
+ * ```ts
+ * FirstSegment<'a.x'> // → 'a'
+ * FirstSegment<'b'>   // → 'b'
+ * FirstSegment<'a.x' | 'b'> // → 'a' | 'b'
+ * ```
+ */
+export type FirstSegment<T extends string> = T extends `${infer H}.${string}`
+  ? H
+  : T;
+
+/**
+ * @internal
+ *
  * Extracts the first dot-separated segment from every path in `Paths` into a
  * union. For a bare key like `'b'` the whole string is returned; for a
  * compound path like `'a.x'` only `'a'` is returned.
@@ -92,13 +105,9 @@ export type SubPathsFor<
  * TopLevelKeys<readonly ['a.x', 'a.y', 'b']> // → 'a' | 'b'
  * ```
  */
-export type TopLevelKeys<Paths extends readonly string[]> =
-  Paths extends readonly [
-    infer Head extends string,
-    ...infer Tail extends readonly string[],
-  ]
-    ? (Head extends `${infer H}.${string}` ? H : Head) | TopLevelKeys<Tail>
-    : never;
+export type TopLevelKeys<Paths extends readonly string[]> = FirstSegment<
+  Paths[number]
+>;
 
 /**
  * @internal

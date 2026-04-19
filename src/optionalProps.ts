@@ -6,11 +6,9 @@ import type {
   OmitFromTuple,
 } from './utils/types';
 
-type ObjectKeys = string | number | symbol;
-
 type OptionalProps<
   Schema extends JSONSchemaObject,
-  Keys extends ObjectKeys[] | never[] | undefined = undefined,
+  Keys extends PropertyKey[] | never[] | undefined = undefined,
 > = Keys extends undefined
   ? // If no keys:
     Omit<Schema, 'required'>

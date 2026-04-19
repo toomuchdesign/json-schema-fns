@@ -3,6 +3,7 @@ import { describe, it } from 'vitest';
 
 import type {
   DeepPaths,
+  FirstSegment,
   HasPathStartingWith,
   SubPathsFor,
   TopLevelKeys,
@@ -11,143 +12,211 @@ import type { TupleToUnion } from '../src/utils/types';
 
 describe('Internal types', () => {
   describe('DeepPaths', () => {
-    it('returns a union of leaf keys for a flat schema', () => {
-      type Schema = {
-        type: 'object';
-        properties: {
-          a: { type: 'string' };
-          b: { type: 'number' };
-        };
-      };
-      expectTypeOf<DeepPaths<Schema>>().toEqualTypeOf<'a' | 'b'>();
-    });
-
-    it('includes both the nested object key and its inner paths', () => {
-      type Schema = {
-        type: 'object';
-        properties: {
-          a: {
-            type: 'object';
-            properties: {
-              x: { type: 'string' };
-              y: { type: 'number' };
-            };
+    describe('flat schema', () => {
+      it('returns a union of all property keys', () => {
+        type Schema = {
+          type: 'object';
+          properties: {
+            a: { type: 'string' };
+            b: { type: 'number' };
           };
-          b: { type: 'string' };
         };
-      };
-      expectTypeOf<DeepPaths<Schema>>().toEqualTypeOf<
-        'a' | 'a.x' | 'a.y' | 'b'
-      >();
+        expectTypeOf<DeepPaths<Schema>>().toEqualTypeOf<'a' | 'b'>();
+      });
     });
 
-    it('drills through multiple levels of nesting', () => {
-      type Schema = {
-        type: 'object';
-        properties: {
-          a: {
-            type: 'object';
-            properties: {
-              b: {
-                type: 'object';
-                properties: {
-                  c: { type: 'string' };
+    describe('schema with one level of nesting', () => {
+      it('includes both the nested object key and its inner paths', () => {
+        type Schema = {
+          type: 'object';
+          properties: {
+            a: {
+              type: 'object';
+              properties: {
+                x: { type: 'string' };
+                y: { type: 'number' };
+              };
+            };
+            b: { type: 'string' };
+          };
+        };
+        expectTypeOf<DeepPaths<Schema>>().toEqualTypeOf<
+          'a' | 'a.x' | 'a.y' | 'b'
+        >();
+      });
+    });
+
+    describe('schema with multiple levels of nesting', () => {
+      it('includes all intermediate and leaf paths', () => {
+        type Schema = {
+          type: 'object';
+          properties: {
+            a: {
+              type: 'object';
+              properties: {
+                b: {
+                  type: 'object';
+                  properties: {
+                    c: { type: 'string' };
+                  };
                 };
               };
             };
           };
         };
-      };
-      expectTypeOf<DeepPaths<Schema>>().toEqualTypeOf<'a' | 'a.b' | 'a.b.c'>();
+        expectTypeOf<DeepPaths<Schema>>().toEqualTypeOf<
+          'a' | 'a.b' | 'a.b.c'
+        >();
+      });
     });
 
-    it('returns never for a schema without properties', () => {
-      type Schema = { type: 'string' };
-      expectTypeOf<DeepPaths<Schema>>().toEqualTypeOf<never>();
+    describe('a schema without properties', () => {
+      it('returns never', () => {
+        type Schema = { type: 'string' };
+        expectTypeOf<DeepPaths<Schema>>().toEqualTypeOf<never>();
+      });
     });
   });
 
   describe('HasPathStartingWith', () => {
-    it('is true when the key is an exact bare path', () => {
-      expectTypeOf<
-        HasPathStartingWith<readonly ['a', 'b.x'], 'a'>
-      >().toEqualTypeOf<true>();
+    describe('the key matches exactly', () => {
+      it('returns true', () => {
+        expectTypeOf<
+          HasPathStartingWith<readonly ['a', 'b.x'], 'a'>
+        >().toEqualTypeOf<true>();
+      });
     });
 
-    it('is true when the key is the prefix of a dot-notation path', () => {
-      expectTypeOf<
-        HasPathStartingWith<readonly ['a.x', 'b'], 'a'>
-      >().toEqualTypeOf<true>();
+    describe('the key is the prefix of a dot-notation path', () => {
+      it('returns true', () => {
+        expectTypeOf<
+          HasPathStartingWith<readonly ['a.x', 'b'], 'a'>
+        >().toEqualTypeOf<true>();
+      });
     });
 
-    it('is false when no path references the key', () => {
-      expectTypeOf<
-        HasPathStartingWith<readonly ['a.x', 'b'], 'c'>
-      >().toEqualTypeOf<false>();
+    describe('no path references the key', () => {
+      it('returns false', () => {
+        expectTypeOf<
+          HasPathStartingWith<readonly ['a.x', 'b'], 'c'>
+        >().toEqualTypeOf<false>();
+      });
     });
 
-    it('is false for an empty paths tuple', () => {
-      expectTypeOf<
-        HasPathStartingWith<readonly [], 'a'>
-      >().toEqualTypeOf<false>();
+    describe('an empty paths tuple', () => {
+      it('returns false', () => {
+        expectTypeOf<
+          HasPathStartingWith<readonly [], 'a'>
+        >().toEqualTypeOf<false>();
+      });
     });
 
-    it('does not match keys that are only a prefix substring (no dot boundary)', () => {
-      expectTypeOf<
-        HasPathStartingWith<readonly ['ab'], 'a'>
-      >().toEqualTypeOf<false>();
+    describe('the key is a prefix substring without a dot boundary', () => {
+      it('returns false', () => {
+        expectTypeOf<
+          HasPathStartingWith<readonly ['ab'], 'a'>
+        >().toEqualTypeOf<false>();
+      });
     });
   });
 
   describe('SubPathsFor', () => {
-    it('extracts the rest segment for paths prefixed by the key', () => {
-      type Actual = SubPathsFor<readonly ['a.x', 'a.y.z', 'b'], 'a'>;
-      type Expected = readonly ['x', 'y.z'];
-      expectTypeOf<Actual>().toEqualTypeOf<Expected>();
+    describe('paths prefixed by the key', () => {
+      it('returns the rest segments as a tuple', () => {
+        type Actual = SubPathsFor<readonly ['a.x', 'a.y.z', 'b'], 'a'>;
+        type Expected = readonly ['x', 'y.z'];
+        expectTypeOf<Actual>().toEqualTypeOf<Expected>();
+      });
     });
 
-    it('skips exact-key matches (they are handled by the whole-wins branch)', () => {
-      type Actual = SubPathsFor<readonly ['a', 'a.x'], 'a'>;
-      type Expected = readonly ['x'];
-      expectTypeOf<Actual>().toEqualTypeOf<Expected>();
+    describe('paths include an exact match', () => {
+      it('skips exact-key matches', () => {
+        type Actual = SubPathsFor<readonly ['a', 'a.x'], 'a'>;
+        type Expected = readonly ['x'];
+        expectTypeOf<Actual>().toEqualTypeOf<Expected>();
+      });
     });
 
-    it('returns an empty tuple when no paths match the prefix', () => {
-      type Actual = SubPathsFor<readonly ['a', 'b.x'], 'c'>;
-      type Expected = readonly [];
-      expectTypeOf<Actual>().toEqualTypeOf<Expected>();
+    describe('no paths match the prefix', () => {
+      it('returns an empty tuple', () => {
+        type Actual = SubPathsFor<readonly ['a', 'b.x'], 'c'>;
+        type Expected = readonly [];
+        expectTypeOf<Actual>().toEqualTypeOf<Expected>();
+      });
     });
 
-    it('preserves deep dot segments in the rest string', () => {
-      type Actual = SubPathsFor<readonly ['a.b.c.d'], 'a'>;
-      type Expected = readonly ['b.c.d'];
-      expectTypeOf<Actual>().toEqualTypeOf<Expected>();
+    describe('deeply nested paths', () => {
+      it('preserves deep dot segments in the rest string', () => {
+        type Actual = SubPathsFor<readonly ['a.b.c.d'], 'a'>;
+        type Expected = readonly ['b.c.d'];
+        expectTypeOf<Actual>().toEqualTypeOf<Expected>();
+      });
+    });
+  });
+
+  describe('FirstSegment', () => {
+    describe('a dotted string', () => {
+      it('returns the prefix before the first dot', () => {
+        expectTypeOf<FirstSegment<'a.x'>>().toEqualTypeOf<'a'>();
+      });
+    });
+
+    describe('a deeply dotted string', () => {
+      it('strips only the first segment', () => {
+        expectTypeOf<FirstSegment<'a.b.c'>>().toEqualTypeOf<'a'>();
+      });
+    });
+
+    describe('there is no dot', () => {
+      it('returns the string unchanged', () => {
+        expectTypeOf<FirstSegment<'b'>>().toEqualTypeOf<'b'>();
+      });
+    });
+
+    describe('a union input', () => {
+      it('distributes over each member', () => {
+        expectTypeOf<FirstSegment<'a.x' | 'b'>>().toEqualTypeOf<'a' | 'b'>();
+      });
+    });
+
+    describe('never', () => {
+      it('returns never', () => {
+        expectTypeOf<FirstSegment<never>>().toEqualTypeOf<never>();
+      });
     });
   });
 
   describe('TopLevelKeys', () => {
-    it('collects the first segment of every path', () => {
-      type Actual = TopLevelKeys<readonly ['a.x', 'a.y', 'b', 'c.z']>;
-      type Expected = 'a' | 'b' | 'c';
+    describe('a mixed tuple of dotted and bare paths', () => {
+      it('collects the first segment of every path', () => {
+        type Actual = TopLevelKeys<readonly ['a.x', 'a.y', 'b', 'c.z']>;
+        type Expected = 'a' | 'b' | 'c';
 
-      // TypeScript does not guarantee union member ordering
-      expectTypeOf<Actual>().toEqualTypeOf<Expected>();
+        // TypeScript does not guarantee union member ordering
+        expectTypeOf<Actual>().toEqualTypeOf<Expected>();
+      });
     });
 
-    it('returns bare keys unchanged', () => {
-      expectTypeOf<TopLevelKeys<readonly ['a', 'b']>>().toEqualTypeOf<
-        'a' | 'b'
-      >();
+    describe('tuple of bare keys', () => {
+      it('returns them unchanged', () => {
+        expectTypeOf<TopLevelKeys<readonly ['a', 'b']>>().toEqualTypeOf<
+          'a' | 'b'
+        >();
+      });
     });
 
-    it('returns never for an empty paths tuple', () => {
-      expectTypeOf<TopLevelKeys<readonly []>>().toEqualTypeOf<never>();
+    describe('empty paths tuple', () => {
+      it('returns never', () => {
+        expectTypeOf<TopLevelKeys<readonly []>>().toEqualTypeOf<never>();
+      });
     });
 
-    it('deduplicates via union semantics', () => {
-      type Actual = TopLevelKeys<readonly ['a.x', 'a.y', 'a']>;
-      type ActualAsUnion = TupleToUnion<[Actual]>;
-      expectTypeOf<ActualAsUnion>().toEqualTypeOf<'a'>();
+    describe('multiple paths share the same first segment', () => {
+      it('deduplicates via union semantics', () => {
+        type Actual = TopLevelKeys<readonly ['a.x', 'a.y', 'a']>;
+        type ActualAsUnion = TupleToUnion<[Actual]>;
+        expectTypeOf<ActualAsUnion>().toEqualTypeOf<'a'>();
+      });
     });
   });
 });
