@@ -19,12 +19,13 @@ describe('pickProps', () => {
     } as const;
     deepFreeze(schema);
 
-    const actual = pickProps(schema, ['a', 'd']);
+    const actual = pickProps(schema, ['a', 'b', 'd']);
     const expected = {
       type: 'object',
-      required: ['a'],
+      required: ['a', 'b'],
       properties: {
         a: { type: 'string' },
+        b: { type: 'number' },
         d: { type: 'number' },
       },
     } as const;
@@ -137,12 +138,13 @@ describe('pipePickProps', () => {
     } as const;
     deepFreeze(schema);
 
-    const actual = pipeWith(schema, pipePickProps(['a', 'd']));
+    const actual = pipeWith(schema, pipePickProps(['a', 'b', 'd']));
     const expected = {
       type: 'object',
-      required: ['a'],
+      required: ['a', 'b'],
       properties: {
         a: { type: 'string' },
+        b: { type: 'number' },
         d: { type: 'number' },
       },
     } as const;

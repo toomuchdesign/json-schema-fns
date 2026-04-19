@@ -42,6 +42,7 @@ npm install @toomuchdesign/json-schema-fns
 
 - [`omitProps`](#omitProps) – Omit specific `properties` from an object JSON schema
 - [`pickProps`](#pickProps) – Pick only specific `properties` from an object JSON schema
+- [`pickPropsDeep`](#pickPropsDeep) – Pick specific nested `properties` from an object JSON schema using dot-notation paths
 - [`mergeProps`](#mergeProps) – Merge two object JSON schemas `properties` and `patternProperties` props into one. If the same property key exists in both schemas, the property from `schema2` takes precedence
 - [`requireProps`](#requireProps) – Mark specific properties in a object JSON schema as required. If no keys provided, all properties become required
 - [`optionalProps`](#optionalProps) – Make specific properties of a object JSON schema optional. If no keys provided, all properties become optional
@@ -84,6 +85,44 @@ const schema = {
 } as const;
 
 const result = pickProps(schema, ['b']);
+```
+
+### pickPropsDeep
+
+Pick specific nested `properties` from an object JSON schema using dot-notation paths. Paths sharing a common prefix are merged; a bare key (without a sub-path) keeps the whole sub-schema unchanged.
+
+```ts
+import { pickPropsDeep } from '@toomuchdesign/json-schema-fns';
+
+const schema = {
+  type: 'object',
+  required: ['user', 'meta'],
+  properties: {
+    user: {
+      type: 'object',
+      required: ['id', 'password'],
+      properties: {
+        id: { type: 'string' },
+        password: { type: 'string' },
+      },
+    },
+    meta: { type: 'string' },
+  },
+} as const;
+
+const result = pickPropsDeep(schema, ['user.id', 'meta']);
+// {
+//   type: 'object',
+//   required: ['user', 'meta'],
+//   properties: {
+//     user: {
+//       type: 'object',
+//       required: ['id'],
+//       properties: { id: { type: 'string' } },
+//     },
+//     meta: { type: 'string' },
+//   },
+// }
 ```
 
 ### mergeProps
