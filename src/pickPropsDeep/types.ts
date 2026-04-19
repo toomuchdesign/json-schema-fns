@@ -25,56 +25,53 @@ import type {
  * DeepPaths<Schema> // → 'a' | 'a.x' | 'b'
  * ```
  */
-export type DeepPaths<Schema> = Schema extends { properties: infer P }
+export type DeepPaths<Schema> = Schema extends { properties: infer Properties }
   ? {
-      [K in Extract<keyof P, string>]: P[K] extends {
+      [Key in Extract<keyof Properties, string>]: Properties[Key] extends {
         type: 'object';
         properties: object;
       }
-        ? K | `${K}.${DeepPaths<P[K]>}`
-        : K;
-    }[Extract<keyof P, string>]
+        ? Key | `${Key}.${DeepPaths<Properties[Key]>}`
+        : Key;
+    }[Extract<keyof Properties, string>]
   : never;
 
 /**
  * @internal
  *
- * Returns `true` if any element of `Paths` either equals `K` exactly or
- * begins with `${K}.`; `false` otherwise.
+ * Returns `true` if any element of `Paths` either equals `Key` exactly or
+ * begins with `${Key}.`; `false` otherwise.
  *
  * @example
  * ```ts
- * HasPathStartingWith<readonly ['a.x', 'b'], 'a'> // → true
- * HasPathStartingWith<readonly ['a.x', 'b'], 'c'> // → false
+ * HasPathStartingWith<'a.x' | 'b', 'a'> // → true
+ * HasPathStartingWith<'a.x' | 'b', 'c'> // → false
  * ```
  */
-export type HasPathStartingWith<
-  Paths extends readonly string[],
-  K extends string,
-> = [Extract<Paths[number], K | `${K}.${string}`>] extends [never]
+export type HasPathStartingWith<Paths extends string, Key extends string> = [
+  Extract<Paths, Key | `${Key}.${string}`>,
+] extends [never]
   ? false
   : true;
 
 /**
  * @internal
  *
- * Filters `Paths` to those starting with `${K}.`, then strips that prefix,
- * returning the remainders as a new tuple. Paths that don't start with
- * `${K}.` are omitted entirely.
+ * Filters `Paths` to those starting with `${Key}.`, then strips that prefix,
+ * returning the remainders as a union. Paths that are an exact `Key` or don't
+ * start with `${Key}.` are omitted.
+ *
+ * Distributes over the input union, so no tuple recursion is needed.
  *
  * @example
  * ```ts
- * SubPathsFor<readonly ['a.x', 'a.y.z', 'b'], 'a'> // → readonly ['x', 'y.z']
+ * SubPathsFor<'a.x' | 'a.y.z' | 'b', 'a'> // → 'x' | 'y.z'
  * ```
  */
 export type SubPathsFor<
-  Paths extends readonly string[],
-  K extends string,
-> = Paths extends readonly [infer Head, ...infer Tail extends readonly string[]]
-  ? Head extends `${K}.${infer Rest}`
-    ? readonly [Rest, ...SubPathsFor<Tail, K>]
-    : SubPathsFor<Tail, K>
-  : readonly [];
+  Paths extends string,
+  Key extends string,
+> = Paths extends `${Key}.${infer Rest}` ? Rest : never;
 
 /**
  * @internal
@@ -84,49 +81,29 @@ export type SubPathsFor<
  *
  * @example
  * ```ts
- * FirstSegment<'a.x'> // → 'a'
- * FirstSegment<'b'>   // → 'b'
- * FirstSegment<'a.x' | 'b'> // → 'a' | 'b'
+ * FirstPathSegment<'a.x'> // → 'a'
+ * FirstPathSegment<'b'>   // → 'b'
+ * FirstPathSegment<'a.x' | 'b'> // → 'a' | 'b'
  * ```
  */
-export type FirstSegment<T extends string> = T extends `${infer H}.${string}`
-  ? H
-  : T;
+export type FirstPathSegment<Path extends string> =
+  Path extends `${infer Head}.${string}` ? Head : Path;
 
 /**
  * @internal
  *
- * Extracts the first dot-separated segment from every path in `Paths` into a
- * union. For a bare key like `'b'` the whole string is returned; for a
- * compound path like `'a.x'` only `'a'` is returned.
+ * Union-based core of `PickPropsDeep`. Accepts `Paths` as a string union
+ * (not a tuple) so all internal operations are distributive conditionals
+ * with no tuple recursion.
  *
- * @example
- * ```ts
- * TopLevelKeys<readonly ['a.x', 'a.y', 'b']> // → 'a' | 'b'
- * ```
+ * Three rules per property `Key`:
+ * - **Drop** `Key` when no path touches it.
+ * - **Keep whole** when a path is exactly `Key` ("whole wins").
+ * - **Recurse** otherwise with `SubPathsFor<Paths, Key>`.
  */
-export type TopLevelKeys<Paths extends readonly string[]> = FirstSegment<
-  Paths[number]
->;
-
-/**
- * @internal
- *
- * Recursively filters a JSON schema's `properties` to those touched by `Paths`,
- * applying three rules per property `Key`:
- * - **Drop** `Key` when no path touches it (`HasPathStartingWith` is `false`).
- * - **Keep whole** when a path is exactly `Key` — the sub-schema is left
- *   unchanged ("whole wins" rule, checked as `Key extends Paths[number]`).
- * - **Recurse** otherwise, passing `SubPathsFor<Paths, Key>` into the
- *   sub-schema.
- *
- * `required` is narrowed at every level to `TopLevelKeys<Paths>`, and
- * `CompactSchema` removes any empty `required` tuples or `undefined` values
- * that result from the filtering.
- */
-export type PickPropsDeep<
+type PickPropsDeepWith<
   Schema extends JSONSchemaObject,
-  Paths extends readonly string[],
+  Paths extends string,
 > = CompactSchema<
   MergeRecords<
     Schema,
@@ -136,18 +113,30 @@ export type PickPropsDeep<
           ? HasPathStartingWith<Paths, Key> extends true
             ? Key
             : never
-          : never]: Key extends Paths[number]
+          : never]: Key extends Paths
           ? Schema['properties'][Key]
           : Schema['properties'][Key] extends JSONSchemaObject
-            ? PickPropsDeep<
+            ? PickPropsDeepWith<
                 Schema['properties'][Key],
                 SubPathsFor<Paths, Key & string>
               >
             : Schema['properties'][Key];
       }>;
       required: Schema['required'] extends readonly string[]
-        ? PickFromTuple<Schema['required'], TopLevelKeys<Paths>>
+        ? PickFromTuple<Schema['required'], FirstPathSegment<Paths>>
         : undefined;
     }
   >
 >;
+
+/**
+ * @internal
+ *
+ * Recursively filters a JSON schema's `properties` to those touched by `Paths`.
+ * Converts the `Paths` tuple to a union at the boundary and delegates to
+ * `PickPropsDeepWith` for all internal work.
+ */
+export type PickPropsDeep<
+  Schema extends JSONSchemaObject,
+  Paths extends readonly string[],
+> = PickPropsDeepWith<Schema, Paths[number]>;

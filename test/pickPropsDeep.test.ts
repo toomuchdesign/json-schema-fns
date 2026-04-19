@@ -348,6 +348,82 @@ describe('pickPropsDeep', () => {
     expectTypeOf(actual).toEqualTypeOf(expected);
   });
 
+  it('whole-wins at the top level', () => {
+    const schema = {
+      type: 'object',
+      required: ['a', 'b'],
+      properties: {
+        a: {
+          type: 'object',
+          required: ['x', 'y'],
+          properties: {
+            x: { type: 'string' },
+            y: { type: 'number' },
+          },
+        },
+        b: { type: 'string' },
+      },
+    } as const;
+    deepFreeze(schema);
+
+    // bare 'a' wins over 'a.x' — full sub-schema is kept unchanged
+    const actual = pickPropsDeep(schema, ['a', 'a.x']);
+    const expected = {
+      type: 'object',
+      required: ['a'],
+      properties: {
+        a: {
+          type: 'object',
+          required: ['x', 'y'],
+          properties: {
+            x: { type: 'string' },
+            y: { type: 'number' },
+          },
+        },
+      },
+    } as const;
+
+    expect(actual).toEqual(expected);
+    expectTypeOf(actual).toEqualTypeOf(expected);
+  });
+
+  it('duplicate paths are treated as a single path', () => {
+    const schema = {
+      type: 'object',
+      required: ['a', 'b'],
+      properties: {
+        a: {
+          type: 'object',
+          required: ['x', 'y'],
+          properties: {
+            x: { type: 'string' },
+            y: { type: 'number' },
+          },
+        },
+        b: { type: 'string' },
+      },
+    } as const;
+    deepFreeze(schema);
+
+    const actual = pickPropsDeep(schema, ['a.x', 'a.x']);
+    const expected = {
+      type: 'object',
+      required: ['a'],
+      properties: {
+        a: {
+          type: 'object',
+          required: ['x'],
+          properties: {
+            x: { type: 'string' },
+          },
+        },
+      },
+    } as const;
+
+    expect(actual).toEqual(expected);
+    expectTypeOf(actual).toEqualTypeOf(expected);
+  });
+
   it('whole-wins at a deep nested level', () => {
     const schema = {
       type: 'object',

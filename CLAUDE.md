@@ -45,7 +45,7 @@ Flat "one function per file" under `src/`, **except** [src/pickPropsDeep/](src/p
 
 ## `pickPropsDeep` semantics (non-obvious)
 
-- **Whole wins.** Paths `['a', 'a.x']` keep all of `a` unchanged (not just `a.x`). The exact-key check is inlined as `K extends Paths[number]` in [src/pickPropsDeep/types.ts](src/pickPropsDeep/types.ts).
+- **Whole wins.** Paths `['a', 'a.x']` keep all of `a` unchanged (not just `a.x`). The exact-key check is `Key extends Paths` inside the private `PickPropsDeepWith` in [src/pickPropsDeep/types.ts](src/pickPropsDeep/types.ts), where `Paths` is already a string union.
 - **`required` is filtered at every level** based on which top-level segments of `Paths` touch each level — not just the root.
 - **`DeepPaths<Schema>` constraint enforces valid paths at the call site.** Paths that don't exist in the schema are a compile error, not a runtime no-op.
 - Out of scope for deep picking: `patternProperties`, combinators, tuple-typed array `items`. Match `pickProps` scope.
@@ -63,6 +63,6 @@ Flat "one function per file" under `src/`, **except** [src/pickPropsDeep/](src/p
 ## Gotchas
 
 - **Don't add stackblitz "Live demo" links to README unless you have a real URL** — they're tied to per-function forks.
-- **Type widening in accumulator patterns.** A `WalkPaths<..., Acc extends { sub: readonly string[] }>`-style accumulator is tempting but TypeScript can widen `Acc['sub']` to `readonly string[]` inside the body, losing specific tuple inference. Been tried, failed. The current two-walk approach (`HasPathStartingWith` + `SubPathsFor`) is intentional.
+- **Type widening in accumulator patterns.** A `WalkPaths<..., Acc extends { sub: readonly string[] }>`-style accumulator is tempting but TypeScript can widen `Acc['sub']` to `readonly string[]` inside the body, losing specific tuple inference. Been tried, failed. The current approach converts the `Paths` tuple to a union at the `PickPropsDeep` boundary and passes `Paths extends string` into the private `PickPropsDeepWith`. All internal helpers (`HasPathStartingWith`, `SubPathsFor`, `FirstSegment`) operate on string unions via distributive conditionals — no tuple recursion inside the hot path.
 - **Changesets.** [package.json](package.json) uses `@changesets/cli`. Contributors are expected to run `npx changeset` before a PR.
 - **IDE file references.** When writing text for this workspace, use markdown links like `[file.ts](src/file.ts)` rather than backticks — the extension renders them as clickable.
