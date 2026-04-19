@@ -25,7 +25,7 @@ Flat "one function per file" under `src/`, **except** [src/pickPropsDeep/](src/p
 
 ## Non-negotiable conventions
 
-1. **Explicit return types on every `pipe*` function.** The closure they return expands the inner type alias inline, and with recursive types (notably `PickPropsDeep`) this hits `TS7056: The inferred type of this node exceeds the maximum length the compiler will serialize` during `.d.ts` emission. The fix is `(): (schema: Schema) => SomeTypeAlias<...>` at the outer function. Applied consistently to all `pipe*` functions — keep it that way.
+1. **Explicit return types on every `pipe*` function.** The closure they return expands the inner type alias inline, and with recursive types (notably `PickPropsDeepWith`) this hits `TS7056: The inferred type of this node exceeds the maximum length the compiler will serialize` during `.d.ts` emission. The fix is `(): (schema: Schema) => SomeTypeAlias<...>` at the outer function. Applied consistently to all `pipe*` functions — keep it that way.
 
 2. **Use `const` type parameters.** `<const Schema extends JSONSchemaObject>` is how the library preserves literal types from `as const` call sites. Don't drop the `const` modifier.
 
@@ -45,7 +45,7 @@ Flat "one function per file" under `src/`, **except** [src/pickPropsDeep/](src/p
 
 ## `pickPropsDeep` semantics (non-obvious)
 
-- **Whole wins.** Paths `['a', 'a.x']` keep all of `a` unchanged (not just `a.x`). The exact-key check is `Key extends Paths` inside the private `PickPropsDeepWith` in [src/pickPropsDeep/types.ts](src/pickPropsDeep/types.ts), where `Paths` is already a string union.
+- **Whole wins.** Paths `['a', 'a.x']` keep all of `a` unchanged (not just `a.x`). The exact-key check is `Key extends Paths` inside `PickPropsDeepWith` in [src/pickPropsDeep/types.ts](src/pickPropsDeep/types.ts) (exported but `@internal`), where `Paths` is already a string union.
 - **`required` is filtered at every level** based on which top-level segments of `Paths` touch each level — not just the root.
 - **`DeepPaths<Schema>` constraint enforces valid paths at the call site.** Paths that don't exist in the schema are a compile error, not a runtime no-op.
 - Out of scope for deep picking: `patternProperties`, combinators, tuple-typed array `items`. Match `pickProps` scope.
@@ -63,6 +63,6 @@ Flat "one function per file" under `src/`, **except** [src/pickPropsDeep/](src/p
 ## Gotchas
 
 - **Don't add stackblitz "Live demo" links to README unless you have a real URL** — they're tied to per-function forks.
-- **Type widening in accumulator patterns.** A `WalkPaths<..., Acc extends { sub: readonly string[] }>`-style accumulator is tempting but TypeScript can widen `Acc['sub']` to `readonly string[]` inside the body, losing specific tuple inference. Been tried, failed. The current approach converts the `Paths` tuple to a union at the `PickPropsDeep` boundary and passes `Paths extends string` into the private `PickPropsDeepWith`. All internal helpers (`HasPathStartingWith`, `SubPathsFor`, `FirstSegment`) operate on string unions via distributive conditionals — no tuple recursion inside the hot path.
+- **Type widening in accumulator patterns.** A `WalkPaths<..., Acc extends { sub: readonly string[] }>`-style accumulator is tempting but TypeScript can widen `Acc['sub']` to `readonly string[]` inside the body, losing specific tuple inference. Been tried, failed. The current approach converts the `Paths` tuple to a union at the `pickPropsDeep` function boundary (via `Paths[number]`) and passes `Paths extends string` into `PickPropsDeepWith`. All internal helpers (`HasPathStartingWith`, `SubPathsFor`, `FirstPathSegment`) operate on string unions via distributive conditionals — no tuple recursion inside the hot path.
 - **Changesets.** [package.json](package.json) uses `@changesets/cli`. Contributors are expected to run `npx changeset` before a PR.
 - **IDE file references.** When writing text for this workspace, use markdown links like `[file.ts](src/file.ts)` rather than backticks — the extension renders them as clickable.

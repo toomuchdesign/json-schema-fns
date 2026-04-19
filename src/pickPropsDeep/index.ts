@@ -34,19 +34,18 @@ function pickPropsDeepInternal(
     ? schema.required.filter((key) => keptKeys.has(key))
     : [];
 
-  const properties = Object.fromEntries(
-    Object.entries(schema.properties)
-      .filter(([key]) => keptKeys.has(key))
-      .map(([key, value]) => {
-        if (keepWhole.has(key)) {
-          return [key, value];
-        }
-        return [
-          key,
-          pickPropsDeepInternal(value as JSONSchemaObject, subPathsByKey[key]!),
-        ];
-      }),
-  );
+  const properties: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(schema.properties)) {
+    if (keptKeys.has(key)) {
+      properties[key] = keepWhole.has(key)
+        ? value
+        : pickPropsDeepInternal(
+            // @ts-expect-error nested value is a JSONSchemaObject by DeepPaths constraint — TS cannot infer it through Record<string, unknown>
+            value,
+            subPathsByKey[key]!,
+          );
+    }
+  }
 
   return {
     ...schema,
