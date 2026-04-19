@@ -1,4 +1,4 @@
-import type { UnionToTuple } from './';
+import type { OmitFromTuple } from './OmitFromTuple';
 import type { StringTuple } from './definitions';
 
 /**
@@ -7,7 +7,4 @@ import type { StringTuple } from './definitions';
 export type MergeTuples<
   T1 extends StringTuple,
   T2 extends StringTuple,
-> = UnionToTuple<
-  // Transform tuples to union to remove duplicates
-  T1[number] | T2[number]
->;
+> = readonly [...T1, ...OmitFromTuple<T2, T1[number]>];
