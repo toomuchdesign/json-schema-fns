@@ -6,12 +6,16 @@ JSON Schema [combinators](https://json-schema.org/understanding-json-schema/refe
 
 |         | Seal                                                                                                             | Unseal                                                                                                           |
 | ------- | ---------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `allOf` | 🚫 Skip — sealing each option would forbid properties declared in the siblings (their intersection becomes `{}`) | ✅ Recurse — unseal each option                                                                                  |
 | `anyOf` | ✅ Recurse — seal each option                                                                                    | ✅ Recurse — unseal each option                                                                                  |
 | `oneOf` | ✅ Recurse — seal each option                                                                                    | 🚫 Skip — unsealing would let options overlap and break mutual exclusivity                                       |
-| `allOf` | 🚫 Skip — sealing each option would forbid properties declared in the siblings (their intersection becomes `{}`) | ✅ Recurse — unseal each option                                                                                  |
 | `not`   | 🚫 Skip — sealing the inner schema narrows it, which _widens_ what `not` matches (validation becomes looser)     | 🚫 Skip — unsealing the inner schema widens it, which _narrows_ what `not` matches (validation becomes stricter) |
 
 ## Rationale
+
+### `allOf` — skip on seal, recurse on unseal
+
+`allOf` succeeds when a value matches **every** sub-schema. Sealing each option would require every value to carry only the props declared in that single option — but values typically carry the _union_ of props across the sub-schemas, so every such value would fail. Unsealing each option only broadens them, and the intersection of broader schemas is still at least as large as the original: semantics are preserved.
 
 ### `anyOf` — recurse in both directions
 
@@ -20,10 +24,6 @@ JSON Schema [combinators](https://json-schema.org/understanding-json-schema/refe
 ### `oneOf` — recurse on seal, skip on unseal
 
 `oneOf` succeeds when a value matches **exactly one** sub-schema. Sealing each option only narrows them, so a value that previously matched exactly one still matches exactly one (or zero). Unsealing, however, broadens each option: a value that originally matched a single option may now match several, turning a valid schema into one that always rejects. To preserve mutual exclusivity, unseal leaves `oneOf` untouched.
-
-### `allOf` — skip on seal, recurse on unseal
-
-`allOf` succeeds when a value matches **every** sub-schema. Sealing each option would require every value to carry only the props declared in that single option — but values typically carry the _union_ of props across the sub-schemas, so every such value would fail. Unsealing each option only broadens them, and the intersection of broader schemas is still at least as large as the original: semantics are preserved.
 
 ### `not` — skip in both directions
 
