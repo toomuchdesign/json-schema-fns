@@ -40,18 +40,20 @@ npm install @toomuchdesign/json-schema-fns
 
 ## API
 
-- [`omitProps`](#omitProps) – Omit specific `properties` from an object JSON schema
-- [`pickProps`](#pickProps) – Pick only specific `properties` from an object JSON schema
-- [`pickPropsDeep`](#pickPropsDeep) – Pick specific nested `properties` from an object JSON schema using dot-notation paths
-- [`mergeProps`](#mergeProps) – Merge two object JSON schemas `properties` and `patternProperties` props into one. If the same property key exists in both schemas, the property from `schema2` takes precedence
-- [`requireProps`](#requireProps) – Mark specific properties in a object JSON schema as required. If no keys provided, all properties become required
-- [`optionalProps`](#optionalProps) – Make specific properties of a object JSON schema optional. If no keys provided, all properties become optional
-- [`sealSchemaDeep`](#sealSchemaDeep) – Recursively set `additionalProperties: false` on all object JSON schema schemas
-- [`unsealSchemaDeep`](#unsealSchemaDeep) – Recursively remove `additionalProperties` and `unevaluatedProperties` keywords from all object JSON schema schemas
+| Function                                | Description                                                                  |                                       |
+| --------------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------- |
+| [`omitProps`](#omitProps)               | Omit specific `properties` from an object JSON schema                        | [Live demo ⚡][omitProps-demo]        |
+| [`pickProps`](#pickProps)               | Pick only specific `properties` from an object JSON schema                   | [Live demo ⚡][pickProps-demo]        |
+| [`pickPropsDeep`](#pickPropsDeep)       | Pick specific nested `properties` using dot-notation paths                   | [Live demo ⚡][pickPropsDeep-demo]    |
+| [`mergeProps`](#mergeProps)             | Merge two object JSON schemas' `properties` and `patternProperties` into one | [Live demo ⚡][mergeProps-demo]       |
+| [`requireProps`](#requireProps)         | Mark specific properties as required (all if none provided)                  | [Live demo ⚡][requireProps-demo]     |
+| [`optionalProps`](#optionalProps)       | Make specific properties optional (all if none provided)                     | [Live demo ⚡][optionalProps-demo]    |
+| [`sealSchemaDeep`](#sealSchemaDeep)     | Recursively set `additionalProperties: false` on all object schemas          | [Live demo ⚡][sealSchemaDeep-demo]   |
+| [`unsealSchemaDeep`](#unsealSchemaDeep) | Recursively remove `additionalProperties` and `unevaluatedProperties`        | [Live demo ⚡][unsealSchemaDeep-demo] |
 
 ### omitProps
 
-Omit specific `properties` from an object JSON schema. [Live demo ⚡](https://stackblitz.com/edit/vitejs-vite-aglzxc19?file=src%2FomitProps.ts&view=editor)
+Omit specific `properties` from an object JSON schema. [Live demo ⚡][omitProps-demo]
 
 ```ts
 import { omitProps } from '@toomuchdesign/json-schema-fns';
@@ -70,7 +72,7 @@ const result = omitProps(schema, ['b']);
 
 ### pickProps
 
-Pick only specific `properties` from an object JSON schema. [Live demo ⚡](https://stackblitz.com/edit/vitejs-vite-aglzxc19?file=src%2FpickProps.ts&view=editor)
+Pick only specific `properties` from an object JSON schema. [Live demo ⚡][pickProps-demo]
 
 ```ts
 import { pickProps } from '@toomuchdesign/json-schema-fns';
@@ -89,7 +91,7 @@ const result = pickProps(schema, ['b']);
 
 ### pickPropsDeep
 
-Pick specific nested `properties` from an object JSON schema using dot-notation paths. Paths sharing a common prefix are merged; a bare key (without a sub-path) keeps the whole sub-schema unchanged.
+Pick specific nested `properties` from an object JSON schema using dot-notation paths. Paths sharing a common prefix are merged; a bare key (without a sub-path) keeps the whole sub-schema unchanged. [Live demo ⚡][pickPropsDeep-demo]
 
 ```ts
 import { pickPropsDeep } from '@toomuchdesign/json-schema-fns';
@@ -111,23 +113,11 @@ const schema = {
 } as const;
 
 const result = pickPropsDeep(schema, ['user.id', 'meta']);
-// {
-//   type: 'object',
-//   required: ['user', 'meta'],
-//   properties: {
-//     user: {
-//       type: 'object',
-//       required: ['id'],
-//       properties: { id: { type: 'string' } },
-//     },
-//     meta: { type: 'string' },
-//   },
-// }
 ```
 
 ### mergeProps
 
-Merge two object JSON schemas `properties` and `patternProperties` props into one. If the same property key exists in both schemas, the property from `schema2` takes precedence. [Live demo ⚡](https://stackblitz.com/edit/vitejs-vite-aglzxc19?file=src%2FmergeProps.ts&view=editor)
+Merge two object JSON schemas `properties` and `patternProperties` props into one. If the same property key exists in both schemas, the property from `schema2` takes precedence. [Live demo ⚡][mergeProps-demo]
 
 ```ts
 import { mergeProps } from '@toomuchdesign/json-schema-fns';
@@ -153,7 +143,7 @@ const result = mergeProps(schema1, schema2);
 
 ### requireProps
 
-Mark specific properties in a object JSON schema as required. If no keys provided, all properties become required. [Live demo ⚡](https://stackblitz.com/edit/vitejs-vite-aglzxc19?file=src%2FrequireProps.ts&view=editor)
+Mark specific properties in a object JSON schema as required. If no keys provided, all properties become required. [Live demo ⚡][requireProps-demo]
 
 ```ts
 import { requireProps } from '@toomuchdesign/json-schema-fns';
@@ -173,7 +163,7 @@ const result = requireProps(schema, ['a', 'c']);
 
 ### optionalProps
 
-Make specific properties of a object JSON schema optional. If no keys provided, all properties become optional. [Live demo ⚡](https://stackblitz.com/edit/vitejs-vite-aglzxc19?file=src%2FoptionalProps.ts&view=editor)
+Make specific properties of a object JSON schema optional. If no keys provided, all properties become optional. [Live demo ⚡][optionalProps-demo]
 
 ```ts
 import { optionalProps } from '@toomuchdesign/json-schema-fns';
@@ -193,7 +183,7 @@ const result = optionalProps(schema, ['b', 'c']);
 
 ### sealSchemaDeep
 
-Recursively set `additionalProperties: false` on all object JSON schema schemas. [Live demo ⚡](https://stackblitz.com/edit/vitejs-vite-aglzxc19?file=src%2FsealSchemaDeep.ts&view=editor)
+Recursively set `additionalProperties: false` on all object JSON schema schemas. [Live demo ⚡][sealSchemaDeep-demo]
 
 It does not modify [JSON Schema combinators](https://json-schema.org/understanding-json-schema/reference/combining) such as `allOf`, `anyOf`, `oneOf`, or `not`. This ensures that the logical combination of schemas remains intact and that the semantics of the schema are not altered in any way.
 
@@ -219,7 +209,7 @@ const result = sealSchemaDeep(schema);
 
 ### unsealSchemaDeep
 
-Recursively remove `additionalProperties` and `unevaluatedProperties` keywords from all object JSON schema schemas. [Live demo ⚡](https://stackblitz.com/edit/vitejs-vite-aglzxc19?file=src%2FunsealSchemaDeep.ts&view=editor)
+Recursively remove `additionalProperties` and `unevaluatedProperties` keywords from all object JSON schema schemas. [Live demo ⚡][unsealSchemaDeep-demo]
 
 It does not modify [JSON Schema combinators](https://json-schema.org/understanding-json-schema/reference/combining) such as `allOf`, `anyOf`, `oneOf`, or `not`. This ensures that the logical combination of schemas remains intact and that the semantics of the schema are not altered in any way.
 
@@ -247,7 +237,7 @@ const result = unsealSchemaDeep(schema);
 
 ## Composition & pipe-friendly API (experimental)
 
-In addition to the standard functional API, `json-schema-fns` also offers a composition-friendly counterpart that enables schema transformations through a pipeable interface. [Live demo ⚡](https://stackblitz.com/edit/vitejs-vite-aglzxc19?file=src%2Fpipe.ts&view=editor)
+In addition to the standard functional API, `json-schema-fns` also offers a composition-friendly counterpart that enables schema transformations through a pipeable interface. [Live demo ⚡][pipe-demo]
 
 > Note: piping could lead TypeScript to hit its internal recursion limits producing the following error: `TS2589: Type instantiation is excessively deep and possibly infinite`
 
@@ -319,3 +309,12 @@ npx changeset
 [coveralls]: https://coveralls.io/github/toomuchdesign/json-schema-fns?branch=master
 [npm]: https://www.npmjs.com/package/@toomuchdesign/json-schema-fns
 [npm-version-badge]: https://img.shields.io/npm/v/@toomuchdesign/json-schema-fns.svg
+[omitProps-demo]: https://stackblitz.com/edit/vitejs-vite-aglzxc19?file=src%2FomitProps.ts
+[pickProps-demo]: https://stackblitz.com/edit/vitejs-vite-aglzxc19?file=src%2FpickProps.ts
+[pickPropsDeep-demo]: https://stackblitz.com/edit/vitejs-vite-aglzxc19?file=src%2FpickPropsDeep.ts
+[mergeProps-demo]: https://stackblitz.com/edit/vitejs-vite-aglzxc19?file=src%2FmergeProps.ts
+[requireProps-demo]: https://stackblitz.com/edit/vitejs-vite-aglzxc19?file=src%2FrequireProps.ts
+[optionalProps-demo]: https://stackblitz.com/edit/vitejs-vite-aglzxc19?file=src%2FoptionalProps.ts
+[sealSchemaDeep-demo]: https://stackblitz.com/edit/vitejs-vite-aglzxc19?file=src%2FsealSchemaDeep.ts
+[unsealSchemaDeep-demo]: https://stackblitz.com/edit/vitejs-vite-aglzxc19?file=src%2FunsealSchemaDeep.ts
+[pipe-demo]: https://stackblitz.com/edit/vitejs-vite-aglzxc19?file=src%2Fpipe.ts
