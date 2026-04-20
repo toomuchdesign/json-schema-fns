@@ -1,5 +1,17 @@
 # @toomuchdesign/json-schema-fns
 
+## 0.8.0
+
+### Minor Changes
+
+- [#103](https://github.com/toomuchdesign/json-schema-fns/pull/103) [`efab04d`](https://github.com/toomuchdesign/json-schema-fns/commit/efab04d0e6ffc6325f0f7c11ebdc0e9bdd97f381) Thanks [@toomuchdesign](https://github.com/toomuchdesign)! - Handle JSON schema `allOf`, `anyOf`, `oneOf`, `not` combinators with `sealSchemaDeep`
+
+- [#180](https://github.com/toomuchdesign/json-schema-fns/pull/180) [`661cada`](https://github.com/toomuchdesign/json-schema-fns/commit/661cada270f745bf03059dbf121097ff93b01726) Thanks [@toomuchdesign](https://github.com/toomuchdesign)! - Add `pickPropsDeep` function
+
+- [#102](https://github.com/toomuchdesign/json-schema-fns/pull/102) [`8cdde3c`](https://github.com/toomuchdesign/json-schema-fns/commit/8cdde3c3719de7bc3d6bde068604349509fa369b) Thanks [@toomuchdesign](https://github.com/toomuchdesign)! - Remove `type-fest` dependency
+
+- [#103](https://github.com/toomuchdesign/json-schema-fns/pull/103) [`efab04d`](https://github.com/toomuchdesign/json-schema-fns/commit/efab04d0e6ffc6325f0f7c11ebdc0e9bdd97f381) Thanks [@toomuchdesign](https://github.com/toomuchdesign)! - Handle JSON schema `allOf`, `anyOf`, `oneOf`, `not` combinators with `unsealSchemaDeep`
+
 ## 0.7.0
 
 ### Minor Changes
