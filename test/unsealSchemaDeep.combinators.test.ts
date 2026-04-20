@@ -8,15 +8,17 @@ describe('unsealSchemaDeep', () => {
   describe('combinators', () => {
     describe('allOf', () => {
       describe('as root definition', () => {
-        it('ignores combinator schemas', () => {
+        it('unseals each option', () => {
           const schema = {
             allOf: [
               {
                 type: 'object',
+                additionalProperties: false,
                 properties: { a: { type: 'string' } },
               },
               {
                 type: 'object',
+                additionalProperties: false,
                 properties: { b: { type: 'number' } },
               },
             ],
@@ -43,7 +45,7 @@ describe('unsealSchemaDeep', () => {
       });
 
       describe('as object property definition', () => {
-        it('ignores combinator schemas', () => {
+        it('unseals each option', () => {
           const schema = {
             type: 'object',
             additionalProperties: false,
@@ -109,11 +111,9 @@ describe('unsealSchemaDeep', () => {
                 allOf: [
                   {
                     type: 'object',
-                    additionalProperties: false,
                     properties: {
                       a: {
                         type: 'object',
-                        additionalProperties: false,
                         properties: {
                           aa: { type: 'string' },
                         },
@@ -122,11 +122,9 @@ describe('unsealSchemaDeep', () => {
                   },
                   {
                     type: 'object',
-                    additionalProperties: false,
                     properties: {
                       b: {
                         type: 'object',
-                        additionalProperties: false,
                         properties: {
                           bb: { type: 'number' },
                         },
@@ -141,11 +139,9 @@ describe('unsealSchemaDeep', () => {
                 allOf: [
                   {
                     type: 'object',
-                    additionalProperties: false,
                     properties: {
                       a: {
                         type: 'object',
-                        additionalProperties: false,
                         properties: {
                           aa: { type: 'string' },
                         },
@@ -165,15 +161,17 @@ describe('unsealSchemaDeep', () => {
 
     describe('anyOf', () => {
       describe('as root definition', () => {
-        it('ignores combinator schemas', () => {
+        it('unseals each option', () => {
           const schema = {
             anyOf: [
               {
                 type: 'object',
+                additionalProperties: false,
                 properties: { a: { type: 'string' } },
               },
               {
                 type: 'object',
+                additionalProperties: false,
                 properties: { b: { type: 'number' } },
               },
             ],
@@ -200,7 +198,7 @@ describe('unsealSchemaDeep', () => {
       });
 
       describe('as object property definition', () => {
-        it('ignores combinator schemas', () => {
+        it('unseals each option', () => {
           const schema = {
             type: 'object',
             additionalProperties: false,
@@ -247,11 +245,9 @@ describe('unsealSchemaDeep', () => {
                 anyOf: [
                   {
                     type: 'object',
-                    additionalProperties: false,
                     properties: {
                       a: {
                         type: 'object',
-                        additionalProperties: false,
                         properties: {
                           aa: { type: 'string' },
                         },
@@ -260,11 +256,9 @@ describe('unsealSchemaDeep', () => {
                   },
                   {
                     type: 'object',
-                    additionalProperties: false,
                     properties: {
                       b: {
                         type: 'object',
-                        additionalProperties: false,
                         properties: {
                           bb: { type: 'number' },
                         },
@@ -502,7 +496,25 @@ describe('unsealSchemaDeep', () => {
           type: 'object',
           additionalProperties: false,
           properties: {
+            allOf: {
+              type: 'object',
+              additionalProperties: false,
+              properties: {
+                a: {
+                  type: 'string',
+                },
+              },
+            },
             anyOf: {
+              type: 'object',
+              additionalProperties: false,
+              properties: {
+                a: {
+                  type: 'string',
+                },
+              },
+            },
+            oneOf: {
               type: 'object',
               additionalProperties: false,
               properties: {
@@ -522,7 +534,25 @@ describe('unsealSchemaDeep', () => {
             },
           },
           patternProperties: {
+            allOf: {
+              type: 'object',
+              additionalProperties: false,
+              properties: {
+                a: {
+                  type: 'string',
+                },
+              },
+            },
             anyOf: {
+              type: 'object',
+              additionalProperties: false,
+              properties: {
+                a: {
+                  type: 'string',
+                },
+              },
+            },
+            oneOf: {
               type: 'object',
               additionalProperties: false,
               properties: {
@@ -548,6 +578,15 @@ describe('unsealSchemaDeep', () => {
         const expected = {
           type: 'object',
           properties: {
+            // Property-named combinator: recurse normally (not a combinator at this position).
+            allOf: {
+              type: 'object',
+              properties: {
+                a: {
+                  type: 'string',
+                },
+              },
+            },
             anyOf: {
               type: 'object',
               properties: {
@@ -556,7 +595,15 @@ describe('unsealSchemaDeep', () => {
                 },
               },
             },
-            // This is the reason why we need isObjectPropertiesDefinitionKeyword
+            oneOf: {
+              type: 'object',
+              properties: {
+                a: {
+                  type: 'string',
+                },
+              },
+            },
+            // Property-named combinator: recurse normally (not a combinator at this position).
             not: {
               type: 'object',
               properties: {
@@ -567,6 +614,15 @@ describe('unsealSchemaDeep', () => {
             },
           },
           patternProperties: {
+            // Property-named combinator: recurse normally (not a combinator at this position).
+            allOf: {
+              type: 'object',
+              properties: {
+                a: {
+                  type: 'string',
+                },
+              },
+            },
             anyOf: {
               type: 'object',
               properties: {
@@ -575,7 +631,15 @@ describe('unsealSchemaDeep', () => {
                 },
               },
             },
-            // This is the reason why we need isObjectPropertiesDefinitionKeyword
+            oneOf: {
+              type: 'object',
+              properties: {
+                a: {
+                  type: 'string',
+                },
+              },
+            },
+            // Property-named combinator: recurse normally (not a combinator at this position).
             not: {
               type: 'object',
               properties: {

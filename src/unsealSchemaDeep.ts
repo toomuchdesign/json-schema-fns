@@ -1,126 +1,78 @@
-import {
-  isArrayCombinatorKeyword,
-  isObjectCombinatorKeyword,
-  isObjectPropertiesDefinitionKeyword,
-  isRecord,
-} from './utils';
+import { isRecord } from './utils';
 import type {
-  ArrayCombinators,
   JSONSchema,
-  ObjectCombinators,
-  ObjectPropertiesDefinitionKeyword,
+  Simplify,
   UnknownArray,
   UnknownRecord,
 } from './utils/types';
 
-type UnsealSchemaDeep<
-  Value,
-  ItemKey extends PropertyKey | undefined,
-  ParentItemKey extends PropertyKey | undefined,
-  // Check if current item is an object definition property
-  IsObjectProperty = ParentItemKey extends ObjectPropertiesDefinitionKeyword
-    ? true
-    : false,
-> = Value extends UnknownRecord
-  ? ItemKey extends ObjectCombinators
-    ? IsObjectProperty extends false
-      ? // Value key is schema object combinators
-        /**
-         * Skip JSON schema object combinators (stop iteration)
-         * @TODO consider skipping additionalProperties handling only on root child object
-         */
-        Value
-      : // Value key is schema object combinator, but it’s being used in an object definition context
-        {
-          [Key in keyof Omit<
-            Value,
-            'additionalProperties' | 'unevaluatedProperties'
-          >]: UnsealSchemaDeep<Value[Key], Key, ItemKey>;
+// Children are dispatched from the parent's mapped type — no `Key` param is
+// threaded through, so every `UnsealSchemaDeep<X>` instantiation is keyed by
+// `X` alone, maximizing the compiler's instantiation cache hits.
+type UnsealSchemaDeep<Schema> = Schema extends UnknownArray
+  ? { [Index in keyof Schema]: UnsealSchemaDeep<Schema[Index]> }
+  : Schema extends { type: 'object' }
+    ? Simplify<{
+        [Keyword in keyof Omit<
+          Schema,
+          'additionalProperties' | 'unevaluatedProperties'
+        >]: UnsealChild<Keyword, Schema[Keyword]>;
+      }>
+    : Schema extends UnknownRecord
+      ? {
+          [Keyword in keyof Schema]: UnsealChild<Keyword, Schema[Keyword]>;
         }
-    : Value extends { type: 'object' }
-      ? // Value is JSON schema object
-        {
-          [Key in keyof Omit<
-            Value,
-            'additionalProperties' | 'unevaluatedProperties'
-          >]: UnsealSchemaDeep<Value[Key], Key, ItemKey>;
+      : Schema;
+
+// Dispatch recursion based on the JSON Schema keyword — see docs/combinators.md.
+type UnsealChild<Keyword, Value> = Keyword extends 'not' | 'oneOf'
+  ? Value // skip — unsealing would alter combinator semantics
+  : Keyword extends 'properties' | 'patternProperties'
+    ? Value extends UnknownRecord
+      ? {
+          [PropertyName in keyof Value]: UnsealSchemaDeep<Value[PropertyName]>;
         }
-      : // Value is any other object
-        {
-          [Key in keyof Value]: UnsealSchemaDeep<Value[Key], Key, ItemKey>;
-        }
-  : Value extends UnknownArray
-    ? // Value is array
-      /**
-       * Skip JSON schema array combinators (stop iteration)
-       * @TODO consider skipping additionalProperties handling only on root child object
-       */
-      ItemKey extends ArrayCombinators
-      ? Value
-      : {
-          [Key in keyof Value]: UnsealSchemaDeep<Value[Key], Key, ItemKey>;
-        }
-    : // Value is any other primitive
-      Value;
+      : Value
+    : UnsealSchemaDeep<Value>;
 
-function omitAdditionalPropertiesDeep(
-  item: unknown,
-  itemKey = '',
-  parentItemKey = '',
-): unknown {
-  if (isRecord(item)) {
-    let record = item;
-
-    // Check if current item is an object definition property
-    const isObjectProperty = isObjectPropertiesDefinitionKeyword(parentItemKey);
-
-    /**
-     * Skip JSON schema object combinators (stop iteration).
-     * @TODO consider skipping additionalProperties handling only on root child object
-     */
-    if (isObjectCombinatorKeyword(itemKey) && !isObjectProperty) {
-      return record;
-    }
-
-    if (record.type === 'object') {
+function unsealSchema(schema: unknown): unknown {
+  if (Array.isArray(schema)) return schema.map(unsealSchema);
+  if (isRecord(schema)) {
+    const walked: Record<string, unknown> = {};
+    const isObjectSchema = schema.type === 'object';
+    for (const [k, v] of Object.entries(schema)) {
       if (
-        'additionalProperties' in record ||
-        'unevaluatedProperties' in record
+        isObjectSchema &&
+        (k === 'additionalProperties' || k === 'unevaluatedProperties')
       ) {
-        const { additionalProperties, unevaluatedProperties, ...rest } = record;
-        record = rest;
+        continue;
       }
+      walked[k] = unsealChild(k, v);
     }
-
-    return Object.fromEntries(
-      Object.entries(record).map(([key, value]) => {
-        return [key, omitAdditionalPropertiesDeep(value, key, itemKey)];
-      }),
-    );
+    return walked;
   }
+  return schema;
+}
 
-  if (Array.isArray(item)) {
-    /**
-     * Skip JSON schema array combinators (stop iteration)
-     * @TODO consider skipping additionalProperties handling only on root child object
-     */
-    if (isArrayCombinatorKeyword(itemKey)) {
-      return item;
-    }
-
-    return item.map((item) =>
-      omitAdditionalPropertiesDeep(item, 'index', itemKey),
-    );
+function unsealChild(key: string, value: unknown): unknown {
+  if (key === 'not' || key === 'oneOf') return value;
+  if (key === 'properties' || key === 'patternProperties') {
+    if (!isRecord(value)) return value;
+    const result: Record<string, unknown> = {};
+    for (const [p, pv] of Object.entries(value)) result[p] = unsealSchema(pv);
+    return result;
   }
-
-  return item;
+  return unsealSchema(value);
 }
 
 /**
- * Recursively remove `additionalProperties` and `unevaluatedProperties` keywords from all object JSON schema schemas.
+ * Recursively remove `additionalProperties` and `unevaluatedProperties` from object JSON schemas.
  *
- * It does not modify [JSON Schema combinators](https://json-schema.org/understanding-json-schema/reference/combining) such as `allOf`, `anyOf`, `oneOf`, or `not`.
- * This ensures that the logical combination of schemas remains intact and that the semantics of the schema are not altered in any way.
+ * JSON Schema [combinators](https://json-schema.org/understanding-json-schema/reference/combining) are handled selectively to preserve semantics:
+ * - `allOf` / `anyOf`: each option is unsealed
+ * - `oneOf` / `not`: left untouched (unsealing would alter validation meaning)
+ *
+ * See [docs/combinators.md](../docs/combinators.md) for the full rationale.
  *
  * @example
  * ```ts
@@ -129,20 +81,21 @@ function omitAdditionalPropertiesDeep(
  */
 export function unsealSchemaDeep<const Schema extends JSONSchema>(
   schema: Schema,
-): UnsealSchemaDeep<Schema, undefined, undefined> {
-  // @ts-expect-error not relying on natural type flow
-  return omitAdditionalPropertiesDeep(schema);
+): UnsealSchemaDeep<Schema> {
+  return unsealSchema(schema) as UnsealSchemaDeep<Schema>;
 }
 
 /**
  * Recursively remove `additionalProperties` from all object JSON schema schemas.
- * Wraps `unsealSchemaDeep` to support function piping
+ * Wraps `unsealSchemaDeep` to support function piping.
  *
  * @example
  * ```ts
  * pipeWith(schema, pipeUnsealSchemaDeep());
  * ```
  */
-export function pipeUnsealSchemaDeep<const Schema extends JSONSchema>() {
-  return (schema: Schema) => unsealSchemaDeep<Schema>(schema);
+export function pipeUnsealSchemaDeep<const Schema extends JSONSchema>(): (
+  schema: Schema,
+) => UnsealSchemaDeep<Schema> {
+  return (schema) => unsealSchemaDeep<Schema>(schema);
 }

@@ -240,6 +240,29 @@ describe('unsealSchemaDeep', () => {
       expectTypeOf(actual).toEqualTypeOf(expected);
     });
   });
+
+  describe('undefined `patternProperties` / `properties`', () => {
+    // `mergeProps` and friends intentionally produce `patternProperties: undefined`
+    // when both inputs lack it (see CLAUDE.md convention 3). Unseal must
+    // tolerate that value rather than crash on `Object.entries(undefined)`.
+    it('passes `patternProperties: undefined` through untouched', () => {
+      const schema = {
+        type: 'object',
+        additionalProperties: false,
+        patternProperties: undefined,
+        properties: { a: { type: 'string' } },
+      } as const;
+      deepFreeze(schema);
+
+      const actual = unsealSchemaDeep(schema);
+      const expected = {
+        type: 'object',
+        properties: { a: { type: 'string' } },
+      } as const;
+
+      expect(actual).toEqual(expected);
+    });
+  });
 });
 
 describe('pipeUnsealSchemaDeep', () => {

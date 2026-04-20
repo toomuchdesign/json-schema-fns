@@ -131,7 +131,7 @@ describe('sealSchemaDeep', () => {
 
     describe('anyOf', () => {
       describe('root combinator', () => {
-        it('ignores combinator schemas', () => {
+        it('seals each option', () => {
           const schema = {
             anyOf: [
               {
@@ -151,10 +151,12 @@ describe('sealSchemaDeep', () => {
             anyOf: [
               {
                 type: 'object',
+                additionalProperties: false,
                 properties: { a: { type: 'string' } },
               },
               {
                 type: 'object',
+                additionalProperties: false,
                 properties: { b: { type: 'number' } },
               },
             ],
@@ -166,7 +168,7 @@ describe('sealSchemaDeep', () => {
       });
 
       describe('object property combinator', () => {
-        it('ignores combinator schemas', () => {
+        it('seals each option', () => {
           const schema = {
             type: 'object',
             properties: {
@@ -209,9 +211,11 @@ describe('sealSchemaDeep', () => {
                 anyOf: [
                   {
                     type: 'object',
+                    additionalProperties: false,
                     properties: {
                       a: {
                         type: 'object',
+                        additionalProperties: false,
                         properties: {
                           aa: { type: 'string' },
                         },
@@ -220,9 +224,11 @@ describe('sealSchemaDeep', () => {
                   },
                   {
                     type: 'object',
+                    additionalProperties: false,
                     properties: {
                       b: {
                         type: 'object',
+                        additionalProperties: false,
                         properties: {
                           bb: { type: 'number' },
                         },
@@ -242,7 +248,7 @@ describe('sealSchemaDeep', () => {
 
     describe('oneOf', () => {
       describe('root combinator', () => {
-        it('ignores combinator schemas', () => {
+        it('seals each option', () => {
           const schema = {
             oneOf: [
               {
@@ -262,10 +268,12 @@ describe('sealSchemaDeep', () => {
             oneOf: [
               {
                 type: 'object',
+                additionalProperties: false,
                 properties: { a: { type: 'string' } },
               },
               {
                 type: 'object',
+                additionalProperties: false,
                 properties: { b: { type: 'number' } },
               },
             ],
@@ -277,7 +285,7 @@ describe('sealSchemaDeep', () => {
       });
 
       describe('object property combinator', () => {
-        it('ignores combinator schemas', () => {
+        it('seals each option', () => {
           const schema = {
             type: 'object',
             properties: {
@@ -320,9 +328,11 @@ describe('sealSchemaDeep', () => {
                 oneOf: [
                   {
                     type: 'object',
+                    additionalProperties: false,
                     properties: {
                       a: {
                         type: 'object',
+                        additionalProperties: false,
                         properties: {
                           aa: { type: 'string' },
                         },
@@ -331,9 +341,11 @@ describe('sealSchemaDeep', () => {
                   },
                   {
                     type: 'object',
+                    additionalProperties: false,
                     properties: {
                       b: {
                         type: 'object',
+                        additionalProperties: false,
                         properties: {
                           bb: { type: 'number' },
                         },
@@ -459,7 +471,23 @@ describe('sealSchemaDeep', () => {
         const schema = {
           type: 'object',
           properties: {
+            allOf: {
+              type: 'object',
+              properties: {
+                a: {
+                  type: 'string',
+                },
+              },
+            },
             anyOf: {
+              type: 'object',
+              properties: {
+                a: {
+                  type: 'string',
+                },
+              },
+            },
+            oneOf: {
               type: 'object',
               properties: {
                 a: {
@@ -477,7 +505,23 @@ describe('sealSchemaDeep', () => {
             },
           },
           patternProperties: {
+            allOf: {
+              type: 'object',
+              properties: {
+                a: {
+                  type: 'string',
+                },
+              },
+            },
             anyOf: {
+              type: 'object',
+              properties: {
+                a: {
+                  type: 'string',
+                },
+              },
+            },
+            oneOf: {
               type: 'object',
               properties: {
                 a: {
@@ -502,7 +546,26 @@ describe('sealSchemaDeep', () => {
           type: 'object',
           additionalProperties: false,
           properties: {
+            allOf: {
+              type: 'object',
+              // Property-named combinator: recurse normally (not a combinator at this position).
+              additionalProperties: false,
+              properties: {
+                a: {
+                  type: 'string',
+                },
+              },
+            },
             anyOf: {
+              type: 'object',
+              additionalProperties: false,
+              properties: {
+                a: {
+                  type: 'string',
+                },
+              },
+            },
+            oneOf: {
               type: 'object',
               additionalProperties: false,
               properties: {
@@ -513,7 +576,7 @@ describe('sealSchemaDeep', () => {
             },
             not: {
               type: 'object',
-              // This is the reason why we need isObjectPropertiesDefinitionKeyword
+              // Property-named combinator: recurse normally (not a combinator at this position).
               additionalProperties: false,
               properties: {
                 a: {
@@ -523,7 +586,26 @@ describe('sealSchemaDeep', () => {
             },
           },
           patternProperties: {
+            allOf: {
+              type: 'object',
+              // Property-named combinator: recurse normally (not a combinator at this position).
+              additionalProperties: false,
+              properties: {
+                a: {
+                  type: 'string',
+                },
+              },
+            },
             anyOf: {
+              type: 'object',
+              additionalProperties: false,
+              properties: {
+                a: {
+                  type: 'string',
+                },
+              },
+            },
+            oneOf: {
               type: 'object',
               additionalProperties: false,
               properties: {
@@ -534,7 +616,7 @@ describe('sealSchemaDeep', () => {
             },
             not: {
               type: 'object',
-              // This is the reason why we need isObjectPropertiesDefinitionKeyword
+              // Property-named combinator: recurse normally (not a combinator at this position).
               additionalProperties: false,
               properties: {
                 a: {
