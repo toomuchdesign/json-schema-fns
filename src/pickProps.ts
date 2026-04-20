@@ -62,6 +62,6 @@ export function pickProps<
 export function pipePickProps<
   const Schema extends JSONSchemaObject,
   const Keys extends (keyof Schema['properties'])[],
->(keys: Keys) {
+>(keys: Keys): (schema: Schema) => CompactSchema<PickProps<Schema, Keys>> {
   return (schema: Schema) => pickProps<Schema, Keys>(schema, keys);
 }

@@ -62,6 +62,6 @@ export function requireProps<
 export function pipeRequireProps<
   const Schema extends JSONSchemaObject,
   const Keys extends (keyof Schema['properties'])[] | undefined = undefined,
->(keys?: Keys) {
+>(keys?: Keys): (schema: Schema) => CompactSchema<RequireProps<Schema, Keys>> {
   return (schema: Schema) => requireProps<Schema, Keys>(schema, keys);
 }
