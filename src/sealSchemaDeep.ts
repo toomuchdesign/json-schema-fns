@@ -24,8 +24,13 @@ type SealSchemaDeep<Schema> = Schema extends UnknownArray
       : Schema;
 
 // Dispatch recursion based on the JSON Schema keyword — see docs/combinators.md.
-type SealChild<Keyword, Value> = Keyword extends 'not' | 'allOf'
-  ? Value // skip — sealing would alter combinator semantics
+type SealChild<Keyword, Value> = Keyword extends
+  | 'not'
+  | 'allOf'
+  | 'if'
+  | 'then'
+  | 'else'
+  ? Value // skip — sealing would alter combinator / conditional semantics
   : Keyword extends 'properties' | 'patternProperties'
     ? Value extends UnknownRecord
       ? { [PropertyName in keyof Value]: SealSchemaDeep<Value[PropertyName]> }
@@ -47,7 +52,14 @@ function sealSchema(schema: unknown): unknown {
 }
 
 function sealChild(key: string, value: unknown): unknown {
-  if (key === 'not' || key === 'allOf') return value;
+  if (
+    key === 'not' ||
+    key === 'allOf' ||
+    key === 'if' ||
+    key === 'then' ||
+    key === 'else'
+  )
+    return value;
   if (key === 'properties' || key === 'patternProperties') {
     if (!isRecord(value)) return value;
     const result: Record<string, unknown> = {};
@@ -63,6 +75,8 @@ function sealChild(key: string, value: unknown): unknown {
  * JSON Schema [combinators](https://json-schema.org/understanding-json-schema/reference/combining) are handled selectively to preserve semantics:
  * - `anyOf` / `oneOf`: each option is sealed
  * - `allOf` / `not`: left untouched (sealing would alter validation meaning)
+ * - `if` / `then` / `else`: left untouched (sealing the conditional branches
+ *   would silently change when the `then` / `else` branch fires)
  *
  * See [docs/combinators.md](../docs/combinators.md) for the full rationale.
  *

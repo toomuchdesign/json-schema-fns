@@ -37,7 +37,13 @@ Items here are required to call the release 1.0 with a straight face. Most are n
 
 **Files affected:** [README.md](../README.md), [src/utils/types/definitions.ts](../src/utils/types/definitions.ts), [docs/](.).
 
-**Decision: A.** Declared dialect is JSON Schema 2020-12; Draft-07 schemas continue to work as a subset. Extend `JSONSchema` to recognize the full 2020-12 keyword set as documented above (metadata, validation, and 2020-12 structural keywords) — no transform logic, keywords ride through `...schema` spreads. Widen `type` to `JSONSchemaType | readonly JSONSchemaType[]` to support array forms (`type: ['string', 'null']`). Add `if`/`then`/`else` to the combinator dispatch in `sealSchemaDeep` / `unsealSchemaDeep` with a "skip" policy (mirrors `not`); update [docs/combinators.md](combinators.md). Validator dialect for M1.3 is the 2020-12 meta-schema (`ajv/dist/2020`).
+**Decision: A (revised).** Declared dialect is JSON Schema 2020-12; Draft-07 schemas continue to work as a subset. **Do not** extend `JSONSchema` to list metadata / validation keywords (`title`, `description`, `$id`, `$defs`, `examples`, `default`, `deprecated`, `readOnly`, `writeOnly`, `const`, `enum`, `dependentRequired`, `propertyNames`, …) — they already ride through `<const Schema extends ...>` literal inference + `MergeRecords<Schema, …>` (`Omit`-based) and listing them in the type changes nothing observable. See [docs/types.md](types.md) for the subset philosophy. The real M1.1 work is:
+
+- Widen `type` to `JSONSchemaType | readonly JSONSchemaType[]` so schemas like `type: ['object', 'null']` are accepted at the top level (currently rejected with TS2345).
+- Add `if` / `then` / `else` to the keyword skip dispatch in `sealSchemaDeep` / `unsealSchemaDeep` (runtime + type) — confirmed bug: today these branches get `additionalProperties: false` mutated into them, silently shifting which values trigger `then` vs `else`. Update [docs/combinators.md](combinators.md) accordingly.
+- Document the dialect declaration and subset position in the README (not in the type).
+
+Validator dialect for M1.3 is the 2020-12 meta-schema (`ajv/dist/2020`).
 
 ### M1.2 De-experimentalize the `pipe*` API
 
@@ -252,7 +258,7 @@ The items below are in scope for the 1.0 release. See each section for the decis
 
 **Type & behavior surface**
 
-- **M1.1** Declare 2020-12 dialect; widen `JSONSchema` to recognize the full 2020-12 keyword set; widen `type` to `JSONSchemaType | readonly JSONSchemaType[]`; add `if`/`then`/`else` to combinator dispatch ("skip" policy mirroring `not`).
+- **M1.1** Declare 2020-12 dialect (in README, not in the type); widen `type` to `JSONSchemaType | readonly JSONSchemaType[]`; add `if`/`then`/`else` to combinator dispatch ("skip" policy mirroring `not`). Metadata-keyword preservation is structural already — see [docs/types.md](types.md).
 - **M1.2** De-experimentalize the `pipe*` API; measure depth ceiling across `{pipe-ts, ts-functional-pipe, effect, remeda}` × `{4, 8, 12, 16, 24}` stages; phrase README claim as "at least N stages verified".
 - **M2.1** Ship `omitPropsDeep` (1.0); defer `requirePropsDeep` / `optionalPropsDeep` to 1.x.
 - **M2.2** Ship `renameProps` (1.0); drop `setProp` and `withMeta` (sugar over `mergeProps`).

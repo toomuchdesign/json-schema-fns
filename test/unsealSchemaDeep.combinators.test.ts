@@ -490,6 +490,118 @@ describe('unsealSchemaDeep', () => {
       });
     });
 
+    describe('if / then / else', () => {
+      describe('as root definition', () => {
+        it('ignores conditional branches', () => {
+          const schema = {
+            type: 'object',
+            additionalProperties: false,
+            properties: { country: { type: 'string' } },
+            if: {
+              type: 'object',
+              additionalProperties: false,
+              properties: { country: { const: 'US' } },
+            },
+            then: {
+              type: 'object',
+              additionalProperties: false,
+              properties: { zipcode: { type: 'string' } },
+              required: ['zipcode'],
+            },
+            else: {
+              type: 'object',
+              additionalProperties: false,
+              properties: { postalCode: { type: 'string' } },
+              required: ['postalCode'],
+            },
+          } as const;
+          deepFreeze(schema);
+
+          const actual = unsealSchemaDeep(schema);
+          const expected = {
+            type: 'object',
+            properties: { country: { type: 'string' } },
+            if: {
+              type: 'object',
+              additionalProperties: false,
+              properties: { country: { const: 'US' } },
+            },
+            then: {
+              type: 'object',
+              additionalProperties: false,
+              properties: { zipcode: { type: 'string' } },
+              required: ['zipcode'],
+            },
+            else: {
+              type: 'object',
+              additionalProperties: false,
+              properties: { postalCode: { type: 'string' } },
+              required: ['postalCode'],
+            },
+          } as const;
+
+          expect(actual).toEqual(expected);
+          expectTypeOf(actual).toEqualTypeOf(expected);
+        });
+      });
+
+      describe('as object property definition', () => {
+        it('ignores conditional branches nested under properties', () => {
+          const schema = {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+              conditional: {
+                if: {
+                  type: 'object',
+                  additionalProperties: false,
+                  properties: { a: { type: 'string' } },
+                },
+                then: {
+                  type: 'object',
+                  additionalProperties: false,
+                  properties: { b: { type: 'string' } },
+                },
+                else: {
+                  type: 'object',
+                  additionalProperties: false,
+                  properties: { c: { type: 'string' } },
+                },
+              },
+            },
+          } as const;
+          deepFreeze(schema);
+
+          const actual = unsealSchemaDeep(schema);
+          const expected = {
+            type: 'object',
+            properties: {
+              conditional: {
+                if: {
+                  type: 'object',
+                  additionalProperties: false,
+                  properties: { a: { type: 'string' } },
+                },
+                then: {
+                  type: 'object',
+                  additionalProperties: false,
+                  properties: { b: { type: 'string' } },
+                },
+                else: {
+                  type: 'object',
+                  additionalProperties: false,
+                  properties: { c: { type: 'string' } },
+                },
+              },
+            },
+          } as const;
+
+          expect(actual).toEqual(expected);
+          expectTypeOf(actual).toEqualTypeOf(expected);
+        });
+      });
+    });
+
     describe('JSON Schema object with JSON schema combinator prop names', () => {
       it('changes object properties', () => {
         const schema = {
