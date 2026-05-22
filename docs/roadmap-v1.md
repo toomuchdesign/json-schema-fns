@@ -37,13 +37,17 @@ Items here are required to call the release 1.0 with a straight face. Most are n
 
 **Files affected:** [README.md](../README.md), [src/utils/types/definitions.ts](../src/utils/types/definitions.ts), [docs/](.).
 
-**Decision: A (revised).** Declared dialect is JSON Schema 2020-12; Draft-07 schemas continue to work as a subset. **Do not** extend `JSONSchema` to list metadata / validation keywords (`title`, `description`, `$id`, `$defs`, `examples`, `default`, `deprecated`, `readOnly`, `writeOnly`, `const`, `enum`, `dependentRequired`, `propertyNames`, …) — they already ride through `<const Schema extends ...>` literal inference + `MergeRecords<Schema, …>` (`Omit`-based) and listing them in the type changes nothing observable. See [docs/types.md](types.md) for the subset philosophy. The real M1.1 work is:
+**Decision: A (revised).** Declared dialect is **JSON Schema Draft-07 (2018)** — the dialect the library was built against. Forward-compatibility with later drafts (2019-09, 2020-12) is a **design property**, not an add-on: every transformation acts on a small known set of Draft-07 keywords, and every untouched keyword rides through via `<const Schema extends ...>` literal inference + `MergeRecords<Schema, …>` (`Omit`-based). Schemas using post-Draft-07 keywords therefore work in practice — see [docs/types.md](types.md). One explicit forward extension is documented separately: `unsealSchemaDeep` strips `unevaluatedProperties` (Draft 2019-09) alongside `additionalProperties`.
+
+**Do not** extend `JSONSchema` to list metadata / validation keywords (`title`, `description`, `$id`, `$defs`, `examples`, `default`, `deprecated`, `readOnly`, `writeOnly`, `const`, `enum`, `dependentRequired`, `propertyNames`, …) — they already ride through structurally and listing them in the type changes nothing observable.
+
+The real M1.1 work is:
 
 - Widen `type` to `JSONSchemaType | readonly JSONSchemaType[]` so schemas like `type: ['object', 'null']` are accepted at the top level (currently rejected with TS2345).
 - Add `if` / `then` / `else` to the keyword skip dispatch in `sealSchemaDeep` / `unsealSchemaDeep` (runtime + type) — confirmed bug: today these branches get `additionalProperties: false` mutated into them, silently shifting which values trigger `then` vs `else`. Update [docs/combinators.md](combinators.md) accordingly.
-- Document the dialect declaration and subset position in the README (not in the type).
+- Document the dialect declaration, the forward-compat property, and the `unevaluatedProperties` extension in the README (not in the type).
 
-Validator dialect for M1.3 is the 2020-12 meta-schema (`ajv/dist/2020`).
+Validator dialect for M1.3 is the Draft-07 meta-schema (ajv's default export).
 
 ### M1.2 De-experimentalize the `pipe*` API
 
@@ -63,16 +67,16 @@ Validator dialect for M1.3 is the 2020-12 meta-schema (`ajv/dist/2020`).
 
 **Proposal.**
 
-- Add `ajv` (with `ajv-formats` and the 2020-12 meta-schema) as a dev dependency.
+- Add `ajv` (with `ajv-formats`, using the Draft-07 meta-schema — ajv's default export) as a dev dependency.
 - For each fn, add a `test/semantic/<fn>.test.ts` that:
-  1. Compiles the input schema with ajv against the 2020-12 meta-schema (sanity).
+  1. Compiles the input schema with ajv against the Draft-07 meta-schema (sanity).
   2. Compiles the **output** schema with ajv (validity — the key new check).
   3. Defines a small set of fixture instances and asserts the documented semantic delta (e.g., for `omitProps`, instances missing the omitted prop should now validate where they didn't before, if that prop was required).
 - Keep the existing structural tests as-is — they assert type-level behavior too.
 
 **Why this is the single highest-leverage item.** Once ajv is verifying outputs, a whole class of "the types are right but the runtime is subtly wrong" bug becomes a regression instead of a post-release report.
 
-**Decision: A.** Both meta-schema validity and instance semantics per fn. Dev deps: `ajv`, `ajv-formats`. Shared helpers in `test/semantic/utils.ts` (`assertValidSchema`, `assertValidates`). One `test/semantic/<fn>.test.ts` per public function (8 files). Each contains: (1) one assertion that output passes the 2020-12 meta-schema; (2) ~3 fixture instances asserting the documented semantic delta against the input vs. output schema.
+**Decision: A (revised for Draft-07).** Both meta-schema validity and instance semantics per fn. Dev deps: `ajv`, `ajv-formats`. Validator dialect is **Draft-07** (ajv's default export, `import Ajv from 'ajv'`) — matches the dialect declared in M1.1. Shared helpers in `test/semantic/utils.ts` (`assertValidSchema`, `assertValidates`). One `test/semantic/<fn>.test.ts` per public function (8 files). Each contains: (1) one assertion that output passes the Draft-07 meta-schema; (2) ~3 fixture instances asserting the documented semantic delta against the input vs. output schema. Optional follow-up: add a 2020-12 cross-check (`import Ajv2020 from 'ajv/dist/2020'`) as a defense-in-depth signal that the forward-compat property still holds — not gated on 1.0.
 
 ### M1.4 Property-based tests for round-trip laws
 
@@ -258,7 +262,7 @@ The items below are in scope for the 1.0 release. See each section for the decis
 
 **Type & behavior surface**
 
-- **M1.1** Declare 2020-12 dialect (in README, not in the type); widen `type` to `JSONSchemaType | readonly JSONSchemaType[]`; add `if`/`then`/`else` to combinator dispatch ("skip" policy mirroring `not`). Metadata-keyword preservation is structural already — see [docs/types.md](types.md).
+- **M1.1** Declare **Draft-07** dialect (in README, not in the type) with forward-compatibility as a design property; widen `type` to `JSONSchemaType | readonly JSONSchemaType[]`; add `if`/`then`/`else` to combinator dispatch ("skip" policy mirroring `not`). Metadata-keyword preservation is structural already — see [docs/types.md](types.md).
 - **M1.2** De-experimentalize the `pipe*` API; measure depth ceiling across `{pipe-ts, ts-functional-pipe, effect, remeda}` × `{4, 8, 12, 16, 24}` stages; phrase README claim as "at least N stages verified".
 - **M2.1** Ship `omitPropsDeep` (1.0); defer `requirePropsDeep` / `optionalPropsDeep` to 1.x.
 - **M2.2** Ship `renameProps` (1.0); drop `setProp` and `withMeta` (sugar over `mergeProps`).

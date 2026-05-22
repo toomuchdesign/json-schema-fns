@@ -1,15 +1,25 @@
 # Type philosophy
 
-The internal [`JSONSchema`](../src/utils/types/definitions.ts) type is a **structural subset** of JSON Schema 2020-12, not a reference type. Consumers who need a complete JSON Schema TypeScript reference should pull one from npm (e.g. [`json-schema-to-ts`](https://github.com/ThomasAitken/json-schema-to-ts), [`@types/json-schema`](https://www.npmjs.com/package/@types/json-schema)). This document explains what that means in practice and how to decide when to extend the type.
+The internal [`JSONSchema`](../src/utils/types/definitions.ts) type is a **structural subset** of JSON Schema Draft-07 (2018), not a reference type. Consumers who need a complete JSON Schema TypeScript reference should pull one from npm (e.g. [`json-schema-to-ts`](https://github.com/ThomasAribart/json-schema-to-ts), [`@types/json-schema`](https://www.npmjs.com/package/@types/json-schema)). This document explains what that means in practice, why forward-compatibility with later drafts (2019-09, 2020-12) falls out of the design, and how to decide when to extend the type.
 
 ## The subset rule
 
 `JSONSchema` lists only the keywords this library actively reads or writes:
 
 - Object structure: `type`, `properties`, `patternProperties`, `required`, `additionalProperties`, `unevaluatedProperties`
-- Combinators: `allOf`, `anyOf`, `oneOf`, `not` (plus `if` / `then` / `else` once M1.1 ships)
+- Combinators: `allOf`, `anyOf`, `oneOf`, `not`
+- Conditional applicators: `if`, `then`, `else`
 
 Every other JSON Schema keyword (`title`, `description`, `$id`, `$defs`, `examples`, `default`, `deprecated`, `readOnly`, `writeOnly`, `const`, `enum`, `dependentRequired`, `propertyNames`, …) is intentionally **not** in the type. That is deliberate — not an oversight.
+
+## Forward-compatibility is a design property
+
+The library is built against Draft-07 but works in practice with schemas from Draft 2019-09 and Draft 2020-12 too. That isn't a separate compatibility layer — it falls out of the subset rule:
+
+1. Every transformation acts on a small known set of Draft-07 keywords.
+2. Every untouched key rides through structurally (see next section).
+
+So a schema with `$dynamicRef`, `prefixItems`, or `propertyNames` passes through the library unchanged. We don't validate against the spec, we don't try to "understand" the keyword — we leave it alone. There is exactly one explicit forward extension: `unsealSchemaDeep` strips `unevaluatedProperties` (a Draft 2019-09 keyword) alongside `additionalProperties`. That's documented as part of the function's contract.
 
 ## Why omitted keywords still ride through
 
@@ -56,4 +66,4 @@ Do **not** add a keyword for any of the following reasons:
 
 ## Relationship to `json-schema-to-ts`
 
-The library is designed to pair with `json-schema-to-ts`'s `FromSchema`. The contract is: any `as const` schema literal that is valid under `json-schema-to-ts`'s `JSONSchema` type, and uses only the keywords this library knows how to transform, is accepted as input, and every output remains consumable by `FromSchema`. Keywords outside the library's transformation set ride through untouched, so `FromSchema` sees them on the output exactly as it did on the input.
+The library is designed to pair with `json-schema-to-ts`'s `FromSchema`. The contract is: any `as const` schema literal that is valid under `json-schema-to-ts`'s `JSONSchema` type, and uses only the keywords this library knows how to transform, is accepted as input, and every output remains consumable by `FromSchema`. Keywords outside the library's transformation set — Draft-07 keywords we don't touch, or any post-Draft-07 keyword — ride through untouched, so `FromSchema` sees them on the output exactly as it did on the input.
