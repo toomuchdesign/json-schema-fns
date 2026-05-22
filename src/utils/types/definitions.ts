@@ -13,7 +13,7 @@ export type JSONSchemaType =
 export type JSONSchema =
   | boolean
   | Readonly<{
-      type?: JSONSchemaType;
+      type?: JSONSchemaType | readonly JSONSchemaType[];
       required?: readonly string[];
       properties?: Readonly<Record<string, unknown>>;
       patternProperties?: Readonly<Record<string, unknown>>;
@@ -26,6 +26,11 @@ export type JSONSchema =
       anyOf?: readonly JSONSchema[];
       oneOf?: readonly JSONSchema[];
       not?: JSONSchema;
+
+      // Conditional applicators
+      if?: JSONSchema;
+      then?: JSONSchema;
+      else?: JSONSchema;
     }>;
 
 export type JSONSchemaObject = Simplify<

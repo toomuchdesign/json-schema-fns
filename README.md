@@ -275,6 +275,12 @@ const result = pipeWith(
 );
 ```
 
+## Supported JSON Schema dialect
+
+The library targets **[JSON Schema Draft-07 (2018)](https://json-schema.org/draft-07)**. Every transformation acts on a small known set of Draft-07 keywords (`type`, `properties`, `patternProperties`, `required`, `additionalProperties`, the combinators `allOf` / `anyOf` / `oneOf` / `not`, and the conditional applicators `if` / `then` / `else`).
+
+**Forward-compatibility is a design property.** Schemas that use newer keywords from [Draft 2019-09](https://json-schema.org/draft/2019-09) or [Draft 2020-12](https://json-schema.org/draft/2020-12) — for example `$defs`, `prefixItems`, `dependentRequired`, `propertyNames`, `$dynamicRef` — pass through the library unchanged: every keyword the library does not explicitly transform rides through via TypeScript's `const` generic + `Omit`-based merge. See [docs/types.md](docs/types.md) for the mechanics.
+
 ## Related projects
 
 - https://github.com/codeperate/json-schema-builder
@@ -284,16 +290,6 @@ const result = pipeWith(
 ## Todo
 
 - Consider exposing a pipe utility
-
-## Dev notes
-
-### Types structure
-
-The types exposed by this library are intentionally simplified to make them more explicit and easier to work with. Specifically, we unwrap generic types only at the top level—this means simplification is applied to non-recursive (non-deep) generics, and nested generic structures are left intact.
-
-As a result, manual validation of output types is required before each release to ensure they match the expected structures. This step is important to prevent subtle type regressions that automated tests may not catch.
-
-If anything in this process is unclear or if there's a better way to integrate type checking into our workflow, feel free to raise it—I'd appreciate any suggestions.
 
 ## Contributing
 

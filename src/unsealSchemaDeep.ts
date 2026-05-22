@@ -25,8 +25,13 @@ type UnsealSchemaDeep<Schema> = Schema extends UnknownArray
       : Schema;
 
 // Dispatch recursion based on the JSON Schema keyword — see docs/combinators.md.
-type UnsealChild<Keyword, Value> = Keyword extends 'not' | 'oneOf'
-  ? Value // skip — unsealing would alter combinator semantics
+type UnsealChild<Keyword, Value> = Keyword extends
+  | 'not'
+  | 'oneOf'
+  | 'if'
+  | 'then'
+  | 'else'
+  ? Value // skip — unsealing would alter combinator / conditional semantics
   : Keyword extends 'properties' | 'patternProperties'
     ? Value extends UnknownRecord
       ? {
@@ -55,7 +60,14 @@ function unsealSchema(schema: unknown): unknown {
 }
 
 function unsealChild(key: string, value: unknown): unknown {
-  if (key === 'not' || key === 'oneOf') return value;
+  if (
+    key === 'not' ||
+    key === 'oneOf' ||
+    key === 'if' ||
+    key === 'then' ||
+    key === 'else'
+  )
+    return value;
   if (key === 'properties' || key === 'patternProperties') {
     if (!isRecord(value)) return value;
     const result: Record<string, unknown> = {};
@@ -71,6 +83,8 @@ function unsealChild(key: string, value: unknown): unknown {
  * JSON Schema [combinators](https://json-schema.org/understanding-json-schema/reference/combining) are handled selectively to preserve semantics:
  * - `allOf` / `anyOf`: each option is unsealed
  * - `oneOf` / `not`: left untouched (unsealing would alter validation meaning)
+ * - `if` / `then` / `else`: left untouched (unsealing the conditional branches
+ *   would silently change when the `then` / `else` branch fires)
  *
  * See [docs/combinators.md](../docs/combinators.md) for the full rationale.
  *

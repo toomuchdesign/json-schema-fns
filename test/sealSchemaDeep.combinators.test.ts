@@ -466,6 +466,106 @@ describe('sealSchemaDeep', () => {
       });
     });
 
+    describe('if / then / else', () => {
+      describe('root combinator', () => {
+        it('ignores conditional branches', () => {
+          const schema = {
+            type: 'object',
+            properties: { country: { type: 'string' } },
+            if: {
+              type: 'object',
+              properties: { country: { const: 'US' } },
+            },
+            then: {
+              type: 'object',
+              properties: { zipcode: { type: 'string' } },
+              required: ['zipcode'],
+            },
+            else: {
+              type: 'object',
+              properties: { postalCode: { type: 'string' } },
+              required: ['postalCode'],
+            },
+          } as const;
+          deepFreeze(schema);
+
+          const actual = sealSchemaDeep(schema);
+          const expected = {
+            type: 'object',
+            additionalProperties: false,
+            properties: { country: { type: 'string' } },
+            if: {
+              type: 'object',
+              properties: { country: { const: 'US' } },
+            },
+            then: {
+              type: 'object',
+              properties: { zipcode: { type: 'string' } },
+              required: ['zipcode'],
+            },
+            else: {
+              type: 'object',
+              properties: { postalCode: { type: 'string' } },
+              required: ['postalCode'],
+            },
+          } as const;
+
+          expect(actual).toEqual(expected);
+          expectTypeOf(actual).toEqualTypeOf(expected);
+        });
+      });
+
+      describe('object property combinator', () => {
+        it('ignores conditional branches nested under properties', () => {
+          const schema = {
+            type: 'object',
+            properties: {
+              conditional: {
+                if: {
+                  type: 'object',
+                  properties: { a: { type: 'string' } },
+                },
+                then: {
+                  type: 'object',
+                  properties: { b: { type: 'string' } },
+                },
+                else: {
+                  type: 'object',
+                  properties: { c: { type: 'string' } },
+                },
+              },
+            },
+          } as const;
+          deepFreeze(schema);
+
+          const actual = sealSchemaDeep(schema);
+          const expected = {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+              conditional: {
+                if: {
+                  type: 'object',
+                  properties: { a: { type: 'string' } },
+                },
+                then: {
+                  type: 'object',
+                  properties: { b: { type: 'string' } },
+                },
+                else: {
+                  type: 'object',
+                  properties: { c: { type: 'string' } },
+                },
+              },
+            },
+          } as const;
+
+          expect(actual).toEqual(expected);
+          expectTypeOf(actual).toEqualTypeOf(expected);
+        });
+      });
+    });
+
     describe('JSON Schema object with JSON schema combinator prop names', () => {
       it('changes object properties', () => {
         const schema = {
