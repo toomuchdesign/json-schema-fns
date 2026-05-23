@@ -1,5 +1,5 @@
 import type { DeepPaths } from '../pickPropsDeep/types';
-import { isJSONSchemaObjectType } from '../utils';
+import { groupPathsByHead, isJSONSchemaObjectType } from '../utils';
 import type { JSONSchemaObject } from '../utils/types';
 import type { OmitPropsDeepWith } from './types';
 
@@ -9,35 +9,19 @@ function omitPropsDeepInternal(
 ): JSONSchemaObject {
   isJSONSchemaObjectType(schema);
 
-  const dropWhole = new Set<string>();
-  const subPathsByKey: Record<string, string[]> = {};
-
-  for (const path of paths) {
-    const dotIdx = path.indexOf('.');
-    if (dotIdx === -1) {
-      dropWhole.add(path);
-    } else {
-      const head = path.slice(0, dotIdx);
-      const rest = path.slice(dotIdx + 1);
-      if (!subPathsByKey[head]) {
-        subPathsByKey[head] = [];
-      }
-      subPathsByKey[head].push(rest);
-    }
-  }
-
+  const { bare, nested } = groupPathsByHead(paths);
   const required = schema.required
-    ? schema.required.filter((key) => !dropWhole.has(key))
+    ? schema.required.filter((key) => !bare.has(key))
     : [];
 
   const properties: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(schema.properties)) {
-    if (dropWhole.has(key)) continue;
-    if (subPathsByKey[key]) {
+    if (bare.has(key)) continue;
+    if (nested[key]) {
       properties[key] = omitPropsDeepInternal(
         // @ts-expect-error nested value is a JSONSchemaObject by DeepPaths constraint — TS cannot infer it through Record<string, unknown>
         value,
-        subPathsByKey[key]!,
+        nested[key]!,
       );
     } else {
       properties[key] = value;
