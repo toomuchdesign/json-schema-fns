@@ -43,6 +43,7 @@ npm install @toomuchdesign/json-schema-fns
 | Function                                | Description                                                                  |                                       |
 | --------------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------- |
 | [`omitProps`](#omitProps)               | Omit specific `properties` from an object JSON schema                        | [Live demo ⚡][omitProps-demo]        |
+| [`omitPropsDeep`](#omitPropsDeep)       | Omit specific nested `properties` using dot-notation paths                   |                                       |
 | [`pickProps`](#pickProps)               | Pick only specific `properties` from an object JSON schema                   | [Live demo ⚡][pickProps-demo]        |
 | [`pickPropsDeep`](#pickPropsDeep)       | Pick specific nested `properties` using dot-notation paths                   | [Live demo ⚡][pickPropsDeep-demo]    |
 | [`mergeProps`](#mergeProps)             | Merge two object JSON schemas' `properties` and `patternProperties` into one | [Live demo ⚡][mergeProps-demo]       |
@@ -68,6 +69,32 @@ const schema = {
 } as const;
 
 const result = omitProps(schema, ['b']);
+```
+
+### omitPropsDeep
+
+Omit specific nested `properties` from an object JSON schema using dot-notation paths. Paths sharing a common prefix are merged; a bare key drops the whole sub-schema, a dotted path drills in and drops only the leaf. When both forms target the same key, the bare-key drop wins.
+
+```ts
+import { omitPropsDeep } from '@toomuchdesign/json-schema-fns';
+
+const schema = {
+  type: 'object',
+  required: ['user', 'meta'],
+  properties: {
+    user: {
+      type: 'object',
+      required: ['id', 'password'],
+      properties: {
+        id: { type: 'string' },
+        password: { type: 'string' },
+      },
+    },
+    meta: { type: 'string' },
+  },
+} as const;
+
+const result = omitPropsDeep(schema, ['user.password', 'meta']);
 ```
 
 ### pickProps
