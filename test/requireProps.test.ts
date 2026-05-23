@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest';
 
 import { pipeRequireProps, requireProps } from '../src';
 import type { TupleToUnion } from '../src/utils/types';
+import { assertValidSchema } from './assertValidSchema';
 
 describe('requireProps', () => {
   describe('without keys argument', () => {
@@ -76,6 +77,8 @@ describe('requireProps', () => {
 
         expect(actual).toEqual(expected);
         expectTypeOf(actual).toEqualTypeOf(expected);
+        assertValidSchema(actual);
+        assertValidSchema(expected);
       });
     });
   });
@@ -152,6 +155,8 @@ describe('requireProps', () => {
 
         expect(actual).toEqual(expected);
         expectTypeOf(actual).toEqualTypeOf(expected);
+        assertValidSchema(actual);
+        assertValidSchema(expected);
       });
     });
   });
@@ -177,6 +182,8 @@ describe('requireProps', () => {
 
     expect(actual).toEqual(expected);
     expectTypeOf(actual).toEqualTypeOf(expected);
+    assertValidSchema(actual);
+    assertValidSchema(expected);
   });
 
   describe('type !== object', () => {

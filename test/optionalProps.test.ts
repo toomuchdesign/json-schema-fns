@@ -4,6 +4,7 @@ import { pipeWith } from 'pipe-ts';
 import { describe, expect, it } from 'vitest';
 
 import { optionalProps, pipeOptionalProps } from '../src';
+import { assertValidSchema } from './assertValidSchema';
 
 describe('optionalProps', () => {
   describe('without keys argument', () => {
@@ -29,6 +30,8 @@ describe('optionalProps', () => {
 
       expect(actual).toEqual(expected);
       expectTypeOf(actual).toEqualTypeOf(expected);
+      assertValidSchema(actual);
+      assertValidSchema(expected);
     });
 
     describe('provided schema.properties prop is empty object', () => {
@@ -48,6 +51,8 @@ describe('optionalProps', () => {
 
         expect(actual).toEqual(expected);
         expectTypeOf(actual).toEqualTypeOf(expected);
+        assertValidSchema(actual);
+        assertValidSchema(expected);
       });
     });
   });
@@ -80,6 +85,8 @@ describe('optionalProps', () => {
 
       expect(actual).toEqual(expected);
       expectTypeOf(actual).toEqualTypeOf(expected);
+      assertValidSchema(actual);
+      assertValidSchema(expected);
     });
 
     describe('keys argument is empty array []', () => {
@@ -99,6 +106,8 @@ describe('optionalProps', () => {
 
         expect(actual).toEqual(expected);
         expectTypeOf(actual).toEqualTypeOf(expected);
+        assertValidSchema(actual);
+        assertValidSchema(expected);
       });
     });
 
@@ -117,6 +126,8 @@ describe('optionalProps', () => {
 
         expect(actual).toEqual(expected);
         expectTypeOf(actual).toEqualTypeOf(expected);
+        assertValidSchema(actual);
+        assertValidSchema(expected);
       });
     });
   });
@@ -183,5 +194,7 @@ describe('optionalProps', () => {
 
     expect(actual).toEqual(expected);
     expectTypeOf(actual).toEqualTypeOf(expected);
+    assertValidSchema(actual);
+    assertValidSchema(expected);
   });
 });

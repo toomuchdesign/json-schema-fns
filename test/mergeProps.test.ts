@@ -4,6 +4,7 @@ import { pipeWith } from 'pipe-ts';
 import { describe, expect, it } from 'vitest';
 
 import { mergeProps, pipeMergeProps } from '../src';
+import { assertValidSchema } from './assertValidSchema';
 
 describe('mergeProps', () => {
   it('returns expected schema and types', () => {
@@ -59,6 +60,8 @@ describe('mergeProps', () => {
 
     expect(actual).toEqual(expected);
     expectTypeOf(actual).toEqualTypeOf(expected);
+    assertValidSchema(actual);
+    assertValidSchema(expected);
   });
 
   describe('clashing input properties', () => {
@@ -113,6 +116,8 @@ describe('mergeProps', () => {
 
       expect(actual).toEqual(expected);
       expectTypeOf(actual).toEqualTypeOf(expected);
+      assertValidSchema(actual);
+      assertValidSchema(expected);
     });
   });
 
@@ -151,6 +156,8 @@ describe('mergeProps', () => {
 
     expect(actual).toEqual(expected);
     expectTypeOf(actual).toEqualTypeOf(expected);
+    assertValidSchema(actual);
+    assertValidSchema(expected);
   });
 
   describe('no required props on resulting schema', () => {
@@ -182,6 +189,8 @@ describe('mergeProps', () => {
 
       expect(actual).toEqual(expected);
       expectTypeOf(actual).toEqualTypeOf(expected);
+      assertValidSchema(actual);
+      assertValidSchema(expected);
     });
   });
 
@@ -214,6 +223,8 @@ describe('mergeProps', () => {
 
       expect(actual).toEqual(expected);
       expectTypeOf(actual).toEqualTypeOf(expected);
+      assertValidSchema(actual);
+      assertValidSchema(expected);
     });
   });
 
@@ -318,5 +329,7 @@ describe('pipeMergeProps', () => {
 
     expect(actual).toEqual(expected);
     expectTypeOf(actual).toEqualTypeOf(expected);
+    assertValidSchema(actual);
+    assertValidSchema(expected);
   });
 });

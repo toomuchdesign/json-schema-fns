@@ -15,6 +15,7 @@ import {
   requireProps,
   sealSchemaDeep,
 } from '../src';
+import { assertValidSchema } from './assertValidSchema';
 
 describe('composition', () => {
   describe('functional API', () => {
@@ -53,6 +54,8 @@ describe('composition', () => {
 
       expect(actual).toEqual(expected);
       expectTypeOf(actual).toEqualTypeOf(expected);
+      assertValidSchema(actual);
+      assertValidSchema(expected);
     });
   });
 
@@ -91,6 +94,8 @@ describe('composition', () => {
 
         expect(actual).toEqual(expected);
         expectTypeOf(actual).toEqualTypeOf(expected);
+        assertValidSchema(actual);
+        assertValidSchema(expected);
       });
     });
 
@@ -128,6 +133,8 @@ describe('composition', () => {
 
         expect(actual).toEqual(expected);
         expectTypeOf(actual).toEqualTypeOf(expected);
+        assertValidSchema(actual);
+        assertValidSchema(expected);
       });
     });
 
@@ -165,6 +172,8 @@ describe('composition', () => {
 
         expect(actual).toEqual(expected);
         expectTypeOf(actual).toEqualTypeOf(expected);
+        assertValidSchema(actual);
+        assertValidSchema(expected);
       });
     });
   });

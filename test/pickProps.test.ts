@@ -4,6 +4,7 @@ import { pipeWith } from 'pipe-ts';
 import { describe, expect, it } from 'vitest';
 
 import { pickProps, pipePickProps } from '../src';
+import { assertValidSchema } from './assertValidSchema';
 
 describe('pickProps', () => {
   it('returns expected schema and types', () => {
@@ -32,6 +33,8 @@ describe('pickProps', () => {
 
     expect(actual).toEqual(expected);
     expectTypeOf(actual).toEqualTypeOf(expected);
+    assertValidSchema(actual);
+    assertValidSchema(expected);
   });
 
   it('preserves non relevant props', () => {
@@ -62,6 +65,8 @@ describe('pickProps', () => {
 
     expect(actual).toEqual(expected);
     expectTypeOf(actual).toEqualTypeOf(expected);
+    assertValidSchema(actual);
+    assertValidSchema(expected);
   });
 
   describe('no required props on resulting schema', () => {
@@ -87,6 +92,8 @@ describe('pickProps', () => {
 
       expect(actual).toEqual(expected);
       expectTypeOf(actual).toEqualTypeOf(expected);
+      assertValidSchema(actual);
+      assertValidSchema(expected);
     });
   });
 
@@ -151,5 +158,7 @@ describe('pipePickProps', () => {
 
     expect(actual).toEqual(expected);
     expectTypeOf(actual).toEqualTypeOf(expected);
+    assertValidSchema(actual);
+    assertValidSchema(expected);
   });
 });

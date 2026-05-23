@@ -3,6 +3,7 @@ import { expectTypeOf } from 'expect-type';
 import { describe, expect, it } from 'vitest';
 
 import { unsealSchemaDeep } from '../src';
+import { assertValidSchema } from './assertValidSchema';
 
 describe('unsealSchemaDeep', () => {
   describe('combinators', () => {
@@ -41,6 +42,8 @@ describe('unsealSchemaDeep', () => {
 
           expect(actual).toEqual(expected);
           expectTypeOf(actual).toEqualTypeOf(expected);
+          assertValidSchema(actual);
+          assertValidSchema(expected);
         });
       });
 
@@ -155,6 +158,8 @@ describe('unsealSchemaDeep', () => {
 
           expect(actual).toEqual(expected);
           expectTypeOf(actual).toEqualTypeOf(expected);
+          assertValidSchema(actual);
+          assertValidSchema(expected);
         });
       });
     });
@@ -194,6 +199,8 @@ describe('unsealSchemaDeep', () => {
 
           expect(actual).toEqual(expected);
           expectTypeOf(actual).toEqualTypeOf(expected);
+          assertValidSchema(actual);
+          assertValidSchema(expected);
         });
       });
 
@@ -272,6 +279,8 @@ describe('unsealSchemaDeep', () => {
 
           expect(actual).toEqual(expected);
           expectTypeOf(actual).toEqualTypeOf(expected);
+          assertValidSchema(actual);
+          assertValidSchema(expected);
         });
       });
     });
@@ -309,6 +318,8 @@ describe('unsealSchemaDeep', () => {
 
           expect(actual).toEqual(expected);
           expectTypeOf(actual).toEqualTypeOf(expected);
+          assertValidSchema(actual);
+          assertValidSchema(expected);
         });
       });
 
@@ -391,6 +402,8 @@ describe('unsealSchemaDeep', () => {
 
           expect(actual).toEqual(expected);
           expectTypeOf(actual).toEqualTypeOf(expected);
+          assertValidSchema(actual);
+          assertValidSchema(expected);
         });
       });
     });
@@ -434,6 +447,8 @@ describe('unsealSchemaDeep', () => {
 
           expect(actual).toEqual(expected);
           expectTypeOf(actual).toEqualTypeOf(expected);
+          assertValidSchema(actual);
+          assertValidSchema(expected);
         });
       });
 
@@ -486,6 +501,8 @@ describe('unsealSchemaDeep', () => {
 
           expect(actual).toEqual(expected);
           expectTypeOf(actual).toEqualTypeOf(expected);
+          assertValidSchema(actual);
+          assertValidSchema(expected);
         });
       });
     });
@@ -542,6 +559,8 @@ describe('unsealSchemaDeep', () => {
 
           expect(actual).toEqual(expected);
           expectTypeOf(actual).toEqualTypeOf(expected);
+          assertValidSchema(actual);
+          assertValidSchema(expected);
         });
       });
 
@@ -598,6 +617,8 @@ describe('unsealSchemaDeep', () => {
 
           expect(actual).toEqual(expected);
           expectTypeOf(actual).toEqualTypeOf(expected);
+          assertValidSchema(actual);
+          assertValidSchema(expected);
         });
       });
     });
@@ -765,6 +786,8 @@ describe('unsealSchemaDeep', () => {
 
         expect(actual).toEqual(expected);
         expectTypeOf(actual).toEqualTypeOf(expected);
+        assertValidSchema(actual);
+        assertValidSchema(expected);
       });
     });
   });
