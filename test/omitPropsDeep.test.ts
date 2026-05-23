@@ -7,543 +7,478 @@ import { omitPropsDeep, pipeOmitPropsDeep } from '../src';
 import { assertValidSchema } from './assertValidSchema';
 
 describe('omitPropsDeep', () => {
-  it('deep omits a single nested property', () => {
-    const schema = {
-      type: 'object',
-      required: ['a', 'b'],
-      properties: {
-        a: {
-          type: 'object',
-          required: ['x', 'y'],
-          properties: {
-            x: { type: 'string' },
-            y: { type: 'number' },
-          },
-        },
-        b: { type: 'string' },
-      },
-    } as const;
-    deepFreeze(schema);
-
-    const actual = omitPropsDeep(schema, ['a.x']);
-    const expected = {
-      type: 'object',
-      required: ['a', 'b'],
-      properties: {
-        a: {
-          type: 'object',
-          required: ['y'],
-          properties: {
-            y: { type: 'number' },
-          },
-        },
-        b: { type: 'string' },
-      },
-    } as const;
-
-    expect(actual).toEqual(expected);
-    expectTypeOf(actual).toEqualTypeOf(expected);
-    assertValidSchema(actual);
-    assertValidSchema(expected);
-  });
-
-  it('merges sibling paths under the same prefix', () => {
-    const schema = {
-      type: 'object',
-      required: ['a'],
-      properties: {
-        a: {
-          type: 'object',
-          required: ['x', 'y', 'z'],
-          properties: {
-            x: { type: 'string' },
-            y: { type: 'number' },
-            z: { type: 'boolean' },
-          },
-        },
-      },
-    } as const;
-    deepFreeze(schema);
-
-    const actual = omitPropsDeep(schema, ['a.x', 'a.y']);
-    const expected = {
-      type: 'object',
-      required: ['a'],
-      properties: {
-        a: {
-          type: 'object',
-          required: ['z'],
-          properties: {
-            z: { type: 'boolean' },
-          },
-        },
-      },
-    } as const;
-
-    expect(actual).toEqual(expected);
-    expectTypeOf(actual).toEqualTypeOf(expected);
-    assertValidSchema(actual);
-    assertValidSchema(expected);
-  });
-
-  it('combines top-level and nested paths', () => {
-    const schema = {
-      type: 'object',
-      required: ['a', 'b', 'c', 'd'],
-      properties: {
-        a: {
-          type: 'object',
-          required: ['x', 'y', 'z'],
-          properties: {
-            x: { type: 'string' },
-            y: { type: 'number' },
-            z: { type: 'boolean' },
-          },
-        },
-        b: { type: 'string' },
-        c: { type: 'number' },
-        d: { type: 'boolean' },
-      },
-    } as const;
-    deepFreeze(schema);
-
-    const actual = omitPropsDeep(schema, ['a.x', 'a.y', 'b', 'c']);
-    const expected = {
-      type: 'object',
-      required: ['a', 'd'],
-      properties: {
-        a: {
-          type: 'object',
-          required: ['z'],
-          properties: {
-            z: { type: 'boolean' },
-          },
-        },
-        d: { type: 'boolean' },
-      },
-    } as const;
-
-    expect(actual).toEqual(expected);
-    expectTypeOf(actual).toEqualTypeOf(expected);
-    assertValidSchema(actual);
-    assertValidSchema(expected);
-  });
-
-  it('omits the whole sub-schema when a bare key is supplied', () => {
-    const schema = {
-      type: 'object',
-      required: ['a', 'b'],
-      properties: {
-        a: {
-          type: 'object',
-          required: ['x', 'y'],
-          properties: {
-            x: { type: 'string' },
-            y: { type: 'number' },
-          },
-        },
-        b: { type: 'string' },
-      },
-    } as const;
-    deepFreeze(schema);
-
-    const actual = omitPropsDeep(schema, ['a']);
-    const expected = {
-      type: 'object',
-      required: ['b'],
-      properties: {
-        b: { type: 'string' },
-      },
-    } as const;
-
-    expect(actual).toEqual(expected);
-    expectTypeOf(actual).toEqualTypeOf(expected);
-    assertValidSchema(actual);
-    assertValidSchema(expected);
-  });
-
-  it('drills through multiple levels of nesting', () => {
-    const schema = {
-      type: 'object',
-      required: ['a'],
-      properties: {
-        a: {
-          type: 'object',
-          required: ['b'],
-          properties: {
-            b: {
-              type: 'object',
-              required: ['c', 'd'],
-              properties: {
-                c: { type: 'string' },
-                d: { type: 'number' },
-              },
+  describe('single nested path', () => {
+    it('deep omits the property at the leaf', () => {
+      const schema = {
+        type: 'object',
+        required: ['a', 'b'],
+        properties: {
+          a: {
+            type: 'object',
+            required: ['x', 'y'],
+            properties: {
+              x: { type: 'string' },
+              y: { type: 'number' },
             },
           },
+          b: { type: 'string' },
         },
-      },
-    } as const;
-    deepFreeze(schema);
+      } as const;
+      deepFreeze(schema);
 
-    const actual = omitPropsDeep(schema, ['a.b.c']);
-    const expected = {
-      type: 'object',
-      required: ['a'],
-      properties: {
-        a: {
-          type: 'object',
-          required: ['b'],
-          properties: {
-            b: {
-              type: 'object',
-              required: ['d'],
-              properties: {
-                d: { type: 'number' },
-              },
+      const actual = omitPropsDeep(schema, ['a.x']);
+      const expected = {
+        type: 'object',
+        required: ['a', 'b'],
+        properties: {
+          a: {
+            type: 'object',
+            required: ['y'],
+            properties: {
+              y: { type: 'number' },
             },
           },
+          b: { type: 'string' },
         },
-      },
-    } as const;
+      } as const;
 
-    expect(actual).toEqual(expected);
-    expectTypeOf(actual).toEqualTypeOf(expected);
-    assertValidSchema(actual);
-    assertValidSchema(expected);
+      expect(actual).toEqual(expected);
+      expectTypeOf(actual).toEqualTypeOf(expected);
+      assertValidSchema(actual);
+      assertValidSchema(expected);
+    });
   });
 
-  it('drills 4 levels deep and prunes a single leaf at every level', () => {
-    const schema = {
-      type: 'object',
-      required: ['a', 'keep'],
-      properties: {
-        a: {
-          type: 'object',
-          required: ['b', 'sibling1'],
-          properties: {
-            b: {
-              type: 'object',
-              required: ['c', 'sibling2'],
-              properties: {
-                c: {
-                  type: 'object',
-                  required: ['d', 'sibling3'],
-                  properties: {
-                    d: { type: 'string' },
-                    sibling3: { type: 'boolean' },
-                  },
-                },
-                sibling2: { type: 'number' },
-              },
-            },
-            sibling1: { type: 'string' },
-          },
-        },
-        keep: { type: 'string' },
-      },
-    } as const;
-    deepFreeze(schema);
-
-    const actual = omitPropsDeep(schema, ['a.b.c.d']);
-    const expected = {
-      type: 'object',
-      required: ['a', 'keep'],
-      properties: {
-        a: {
-          type: 'object',
-          required: ['b', 'sibling1'],
-          properties: {
-            b: {
-              type: 'object',
-              required: ['c', 'sibling2'],
-              properties: {
-                c: {
-                  type: 'object',
-                  required: ['sibling3'],
-                  properties: {
-                    sibling3: { type: 'boolean' },
-                  },
-                },
-                sibling2: { type: 'number' },
-              },
-            },
-            sibling1: { type: 'string' },
-          },
-        },
-        keep: { type: 'string' },
-      },
-    } as const;
-
-    expect(actual).toEqual(expected);
-    expectTypeOf(actual).toEqualTypeOf(expected);
-    assertValidSchema(actual);
-    assertValidSchema(expected);
-  });
-
-  it('drills 5 levels deep and merges sibling paths at a deep level', () => {
-    const schema = {
-      type: 'object',
-      required: ['a'],
-      properties: {
-        a: {
-          type: 'object',
-          required: ['b'],
-          properties: {
-            b: {
-              type: 'object',
-              required: ['c'],
-              properties: {
-                c: {
-                  type: 'object',
-                  required: ['d'],
-                  properties: {
-                    d: {
-                      type: 'object',
-                      required: ['e', 'f', 'g'],
-                      properties: {
-                        e: { type: 'string' },
-                        f: { type: 'number' },
-                        g: { type: 'boolean' },
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    } as const;
-    deepFreeze(schema);
-
-    const actual = omitPropsDeep(schema, ['a.b.c.d.e', 'a.b.c.d.g']);
-    const expected = {
-      type: 'object',
-      required: ['a'],
-      properties: {
-        a: {
-          type: 'object',
-          required: ['b'],
-          properties: {
-            b: {
-              type: 'object',
-              required: ['c'],
-              properties: {
-                c: {
-                  type: 'object',
-                  required: ['d'],
-                  properties: {
-                    d: {
-                      type: 'object',
-                      required: ['f'],
-                      properties: {
-                        f: { type: 'number' },
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    } as const;
-
-    expect(actual).toEqual(expected);
-    expectTypeOf(actual).toEqualTypeOf(expected);
-    assertValidSchema(actual);
-    assertValidSchema(expected);
-  });
-
-  it('whole-wins at the top level', () => {
-    const schema = {
-      type: 'object',
-      required: ['a', 'b'],
-      properties: {
-        a: {
-          type: 'object',
-          required: ['x', 'y'],
-          properties: {
-            x: { type: 'string' },
-            y: { type: 'number' },
-          },
-        },
-        b: { type: 'string' },
-      },
-    } as const;
-    deepFreeze(schema);
-
-    // bare 'a' wins over 'a.x' — the whole sub-schema is dropped
-    const actual = omitPropsDeep(schema, ['a', 'a.x']);
-    const expected = {
-      type: 'object',
-      required: ['b'],
-      properties: {
-        b: { type: 'string' },
-      },
-    } as const;
-
-    expect(actual).toEqual(expected);
-    expectTypeOf(actual).toEqualTypeOf(expected);
-    assertValidSchema(actual);
-    assertValidSchema(expected);
-  });
-
-  it('duplicate paths are treated as a single path', () => {
-    const schema = {
-      type: 'object',
-      required: ['a', 'b'],
-      properties: {
-        a: {
-          type: 'object',
-          required: ['x', 'y'],
-          properties: {
-            x: { type: 'string' },
-            y: { type: 'number' },
-          },
-        },
-        b: { type: 'string' },
-      },
-    } as const;
-    deepFreeze(schema);
-
-    const actual = omitPropsDeep(schema, ['a.x', 'a.x']);
-    const expected = {
-      type: 'object',
-      required: ['a', 'b'],
-      properties: {
-        a: {
-          type: 'object',
-          required: ['y'],
-          properties: {
-            y: { type: 'number' },
-          },
-        },
-        b: { type: 'string' },
-      },
-    } as const;
-
-    expect(actual).toEqual(expected);
-    expectTypeOf(actual).toEqualTypeOf(expected);
-    assertValidSchema(actual);
-    assertValidSchema(expected);
-  });
-
-  it('whole-wins at a deep nested level', () => {
-    const schema = {
-      type: 'object',
-      required: ['a'],
-      properties: {
-        a: {
-          type: 'object',
-          required: ['b'],
-          properties: {
-            b: {
-              type: 'object',
-              required: ['c', 'sibling'],
-              properties: {
-                c: {
-                  type: 'object',
-                  required: ['x', 'y'],
-                  properties: {
-                    x: { type: 'string' },
-                    y: { type: 'number' },
-                  },
-                },
-                sibling: { type: 'boolean' },
-              },
-            },
-          },
-        },
-      },
-    } as const;
-    deepFreeze(schema);
-
-    // 'a.b.c' wins over 'a.b.c.x' — c is dropped whole
-    const actual = omitPropsDeep(schema, ['a.b.c', 'a.b.c.x']);
-    const expected = {
-      type: 'object',
-      required: ['a'],
-      properties: {
-        a: {
-          type: 'object',
-          required: ['b'],
-          properties: {
-            b: {
-              type: 'object',
-              required: ['sibling'],
-              properties: {
-                sibling: { type: 'boolean' },
-              },
-            },
-          },
-        },
-      },
-    } as const;
-
-    expect(actual).toEqual(expected);
-    expectTypeOf(actual).toEqualTypeOf(expected);
-    assertValidSchema(actual);
-    assertValidSchema(expected);
-  });
-
-  it('preserves non relevant props at every level', () => {
-    const schema = {
-      type: 'object',
-      properties: {
-        a: {
-          type: 'object',
-          properties: {
-            x: { type: 'string' },
-            y: { type: 'number' },
-          },
-          patternProperties: {
-            '^N_': { type: 'number' },
-          },
-          extraneousNested: { hello: 'nested' },
-        },
-        b: { type: 'number' },
-      },
-      patternProperties: {
-        '^S_': { type: 'string' },
-      },
-      extraneousProp: { hello: 'world' },
-    } as const;
-    deepFreeze(schema);
-
-    const actual = omitPropsDeep(schema, ['a.x']);
-    const expected = {
-      type: 'object',
-      properties: {
-        a: {
-          type: 'object',
-          properties: {
-            y: { type: 'number' },
-          },
-          patternProperties: {
-            '^N_': { type: 'number' },
-          },
-          extraneousNested: { hello: 'nested' },
-        },
-        b: { type: 'number' },
-      },
-      patternProperties: {
-        '^S_': { type: 'string' },
-      },
-      extraneousProp: { hello: 'world' },
-    } as const;
-
-    expect(actual).toEqual(expected);
-    expectTypeOf(actual).toEqualTypeOf(expected);
-    assertValidSchema(actual);
-    assertValidSchema(expected);
-  });
-
-  describe('no required props on resulting schema', () => {
-    it('omits required prop at the nested level', () => {
+  describe('multiple sibling paths under the same prefix', () => {
+    it('omits each of them', () => {
       const schema = {
         type: 'object',
         required: ['a'],
+        properties: {
+          a: {
+            type: 'object',
+            required: ['x', 'y', 'z'],
+            properties: {
+              x: { type: 'string' },
+              y: { type: 'number' },
+              z: { type: 'boolean' },
+            },
+          },
+        },
+      } as const;
+      deepFreeze(schema);
+
+      const actual = omitPropsDeep(schema, ['a.x', 'a.y']);
+      const expected = {
+        type: 'object',
+        required: ['a'],
+        properties: {
+          a: {
+            type: 'object',
+            required: ['z'],
+            properties: {
+              z: { type: 'boolean' },
+            },
+          },
+        },
+      } as const;
+
+      expect(actual).toEqual(expected);
+      expectTypeOf(actual).toEqualTypeOf(expected);
+      assertValidSchema(actual);
+      assertValidSchema(expected);
+    });
+  });
+
+  describe('top-level and nested paths combined', () => {
+    it('omits all of them', () => {
+      const schema = {
+        type: 'object',
+        required: ['a', 'b', 'c', 'd'],
+        properties: {
+          a: {
+            type: 'object',
+            required: ['x', 'y', 'z'],
+            properties: {
+              x: { type: 'string' },
+              y: { type: 'number' },
+              z: { type: 'boolean' },
+            },
+          },
+          b: { type: 'string' },
+          c: { type: 'number' },
+          d: { type: 'boolean' },
+        },
+      } as const;
+      deepFreeze(schema);
+
+      const actual = omitPropsDeep(schema, ['a.x', 'a.y', 'b', 'c']);
+      const expected = {
+        type: 'object',
+        required: ['a', 'd'],
+        properties: {
+          a: {
+            type: 'object',
+            required: ['z'],
+            properties: {
+              z: { type: 'boolean' },
+            },
+          },
+          d: { type: 'boolean' },
+        },
+      } as const;
+
+      expect(actual).toEqual(expected);
+      expectTypeOf(actual).toEqualTypeOf(expected);
+      assertValidSchema(actual);
+      assertValidSchema(expected);
+    });
+  });
+
+  describe('a single leaf path 4 levels deep', () => {
+    it('prunes only the leaf and keeps siblings at every level', () => {
+      const schema = {
+        type: 'object',
+        required: ['a', 'keep'],
+        properties: {
+          a: {
+            type: 'object',
+            required: ['b', 'sibling1'],
+            properties: {
+              b: {
+                type: 'object',
+                required: ['c', 'sibling2'],
+                properties: {
+                  c: {
+                    type: 'object',
+                    required: ['d', 'sibling3'],
+                    properties: {
+                      d: { type: 'string' },
+                      sibling3: { type: 'boolean' },
+                    },
+                  },
+                  sibling2: { type: 'number' },
+                },
+              },
+              sibling1: { type: 'string' },
+            },
+          },
+          keep: { type: 'string' },
+        },
+      } as const;
+      deepFreeze(schema);
+
+      const actual = omitPropsDeep(schema, ['a.b.c.d']);
+      const expected = {
+        type: 'object',
+        required: ['a', 'keep'],
+        properties: {
+          a: {
+            type: 'object',
+            required: ['b', 'sibling1'],
+            properties: {
+              b: {
+                type: 'object',
+                required: ['c', 'sibling2'],
+                properties: {
+                  c: {
+                    type: 'object',
+                    required: ['sibling3'],
+                    properties: {
+                      sibling3: { type: 'boolean' },
+                    },
+                  },
+                  sibling2: { type: 'number' },
+                },
+              },
+              sibling1: { type: 'string' },
+            },
+          },
+          keep: { type: 'string' },
+        },
+      } as const;
+
+      expect(actual).toEqual(expected);
+      expectTypeOf(actual).toEqualTypeOf(expected);
+      assertValidSchema(actual);
+      assertValidSchema(expected);
+    });
+  });
+
+  describe('sibling paths 5 levels deep', () => {
+    it('omits both and keeps the surviving sibling', () => {
+      const schema = {
+        type: 'object',
+        required: ['a'],
+        properties: {
+          a: {
+            type: 'object',
+            required: ['b'],
+            properties: {
+              b: {
+                type: 'object',
+                required: ['c'],
+                properties: {
+                  c: {
+                    type: 'object',
+                    required: ['d'],
+                    properties: {
+                      d: {
+                        type: 'object',
+                        required: ['e', 'f', 'g'],
+                        properties: {
+                          e: { type: 'string' },
+                          f: { type: 'number' },
+                          g: { type: 'boolean' },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      } as const;
+      deepFreeze(schema);
+
+      const actual = omitPropsDeep(schema, ['a.b.c.d.e', 'a.b.c.d.g']);
+      const expected = {
+        type: 'object',
+        required: ['a'],
+        properties: {
+          a: {
+            type: 'object',
+            required: ['b'],
+            properties: {
+              b: {
+                type: 'object',
+                required: ['c'],
+                properties: {
+                  c: {
+                    type: 'object',
+                    required: ['d'],
+                    properties: {
+                      d: {
+                        type: 'object',
+                        required: ['f'],
+                        properties: {
+                          f: { type: 'number' },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      } as const;
+
+      expect(actual).toEqual(expected);
+      expectTypeOf(actual).toEqualTypeOf(expected);
+      assertValidSchema(actual);
+      assertValidSchema(expected);
+    });
+  });
+
+  describe('bare key and vs sub-path props', () => {
+    describe('top level', () => {
+      it('whole wins — the bare key drops the sub-schema', () => {
+        const schema = {
+          type: 'object',
+          required: ['a', 'b'],
+          properties: {
+            a: {
+              type: 'object',
+              required: ['x', 'y'],
+              properties: {
+                x: { type: 'string' },
+                y: { type: 'number' },
+              },
+            },
+            b: { type: 'string' },
+          },
+        } as const;
+        deepFreeze(schema);
+
+        const actual = omitPropsDeep(schema, ['a', 'a.x']);
+        const expected = {
+          type: 'object',
+          required: ['b'],
+          properties: {
+            b: { type: 'string' },
+          },
+        } as const;
+
+        expect(actual).toEqual(expected);
+        expectTypeOf(actual).toEqualTypeOf(expected);
+        assertValidSchema(actual);
+        assertValidSchema(expected);
+      });
+    });
+
+    describe('deep level', () => {
+      it('whole wins — the bare key drops the deep sub-schema', () => {
+        const schema = {
+          type: 'object',
+          required: ['a'],
+          properties: {
+            a: {
+              type: 'object',
+              required: ['b'],
+              properties: {
+                b: {
+                  type: 'object',
+                  required: ['c', 'sibling'],
+                  properties: {
+                    c: {
+                      type: 'object',
+                      required: ['x', 'y'],
+                      properties: {
+                        x: { type: 'string' },
+                        y: { type: 'number' },
+                      },
+                    },
+                    sibling: { type: 'boolean' },
+                  },
+                },
+              },
+            },
+          },
+        } as const;
+        deepFreeze(schema);
+
+        const actual = omitPropsDeep(schema, ['a.b.c', 'a.b.c.x']);
+        const expected = {
+          type: 'object',
+          required: ['a'],
+          properties: {
+            a: {
+              type: 'object',
+              required: ['b'],
+              properties: {
+                b: {
+                  type: 'object',
+                  required: ['sibling'],
+                  properties: {
+                    sibling: { type: 'boolean' },
+                  },
+                },
+              },
+            },
+          },
+        } as const;
+
+        expect(actual).toEqual(expected);
+        expectTypeOf(actual).toEqualTypeOf(expected);
+        assertValidSchema(actual);
+        assertValidSchema(expected);
+      });
+    });
+  });
+
+  describe('duplicate paths', () => {
+    it('are treated as a single path', () => {
+      const schema = {
+        type: 'object',
+        required: ['a', 'b'],
+        properties: {
+          a: {
+            type: 'object',
+            required: ['x', 'y'],
+            properties: {
+              x: { type: 'string' },
+              y: { type: 'number' },
+            },
+          },
+          b: { type: 'string' },
+        },
+      } as const;
+      deepFreeze(schema);
+
+      const actual = omitPropsDeep(schema, ['a.x', 'a.x']);
+      const expected = {
+        type: 'object',
+        required: ['a', 'b'],
+        properties: {
+          a: {
+            type: 'object',
+            required: ['y'],
+            properties: {
+              y: { type: 'number' },
+            },
+          },
+          b: { type: 'string' },
+        },
+      } as const;
+
+      expect(actual).toEqual(expected);
+      expectTypeOf(actual).toEqualTypeOf(expected);
+      assertValidSchema(actual);
+      assertValidSchema(expected);
+    });
+  });
+
+  describe('extraneous props at every level', () => {
+    it('preserves non relevant props', () => {
+      const schema = {
+        type: 'object',
+        properties: {
+          a: {
+            type: 'object',
+            properties: {
+              x: { type: 'string' },
+              y: { type: 'number' },
+            },
+            patternProperties: {
+              '^N_': { type: 'number' },
+            },
+            extraneousNested: { hello: 'nested' },
+          },
+          b: { type: 'number' },
+        },
+        patternProperties: {
+          '^S_': { type: 'string' },
+        },
+        extraneousProp: { hello: 'world' },
+      } as const;
+      deepFreeze(schema);
+
+      const actual = omitPropsDeep(schema, ['a.x']);
+      const expected = {
+        type: 'object',
+        properties: {
+          a: {
+            type: 'object',
+            properties: {
+              y: { type: 'number' },
+            },
+            patternProperties: {
+              '^N_': { type: 'number' },
+            },
+            extraneousNested: { hello: 'nested' },
+          },
+          b: { type: 'number' },
+        },
+        patternProperties: {
+          '^S_': { type: 'string' },
+        },
+        extraneousProp: { hello: 'world' },
+      } as const;
+
+      expect(actual).toEqual(expected);
+      expectTypeOf(actual).toEqualTypeOf(expected);
+      assertValidSchema(actual);
+      assertValidSchema(expected);
+    });
+  });
+
+  describe('no required props left on resulting schema', () => {
+    it('omits empty required props', () => {
+      const schema = {
+        type: 'object',
+        required: ['a', 'b'],
         properties: {
           a: {
             type: 'object',
@@ -553,11 +488,12 @@ describe('omitPropsDeep', () => {
               y: { type: 'number' },
             },
           },
+          b: { type: 'string' },
         },
       } as const;
       deepFreeze(schema);
 
-      const actual = omitPropsDeep(schema, ['a.x']);
+      const actual = omitPropsDeep(schema, ['a.x', 'b']);
       const expected = {
         type: 'object',
         required: ['a'],
@@ -576,29 +512,32 @@ describe('omitPropsDeep', () => {
       assertValidSchema(actual);
       assertValidSchema(expected);
     });
+  });
 
-    it('omits required prop at the root level', () => {
+  describe('no props left on resulting schema', () => {
+    it('keeps empty object properties', () => {
       const schema = {
         type: 'object',
-        required: ['a'],
         properties: {
           a: {
             type: 'object',
-            required: ['x'],
             properties: {
               x: { type: 'string' },
+              y: { type: 'number' },
             },
           },
-          b: { type: 'string' },
         },
       } as const;
       deepFreeze(schema);
 
-      const actual = omitPropsDeep(schema, ['a']);
+      const actual = omitPropsDeep(schema, ['a.x', 'a.y']);
       const expected = {
         type: 'object',
         properties: {
-          b: { type: 'string' },
+          a: {
+            type: 'object',
+            properties: {},
+          },
         },
       } as const;
 
