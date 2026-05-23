@@ -4,6 +4,7 @@ import { pipeWith } from 'pipe-ts';
 import { describe, expect, it } from 'vitest';
 
 import { pipeMergeProps, pipeSealSchemaDeep } from '../src';
+import { assertValidSchema } from './assertValidSchema';
 import { largeSchema } from './composition-pipe-deep-recursion-mock';
 
 describe('composition', () => {
@@ -47,6 +48,8 @@ describe('composition', () => {
 
       expect(actual).toEqual(expected);
       expectTypeOf(actual).toEqualTypeOf(expected);
+      assertValidSchema(actual);
+      assertValidSchema(expected);
 
       // Infer types with FromSchema
       type ActualDefinition = FromSchema<typeof actual>;

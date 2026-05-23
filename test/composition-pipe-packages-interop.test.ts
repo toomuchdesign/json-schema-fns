@@ -11,6 +11,7 @@ import {
   pipeRequireProps,
   pipeSealSchemaDeep,
 } from '../src';
+import { assertValidSchema } from './assertValidSchema';
 
 describe('composition', () => {
   describe('pipe packages interop', () => {
@@ -48,6 +49,8 @@ describe('composition', () => {
 
         expect(actual).toEqual(expected);
         expectTypeOf(actual).toEqualTypeOf(expected);
+        assertValidSchema(actual);
+        assertValidSchema(expected);
       });
     });
 
@@ -85,6 +88,8 @@ describe('composition', () => {
 
         expect(actual).toEqual(expected);
         expectTypeOf(actual).toEqualTypeOf(expected);
+        assertValidSchema(actual);
+        assertValidSchema(expected);
       });
     });
 
@@ -122,6 +127,8 @@ describe('composition', () => {
 
         expect(actual).toEqual(expected);
         expectTypeOf(actual).toEqualTypeOf(expected);
+        assertValidSchema(actual);
+        assertValidSchema(expected);
       });
     });
 
@@ -159,6 +166,8 @@ describe('composition', () => {
 
         expect(actual).toEqual(expected);
         expectTypeOf(actual).toEqualTypeOf(expected);
+        assertValidSchema(actual);
+        assertValidSchema(expected);
       });
     });
   });

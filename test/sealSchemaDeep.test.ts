@@ -4,6 +4,7 @@ import { pipeWith } from 'pipe-ts';
 import { describe, expect, it } from 'vitest';
 
 import { pipeSealSchemaDeep, sealSchemaDeep } from '../src';
+import { assertValidSchema } from './assertValidSchema';
 
 describe('sealSchemaDeep', () => {
   it('recursively set additionalProperties prop to false', () => {
@@ -60,6 +61,8 @@ describe('sealSchemaDeep', () => {
 
     expect(actual).toEqual(expected);
     expectTypeOf(actual).toEqualTypeOf(expected);
+    assertValidSchema(actual);
+    assertValidSchema(expected);
   });
 
   describe('array prop', () => {
@@ -157,6 +160,8 @@ describe('sealSchemaDeep', () => {
 
       expect(actual).toEqual(expected);
       expectTypeOf(actual).toEqualTypeOf(expected);
+      assertValidSchema(actual);
+      assertValidSchema(expected);
     });
   });
 
@@ -195,6 +200,8 @@ describe('sealSchemaDeep', () => {
 
       expect(actual).toEqual(expected);
       expectTypeOf(actual).toEqualTypeOf(expected);
+      assertValidSchema(actual);
+      assertValidSchema(expected);
     });
   });
 });
@@ -235,5 +242,7 @@ describe('pipeSealSchemaDeep', () => {
 
     expect(actual).toEqual(expected);
     expectTypeOf(actual).toEqualTypeOf(expected);
+    assertValidSchema(actual);
+    assertValidSchema(expected);
   });
 });

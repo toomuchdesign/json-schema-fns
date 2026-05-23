@@ -4,6 +4,7 @@ import { pipeWith } from 'pipe-ts';
 import { describe, expect, it } from 'vitest';
 
 import { pickPropsDeep, pipePickPropsDeep } from '../src';
+import { assertValidSchema } from './assertValidSchema';
 
 describe('pickPropsDeep', () => {
   it('deep picks a single nested property', () => {
@@ -41,6 +42,8 @@ describe('pickPropsDeep', () => {
 
     expect(actual).toEqual(expected);
     expectTypeOf(actual).toEqualTypeOf(expected);
+    assertValidSchema(actual);
+    assertValidSchema(expected);
   });
 
   it('merges sibling paths under the same prefix', () => {
@@ -80,6 +83,8 @@ describe('pickPropsDeep', () => {
 
     expect(actual).toEqual(expected);
     expectTypeOf(actual).toEqualTypeOf(expected);
+    assertValidSchema(actual);
+    assertValidSchema(expected);
   });
 
   it('combines top-level and nested paths', () => {
@@ -123,6 +128,8 @@ describe('pickPropsDeep', () => {
 
     expect(actual).toEqual(expected);
     expectTypeOf(actual).toEqualTypeOf(expected);
+    assertValidSchema(actual);
+    assertValidSchema(expected);
   });
 
   it('picks the whole sub-schema when a bare key is supplied', () => {
@@ -161,6 +168,8 @@ describe('pickPropsDeep', () => {
 
     expect(actual).toEqual(expected);
     expectTypeOf(actual).toEqualTypeOf(expected);
+    assertValidSchema(actual);
+    assertValidSchema(expected);
   });
 
   it('drills through multiple levels of nesting', () => {
@@ -209,6 +218,8 @@ describe('pickPropsDeep', () => {
 
     expect(actual).toEqual(expected);
     expectTypeOf(actual).toEqualTypeOf(expected);
+    assertValidSchema(actual);
+    assertValidSchema(expected);
   });
 
   it('drills 4 levels deep and prunes siblings at every level', () => {
@@ -272,6 +283,8 @@ describe('pickPropsDeep', () => {
 
     expect(actual).toEqual(expected);
     expectTypeOf(actual).toEqualTypeOf(expected);
+    assertValidSchema(actual);
+    assertValidSchema(expected);
   });
 
   it('drills 5 levels deep and merges sibling paths at a deep level', () => {
@@ -346,6 +359,8 @@ describe('pickPropsDeep', () => {
 
     expect(actual).toEqual(expected);
     expectTypeOf(actual).toEqualTypeOf(expected);
+    assertValidSchema(actual);
+    assertValidSchema(expected);
   });
 
   it('whole-wins at the top level', () => {
@@ -385,6 +400,8 @@ describe('pickPropsDeep', () => {
 
     expect(actual).toEqual(expected);
     expectTypeOf(actual).toEqualTypeOf(expected);
+    assertValidSchema(actual);
+    assertValidSchema(expected);
   });
 
   it('duplicate paths are treated as a single path', () => {
@@ -422,6 +439,8 @@ describe('pickPropsDeep', () => {
 
     expect(actual).toEqual(expected);
     expectTypeOf(actual).toEqualTypeOf(expected);
+    assertValidSchema(actual);
+    assertValidSchema(expected);
   });
 
   it('whole-wins at a deep nested level', () => {
@@ -485,6 +504,8 @@ describe('pickPropsDeep', () => {
 
     expect(actual).toEqual(expected);
     expectTypeOf(actual).toEqualTypeOf(expected);
+    assertValidSchema(actual);
+    assertValidSchema(expected);
   });
 
   it('preserves non relevant props at every level', () => {
@@ -534,6 +555,8 @@ describe('pickPropsDeep', () => {
 
     expect(actual).toEqual(expected);
     expectTypeOf(actual).toEqualTypeOf(expected);
+    assertValidSchema(actual);
+    assertValidSchema(expected);
   });
 
   describe('no required props on resulting schema', () => {
@@ -570,6 +593,8 @@ describe('pickPropsDeep', () => {
 
       expect(actual).toEqual(expected);
       expectTypeOf(actual).toEqualTypeOf(expected);
+      assertValidSchema(actual);
+      assertValidSchema(expected);
     });
 
     it('omits required prop at the root level', () => {
@@ -599,6 +624,8 @@ describe('pickPropsDeep', () => {
 
       expect(actual).toEqual(expected);
       expectTypeOf(actual).toEqualTypeOf(expected);
+      assertValidSchema(actual);
+      assertValidSchema(expected);
     });
   });
 
@@ -622,6 +649,8 @@ describe('pickPropsDeep', () => {
 
       expect(actual).toEqual(expected);
       expectTypeOf(actual).toEqualTypeOf(expected);
+      assertValidSchema(actual);
+      assertValidSchema(expected);
     });
   });
 
@@ -669,6 +698,8 @@ describe('pickPropsDeep', () => {
 
       expect(actual).toEqual(expected);
       expectTypeOf(actual).toEqualTypeOf(expected);
+      assertValidSchema(actual);
+      assertValidSchema(expected);
     });
   });
 
@@ -743,5 +774,7 @@ describe('pipePickPropsDeep', () => {
 
     expect(actual).toEqual(expected);
     expectTypeOf(actual).toEqualTypeOf(expected);
+    assertValidSchema(actual);
+    assertValidSchema(expected);
   });
 });
