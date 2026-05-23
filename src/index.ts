@@ -1,6 +1,7 @@
 export { pickProps, pipePickProps } from './pickProps';
 export { pickPropsDeep, pipePickPropsDeep } from './pickPropsDeep';
 export { omitProps, pipeOmitProps } from './omitProps';
+export { omitPropsDeep, pipeOmitPropsDeep } from './omitPropsDeep';
 export { mergeProps, pipeMergeProps } from './mergeProps';
 export { sealSchemaDeep, pipeSealSchemaDeep } from './sealSchemaDeep';
 export { unsealSchemaDeep, pipeUnsealSchemaDeep } from './unsealSchemaDeep';
