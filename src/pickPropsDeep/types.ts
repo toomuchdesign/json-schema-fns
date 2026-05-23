@@ -4,11 +4,10 @@ import type {
   MergeRecords,
   PickFromTuple,
   Simplify,
+  SubPathsFor,
 } from '../utils/types';
 
 /**
- * @internal
- *
  * Builds a union of all valid dot-notation paths through a JSON schema's
  * `properties` tree. Shallow keys (`'a'`) and nested keys (`'a.x'`) are both
  * included. Only object sub-schemas (those with `type: 'object'` and their own
@@ -37,8 +36,6 @@ export type DeepPaths<Schema> = Schema extends { properties: infer Properties }
   : never;
 
 /**
- * @internal
- *
  * Returns `true` if any element of `Paths` either equals `Key` exactly or
  * begins with `${Key}.`; `false` otherwise.
  *
@@ -55,27 +52,6 @@ export type HasPathStartingWith<Paths extends string, Key extends string> = [
   : true;
 
 /**
- * @internal
- *
- * Filters `Paths` to those starting with `${Key}.`, then strips that prefix,
- * returning the remainders as a union. Paths that are an exact `Key` or don't
- * start with `${Key}.` are omitted.
- *
- * Distributes over the input union, so no tuple recursion is needed.
- *
- * @example
- * ```ts
- * SubPathsFor<'a.x' | 'a.y.z' | 'b', 'a'> // → 'x' | 'y.z'
- * ```
- */
-export type SubPathsFor<
-  Paths extends string,
-  Key extends string,
-> = Paths extends `${Key}.${infer Rest}` ? Rest : never;
-
-/**
- * @internal
- *
  * Extracts the first dot-separated segment of a string. Returns the string
  * unchanged when it contains no dot. Distributes over unions.
  *
@@ -90,8 +66,6 @@ export type FirstPathSegment<Path extends string> =
   Path extends `${infer Head}.${string}` ? Head : Path;
 
 /**
- * @internal
- *
  * Union-based core of `PickPropsDeep`. Accepts `Paths` as a string union
  * (not a tuple) so all internal operations are distributive conditionals
  * with no tuple recursion.

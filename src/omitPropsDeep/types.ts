@@ -1,15 +1,13 @@
-import type { SubPathsFor } from '../pickPropsDeep/types';
 import type {
   CompactSchema,
   JSONSchemaObject,
   MergeRecords,
   OmitFromTuple,
   Simplify,
+  SubPathsFor,
 } from '../utils/types';
 
 /**
- * @internal
- *
  * Returns the subset of `Paths` that have no dot — i.e. the bare-key drops
  * that should remove a property (and any required entry for it) entirely.
  *
@@ -24,8 +22,6 @@ export type BareKeyPath<Paths extends string> =
   Paths extends `${string}.${string}` ? never : Paths;
 
 /**
- * @internal
- *
  * Union-based core of `OmitPropsDeep`. Accepts `Paths` as a string union
  * (not a tuple) so all internal operations are distributive conditionals
  * with no tuple recursion.
