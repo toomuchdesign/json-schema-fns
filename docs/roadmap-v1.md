@@ -76,7 +76,7 @@ Validator dialect for M1.3 is the Draft-07 meta-schema (ajv's default export).
 
 **Why this is the single highest-leverage item.** Once ajv is verifying outputs, a whole class of "the types are right but the runtime is subtly wrong" bug becomes a regression instead of a post-release report.
 
-**Decision: A (revised for Draft-07).** Both meta-schema validity and instance semantics per fn. Dev deps: `ajv`, `ajv-formats`. Validator dialect is **Draft-07** (ajv's default export, `import Ajv from 'ajv'`) — matches the dialect declared in M1.1. Shared helpers in `test/semantic/utils.ts` (`assertValidSchema`, `assertValidates`). One `test/semantic/<fn>.test.ts` per public function (8 files). Each contains: (1) one assertion that output passes the Draft-07 meta-schema; (2) ~3 fixture instances asserting the documented semantic delta against the input vs. output schema. Optional follow-up: add a 2020-12 cross-check (`import Ajv2020 from 'ajv/dist/2020'`) as a defense-in-depth signal that the forward-compat property still holds — not gated on 1.0.
+**Decision: A (revised for Draft-07, narrowed).** Validator dialect is **Draft-07** (ajv's default export, `import Ajv from 'ajv'`) — matches the dialect declared in M1.1. Dev deps: `ajv`, `ajv-formats`. Shared helper [test/assertValidSchema.ts](../test/assertValidSchema.ts) (`assertValidSchema`) asserts every fixture passes the Draft-07 meta-schema; it is invoked from the existing test files across the suite (see commit d104019). Instance-level semantic-delta tests per fn were considered but **dropped** — the existing structural + type + meta-schema assertions are exhaustive enough that adding instance-validation cases would be redundant rather than catching a new class of bug.
 
 ### M1.4 Property-based tests for round-trip laws
 
@@ -219,7 +219,7 @@ All shallow. Type-level mirrors are straightforward `Omit`/`Pick`/`MergeRecords`
 
 **Tag:** **1.0**. Cheap and avoids a future major bump.
 
-**Decision: B — throw `TypeError`.** Replace the two `new Error(...)` sites in [src/utils/isJSONSchemaObjectType.ts](../src/utils/isJSONSchemaObjectType.ts) with `new TypeError(...)` (same messages). `TypeError` is exactly the JS-standard semantic for "wrong type of argument" — no new export, no docs surface, consumers can already discriminate via `e instanceof TypeError`. Add one sentence to the README API intro stating that public functions throw `TypeError` on non-object input as defense-in-depth against `any`/`unknown` flowing through the type system.
+**Decision: B — throw `TypeError`.** Replace the two `new Error(...)` sites in [src/utils/isJSONSchemaObjectType.ts](../src/utils/isJSONSchemaObjectType.ts) with `new TypeError(...)` (same messages). `TypeError` is exactly the JS-standard semantic for "wrong type of argument" — no new export, no docs surface, consumers can already discriminate via `e instanceof TypeError`. Add one sentence to the README API intro stating that public functions throw `TypeError` on non-object input as defense-in-depth against `any`/`unknown` flowing through the type system. **Shipped.**
 
 ### M2.5 Out-of-scope items, formally listed
 

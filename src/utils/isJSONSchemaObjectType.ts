@@ -5,12 +5,12 @@ export function isJSONSchemaObjectType(schema: {
   type?: unknown;
 }): asserts schema is { type: 'object' } {
   if (schema.type !== 'object') {
-    throw new Error(
+    throw new TypeError(
       'Schema is expected to have a "type" property set to "object"',
     );
   }
 
   if ('properties' in schema === false || !schema.properties) {
-    throw new Error('Schema is expected to have a "properties" property');
+    throw new TypeError('Schema is expected to have a "properties" property');
   }
 }
