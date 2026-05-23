@@ -10,14 +10,14 @@ Type-safe, immutable utilities that transform JSON Schema objects while preservi
 
 Each function has a direct variant + a `pipe*` variant. Exports live in [src/index.ts](src/index.ts):
 
-- `omitProps` / `pickProps` / `pickPropsDeep` — property filtering (shallow and dot-notation deep)
+- `omitProps` / `omitPropsDeep` / `pickProps` / `pickPropsDeep` — property filtering (shallow and dot-notation deep)
 - `mergeProps` — merge two object schemas
 - `requireProps` / `optionalProps` — toggle required flags
 - `sealSchemaDeep` / `unsealSchemaDeep` — recursively add/remove `additionalProperties: false`
 
 ## Project layout
 
-Flat "one function per file" under `src/`, **except** [src/pickPropsDeep/](src/pickPropsDeep/) which is a folder (`index.ts` runtime + `types.ts` helpers). The folder pattern exists because `pickPropsDeep`'s helper types are isolated-testable; apply the same pattern if you add a similarly type-heavy function.
+Flat "one function per file" under `src/`, **except** [src/pickPropsDeep/](src/pickPropsDeep/) and [src/omitPropsDeep/](src/omitPropsDeep/), which are folders (`index.ts` runtime + `types.ts` helpers). The folder pattern exists because their helper types are isolated-testable; apply the same pattern if you add a similarly type-heavy function.
 
 - [src/utils/](src/utils/) — runtime helpers (`isJSONSchemaObjectType`, `isRecord`, combinator-keyword checks)
 - [src/utils/types/](src/utils/types/) — general-purpose type utilities (`MergeRecords`, `PickFromTuple`, `OmitFromTuple`, `CompactSchema`, `Simplify`, `TupleToUnion`, etc.)
@@ -43,12 +43,12 @@ Flat "one function per file" under `src/`, **except** [src/pickPropsDeep/](src/p
 - Type-only tests live alongside integration tests and use `expectTypeOf<A>().toEqualTypeOf<B>()` with no runtime call — see [test/pickPropsDeep.types.test.ts](test/pickPropsDeep.types.test.ts) and [test/utils/OmitFromTuple.test.ts](test/utils/OmitFromTuple.test.ts) for the pattern.
 - Vitest's type-check mode is enabled — type failures show up as test failures.
 
-## `pickPropsDeep` semantics (non-obvious)
+## `pickPropsDeep` / `omitPropsDeep` semantics (non-obvious)
 
-- **Whole wins.** Paths `['a', 'a.x']` keep all of `a` unchanged (not just `a.x`). The exact-key check is `Key extends Paths` inside `PickPropsDeepWith` in [src/pickPropsDeep/types.ts](src/pickPropsDeep/types.ts) (exported but `@internal`), where `Paths` is already a string union.
-- **`required` is filtered at every level** based on which top-level segments of `Paths` touch each level — not just the root.
-- **`DeepPaths<Schema>` constraint enforces valid paths at the call site.** Paths that don't exist in the schema are a compile error, not a runtime no-op.
-- Out of scope for deep picking: `patternProperties`, combinators, tuple-typed array `items`. Match `pickProps` scope.
+- **Whole wins.** A bare key wins over its sub-paths: for `pickPropsDeep` `['a', 'a.x']` keeps all of `a` unchanged; for `omitPropsDeep` `['a', 'a.x']` drops `a` entirely. The exact-key check is `Key extends Paths` inside `PickPropsDeepWith` / `OmitPropsDeepWith` (exported but `@internal`), where `Paths` is already a string union.
+- **`required` is filtered at every level.** `pickPropsDeep` keeps only required keys whose first segment is touched by a path; `omitPropsDeep` removes required keys whose bare path is given at that level (sub-paths leave `required` intact).
+- **`DeepPaths<Schema>` constraint enforces valid paths at the call site.** Paths that don't exist in the schema are a compile error, not a runtime no-op. `omitPropsDeep` reuses `DeepPaths` and `SubPathsFor` from [src/pickPropsDeep/types.ts](src/pickPropsDeep/types.ts).
+- Out of scope for both: `patternProperties`, combinators, tuple-typed array `items`. Match shallow scope.
 
 ## Build / verify commands
 

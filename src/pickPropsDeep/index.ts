@@ -1,4 +1,4 @@
-import { isJSONSchemaObjectType } from '../utils';
+import { groupPathsByHead, isJSONSchemaObjectType } from '../utils';
 import type { JSONSchemaObject } from '../utils/types';
 import type { DeepPaths, PickPropsDeepWith } from './types';
 
@@ -8,28 +8,8 @@ function pickPropsDeepInternal(
 ): JSONSchemaObject {
   isJSONSchemaObjectType(schema);
 
-  const keepWhole = new Set<string>();
-  const subPathsByKey: Record<string, string[]> = {};
-
-  for (const path of paths) {
-    const dotIdx = path.indexOf('.');
-    if (dotIdx === -1) {
-      keepWhole.add(path);
-    } else {
-      const head = path.slice(0, dotIdx);
-      const rest = path.slice(dotIdx + 1);
-      if (!subPathsByKey[head]) {
-        subPathsByKey[head] = [];
-      }
-      subPathsByKey[head].push(rest);
-    }
-  }
-
-  const keptKeys = new Set<string>([
-    ...keepWhole,
-    ...Object.keys(subPathsByKey),
-  ]);
-
+  const { bare, nested } = groupPathsByHead(paths);
+  const keptKeys = new Set<string>([...bare, ...Object.keys(nested)]);
   const required = schema.required
     ? schema.required.filter((key) => keptKeys.has(key))
     : [];
@@ -37,12 +17,12 @@ function pickPropsDeepInternal(
   const properties: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(schema.properties)) {
     if (keptKeys.has(key)) {
-      properties[key] = keepWhole.has(key)
+      properties[key] = bare.has(key)
         ? value
         : pickPropsDeepInternal(
             // @ts-expect-error nested value is a JSONSchemaObject by DeepPaths constraint — TS cannot infer it through Record<string, unknown>
             value,
-            subPathsByKey[key]!,
+            nested[key]!,
           );
     }
   }

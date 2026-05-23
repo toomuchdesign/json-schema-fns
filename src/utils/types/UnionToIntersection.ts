@@ -2,8 +2,6 @@
  * The infamous "convert a union type to an intersection type" hack
  * @see {@link https://github.com/sindresorhus/type-fest/blob/main/source/union-to-intersection.d.ts Source}
  * @see {@link https://github.com/microsoft/TypeScript/issues/29594 Reference}
- *
- * @internal
  */
 export type UnionToIntersection<Union> =
   // `extends unknown` is always going to be the case and is used to convert the

@@ -17,5 +17,6 @@ export type { MergeOptionalTuples } from './MergeOptionalTuples';
 export type { MergeTuples } from './MergeTuples';
 export type { OmitFromTuple } from './OmitFromTuple';
 export type { PickFromTuple } from './PickFromTuple';
+export type { SubPathsFor } from './SubPathsFor';
 
 export type { CompactSchema } from './CompactSchema';
