@@ -49,6 +49,7 @@ npm install @toomuchdesign/json-schema-fns
 | [`pickProps`](#pickProps)               | Pick only specific `properties` from an object JSON schema                   |
 | [`pickPropsDeep`](#pickPropsDeep)       | Pick specific nested `properties` using dot-notation paths                   |
 | [`mergeProps`](#mergeProps)             | Merge two object JSON schemas' `properties` and `patternProperties` into one |
+| [`renameProps`](#renameProps)           | Rename specific `properties` via an `{ oldKey: newKey }` map                 |
 | [`requireProps`](#requireProps)         | Mark specific properties as required (all if none provided)                  |
 | [`optionalProps`](#optionalProps)       | Make specific properties optional (all if none provided)                     |
 | [`sealSchemaDeep`](#sealSchemaDeep)     | Recursively set `additionalProperties: false` on all object schemas          |
@@ -168,6 +169,25 @@ const schema2 = {
 } as const;
 
 const result = mergeProps(schema1, schema2);
+```
+
+### renameProps
+
+Rename specific properties in an object JSON schema via an `{ oldKey: newKey }` map. Source keys must exist in `schema.properties` (compile error on unknown keys); target keys are arbitrary strings. Position in `required` is preserved. Shallow only.
+
+```ts
+import { renameProps } from '@toomuchdesign/json-schema-fns';
+
+const schema = {
+  type: 'object',
+  properties: {
+    id: { type: 'string' },
+    email: { type: 'string' },
+  },
+  required: ['id', 'email'],
+} as const;
+
+const result = renameProps(schema, { id: 'userId', email: 'emailAddress' });
 ```
 
 ### requireProps
