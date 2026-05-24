@@ -1,5 +1,25 @@
 # @toomuchdesign/json-schema-fns
 
+## 0.9.0
+
+### Minor Changes
+
+- [#204](https://github.com/toomuchdesign/json-schema-fns/pull/204) [`7058be1`](https://github.com/toomuchdesign/json-schema-fns/commit/7058be1ccf9c2a10e28e65adbbc4e68dea6db074) Thanks [@toomuchdesign](https://github.com/toomuchdesign)! - Add `omitPropsDeep` and `pipeOmitPropsDeep` — deep variants of `omitProps` that accept dot-notation paths and drop nested `properties` (and matching `required` entries) at every level. Mirrors `pickPropsDeep`: bare keys drop the whole sub-schema, dotted paths drill in, and bare-key drops win over sub-path drills when both target the same key.
+
+- [#206](https://github.com/toomuchdesign/json-schema-fns/pull/206) [`a3ead21`](https://github.com/toomuchdesign/json-schema-fns/commit/a3ead21721072b6695e9f0ffdb006498729ba198) Thanks [@toomuchdesign](https://github.com/toomuchdesign)! - Add `renamePropsDeep` and `pipeRenamePropsDeep` — rename specific nested properties in an object JSON schema using dot-notation paths. Source paths must resolve to existing properties (compile error on unknown paths); target names are arbitrary strings (renames don't move properties between levels). Bare and dotted entries can coexist: `{ user: 'account', 'user.id': 'userId' }` renames `user` at the top level and `id` within it. Position in each level's `required` is preserved.
+
+- [#205](https://github.com/toomuchdesign/json-schema-fns/pull/205) [`d0d00c4`](https://github.com/toomuchdesign/json-schema-fns/commit/d0d00c4480b1afde8b9d441e2fc8d95d3283887d) Thanks [@toomuchdesign](https://github.com/toomuchdesign)! - Add `renameProps` and `pipeRenameProps` — rename specific properties in an object JSON schema via an `{ oldKey: newKey }` map. Source keys must exist in `schema.properties` (compile error on unknown keys); target keys are arbitrary strings. Position in `required` is preserved. Shallow only.
+
+- [#199](https://github.com/toomuchdesign/json-schema-fns/pull/199) [`0f14940`](https://github.com/toomuchdesign/json-schema-fns/commit/0f14940aa3e8967975fc5a24754de43b63738548) Thanks [@toomuchdesign](https://github.com/toomuchdesign)! - Preserve `if` / `then` / `else` conditional branches in `sealSchemaDeep` and `unsealSchemaDeep` (previously these branches were mutated, silently changing which values triggered `then` vs `else`).
+
+- [#199](https://github.com/toomuchdesign/json-schema-fns/pull/199) [`0f14940`](https://github.com/toomuchdesign/json-schema-fns/commit/0f14940aa3e8967975fc5a24754de43b63738548) Thanks [@toomuchdesign](https://github.com/toomuchdesign)! - Accept the array form of `type` (e.g. `type: ['object', 'null']`) at the top level of input schemas. Object-shaped functions (`omitProps`, `pickProps`, …) still require the literal `type: 'object'` form.
+
+### Patch Changes
+
+- [#207](https://github.com/toomuchdesign/json-schema-fns/pull/207) [`12cccdb`](https://github.com/toomuchdesign/json-schema-fns/commit/12cccdbcba095af4ed09ae7023e95c90d4123581) Thanks [@toomuchdesign](https://github.com/toomuchdesign)! - Drop the "experimental" label from the composition / `pipe*` API. Pipelines of at least 9 transformations are now verified across all four endorsed pipe libraries (pipe-ts, remeda, effect, ts-functional-pipe) — limited by pipe-ts's typed-overload cap of 9; the other three libraries support deeper pipelines. See `test/composition-pipe-depth-ceiling.test.ts` for per-library ceilings.
+
+- [#202](https://github.com/toomuchdesign/json-schema-fns/pull/202) [`feb8cca`](https://github.com/toomuchdesign/json-schema-fns/commit/feb8cca8f3391fc676e586fe0b3755cdc50fdd49) Thanks [@toomuchdesign](https://github.com/toomuchdesign)! - Throw `TypeError` (instead of `Error`) when a public function is invoked with a non-object JSON Schema. Consumers can now discriminate library input-shape failures via `e instanceof TypeError`.
+
 ## 0.8.0
 
 ### Minor Changes
