@@ -33,7 +33,15 @@
     "json",
     "schema",
     "jsonschema",
+    "json-schema",
+    "json-schema-to-ts",
     "typescript",
+    "type-safe",
+    "immutable",
+    "composition",
+    "draft-07",
+    "draft-2020-12",
+    "ajv",
     "utilities"
   ],
   "publishConfig": {
@@ -42,6 +50,10 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/toomuchdesign/json-schema-fns.git"
+  },
+  "homepage": "https://github.com/toomuchdesign/json-schema-fns#readme",
+  "bugs": {
+    "url": "https://github.com/toomuchdesign/json-schema-fns/issues"
   },
   "author": "Andrea Carraro <me@andreacarraro.it>",
   "license": "ISC",

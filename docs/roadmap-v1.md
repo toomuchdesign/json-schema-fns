@@ -39,10 +39,6 @@ Things explicitly **out of scope** for 1.0:
 
 **Decision:** Add `CONTRIBUTING.md` (real content: `prepare` hook gotchas, the "always `npm run build` after recursive type changes" rule from [CLAUDE.md](../CLAUDE.md), changeset workflow, the single-major-bump deprecation policy). Skip `SECURITY.md` — for a zero-runtime-dep typings library the attack surface is provenance (already wired). Existing issue templates stay as-is.
 
-### M3.2 npm metadata
-
-**Decision:** Expand `keywords` in [package.json](../package.json) (currently 5): add `draft-2020-12`, `draft-07`, `immutable`, `type-safe`, `composition`, `json-schema-to-ts`, `ajv`. Add `homepage` and `bugs` fields (`repository` is already set). One-line edits, no downside.
-
 ### M3.3 GitHub topics on the repo
 
 **Decision:** Add topics matching the expanded npm keyword set. One-time, trivial, drives discoverability.
