@@ -6,39 +6,18 @@ import { pipe as remedaPipe } from 'remeda';
 import { pipeInto } from 'ts-functional-pipe';
 import { describe, expect, it } from 'vitest';
 
-import { pipeSealSchemaDeep } from '../src';
-import { assertValidSchema } from './assertValidSchema';
+import { pipeSealSchemaDeep } from '../../src';
+import { assertValidSchema } from './../assertValidSchema';
 import { largeSchema } from './composition-pipe-depth-ceiling-mock';
 
-// Each library is exercised at the deepest pipeline that still produces
-// a usable inferred type when fed through `FromSchema`, with both a
-// simple schema and the bulky `largeSchema` mock. Two limits constrain
-// the ceiling:
+// Each library is tested at the deepest pipeline that still produces
+// a usable inferred type when fed through `FromSchema`.
 //
 // 1. The library's own typed-overload cap (number of transformations,
-//    excluding the initial data argument), measured from each library's
-//    `.d.ts` at the versions pinned in package.json:
+//    excluding the initial data argument), measured from each library's `.d.ts`
 //
-//      pipe-ts            `pipeWith`   9 transformations  (overloads A→J)
-//      remeda             `pipe`      15 transformations  (overloads A→P)
-//      effect             `pipe`      19 transformations  (overloads A→T)
-//      ts-functional-pipe `pipeInto`  60+ transformations
-//
-// 2. The TS2589 recursion budget consumed by chaining
-//    `pipeSealSchemaDeep` (the type accumulates structural depth even
-//    though the runtime is idempotent) and re-resolving the result
-//    through `FromSchema`.
-//
-// The verified depth per library below is whichever of (1) and (2) is
-// hit first:
-//
-//      pipe-ts             9   (overload cap)
-//      remeda             15   (overload cap)
-//      effect             15   (TS2589 on largeSchema beyond 15)
-//      ts-functional-pipe 16   (TS2589 beyond 16)
-//
-// `pipeSealSchemaDeep` is idempotent at the runtime level, so a single
-// fixed expected schema holds at every depth.
+// 2. The TS2589 recursion budget consumed by chaining `pipeSealSchemaDeep
+//    and re-resolving the result through `FromSchema`.
 
 const simpleSchema = {
   type: 'object',

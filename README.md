@@ -320,6 +320,8 @@ In addition to the standard functional API, `json-schema-fns` also offers a comp
 
 Pipelines of at least 9 transformations are verified across all four endorsed pipe libraries (limited by [`pipe-ts`](https://www.npmjs.com/package/pipe-ts)'s typed-overload cap of 9); [`remeda`](https://www.npmjs.com/package/remeda), [`effect`](https://www.npmjs.com/package/effect), and [`ts-functional-pipe`](https://www.npmjs.com/package/ts-functional-pipe) support deeper pipelines. See [test/composition-pipe-depth-ceiling.test.ts](./test/composition-pipe-depth-ceiling.test.ts) for per-library ceilings.
 
+> Note: piping could lead TypeScript to hit its internal recursion limits producing the following error: `TS2589: Type instantiation is excessively deep and possibly infinite`
+
 > Note: the library does not include its own pipe utility. You are free to use any composition library you prefer. See [composition tests](./test/composition-pipe-packages-interop.test.ts) for integration with each library.
 
 ```ts
