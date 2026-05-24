@@ -23,12 +23,6 @@ Things explicitly **out of scope** for 1.0:
 
 ## Remaining 1.0 work
 
-### M1.7 Preservation/touches column in README
-
-**Problem.** Today there's no documented answer to "what happens to `description`, `default`, `examples`, `$id` after I call `pickProps`?".
-
-**Decision: C (lean).** One paragraph in the README API intro stating the default ("All transformations preserve every keyword they don't explicitly touch"). Add a "Touches" column to the existing API table listing only the keywords each fn modifies. Move conflict-resolution rules (e.g., `mergeProps`: schema2 wins on top-level metadata via `...schema1, ...schema2`) into per-fn API sections — one or two sentences each. Combinator dispatch stays in [docs/combinators.md](combinators.md); link from the per-fn sections that need it. No exhaustive matrix.
-
 ### M3.1 Repo files
 
 **Decision:** Add `CONTRIBUTING.md` (real content: `prepare` hook gotchas, the "always `npm run build` after recursive type changes" rule from [CLAUDE.md](../CLAUDE.md), changeset workflow, the single-major-bump deprecation policy). Skip `SECURITY.md` — for a zero-runtime-dep typings library the attack surface is provenance (already wired). Existing issue templates stay as-is.
