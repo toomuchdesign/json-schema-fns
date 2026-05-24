@@ -42,19 +42,21 @@ npm install @toomuchdesign/json-schema-fns
 
 [Try it live ⚡][playground] — every example below runs in the playground; open the file matching the function name.
 
-| Function                                | Description                                                                  |
-| --------------------------------------- | ---------------------------------------------------------------------------- |
-| [`omitProps`](#omitProps)               | Omit specific `properties` from an object JSON schema                        |
-| [`omitPropsDeep`](#omitPropsDeep)       | Omit specific nested `properties` using dot-notation paths                   |
-| [`pickProps`](#pickProps)               | Pick only specific `properties` from an object JSON schema                   |
-| [`pickPropsDeep`](#pickPropsDeep)       | Pick specific nested `properties` using dot-notation paths                   |
-| [`mergeProps`](#mergeProps)             | Merge two object JSON schemas' `properties` and `patternProperties` into one |
-| [`renameProps`](#renameProps)           | Rename specific `properties` via an `{ oldKey: newKey }` map                 |
-| [`renamePropsDeep`](#renamePropsDeep)   | Rename specific nested `properties` using dot-notation paths                 |
-| [`requireProps`](#requireProps)         | Mark specific properties as required (all if none provided)                  |
-| [`optionalProps`](#optionalProps)       | Make specific properties optional (all if none provided)                     |
-| [`sealSchemaDeep`](#sealSchemaDeep)     | Recursively set `additionalProperties: false` on all object schemas          |
-| [`unsealSchemaDeep`](#unsealSchemaDeep) | Recursively remove `additionalProperties` and `unevaluatedProperties`        |
+**All transformations preserve every keyword they don't explicitly touch.** Input metadata like `title`, `description`, `default`, `examples`, `$id`, `$defs`, and any other keyword the library does not transform rides through to the output unchanged. The **Touches** column below lists the only keywords each function modifies.
+
+| Function                                | Description                                                                  | Touches                                         |
+| --------------------------------------- | ---------------------------------------------------------------------------- | ----------------------------------------------- |
+| [`omitProps`](#omitProps)               | Omit specific `properties` from an object JSON schema                        | `properties`, `required`                        |
+| [`omitPropsDeep`](#omitPropsDeep)       | Omit specific nested `properties` using dot-notation paths                   | `properties`, `required`                        |
+| [`pickProps`](#pickProps)               | Pick only specific `properties` from an object JSON schema                   | `properties`, `required`                        |
+| [`pickPropsDeep`](#pickPropsDeep)       | Pick specific nested `properties` using dot-notation paths                   | `properties`, `required`                        |
+| [`mergeProps`](#mergeProps)             | Merge two object JSON schemas' `properties` and `patternProperties` into one | `properties`, `patternProperties`, `required`   |
+| [`renameProps`](#renameProps)           | Rename specific `properties` via an `{ oldKey: newKey }` map                 | `properties`, `required`                        |
+| [`renamePropsDeep`](#renamePropsDeep)   | Rename specific nested `properties` using dot-notation paths                 | `properties`, `required`                        |
+| [`requireProps`](#requireProps)         | Mark specific properties as required (all if none provided)                  | `required`                                      |
+| [`optionalProps`](#optionalProps)       | Make specific properties optional (all if none provided)                     | `required`                                      |
+| [`sealSchemaDeep`](#sealSchemaDeep)     | Recursively set `additionalProperties: false` on all object schemas          | `additionalProperties`                          |
+| [`unsealSchemaDeep`](#unsealSchemaDeep) | Recursively remove `additionalProperties` and `unevaluatedProperties`        | `additionalProperties`, `unevaluatedProperties` |
 
 ### omitProps
 
@@ -148,7 +150,7 @@ const result = pickPropsDeep(schema, ['user.id', 'meta']);
 
 ### mergeProps
 
-Merge two object JSON schemas `properties` and `patternProperties` props into one. If the same property key exists in both schemas, the property from `schema2` takes precedence.
+Merge two object JSON schemas `properties` and `patternProperties` props into one. If the same property key exists in both schemas, the property from `schema2` takes precedence. Top-level metadata (`title`, `description`, `$id`, etc.) follows the same rule — values from `schema2` overwrite `schema1` via spread. Combinators (`allOf` / `anyOf` / `oneOf` / `not`) are not merged; see [docs/combinators.md](docs/combinators.md).
 
 ```ts
 import { mergeProps } from '@toomuchdesign/json-schema-fns';
@@ -362,19 +364,19 @@ The library targets **[JSON Schema Draft-07 (2018)](https://json-schema.org/draf
 
 **Forward-compatibility is a design property.** Schemas that use newer keywords from [Draft 2019-09](https://json-schema.org/draft/2019-09) or [Draft 2020-12](https://json-schema.org/draft/2020-12) — for example `$defs`, `prefixItems`, `dependentRequired`, `propertyNames`, `$dynamicRef` — pass through the library unchanged: every keyword the library does not explicitly transform rides through via TypeScript's `const` generic + `Omit`-based merge. See [docs/types.md](docs/types.md) for the mechanics.
 
+### Type compatibility with `json-schema-to-ts`
+
+The library accepts a homegrown `JSONSchemaObject` input type (kept separate from `json-schema-to-ts`'s `JSONSchema` for type-performance reasons). In practice the two are compatible: any `as const` schema literal that is valid under `json-schema-to-ts`'s `JSONSchema` type and uses only the keywords listed above is accepted as input, and every output schema is consumable by `FromSchema`. This is what makes `FromSchema<typeof transformed>` work in the example at the top of this README without any adapter.
+
 ## Related projects
 
 - https://github.com/codeperate/json-schema-builder
 - https://github.com/livelybone/union-tuple
 - https://github.com/ksxnodemodules/typescript-tuple
 
-## Todo
-
-- Consider exposing a pipe utility
-
 ## Contributing
 
-Contributions are welcome! Before opening a PR, please run:
+Contributions are welcome — see [CONTRIBUTING.md](./CONTRIBUTING.md) for the workflow, local checks, and versioning policy. Before opening a PR, please run:
 
 ```bash
 npx changeset
