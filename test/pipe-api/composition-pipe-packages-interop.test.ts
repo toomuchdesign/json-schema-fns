@@ -10,8 +10,8 @@ import {
   pipeOmitProps,
   pipeRequireProps,
   pipeSealSchemaDeep,
-} from '../src';
-import { assertValidSchema } from './assertValidSchema';
+} from '../../src';
+import { assertValidSchema } from './../assertValidSchema';
 
 describe('composition', () => {
   describe('pipe packages interop', () => {

@@ -14,8 +14,8 @@ import {
   pipeUnsealSchemaDeep,
   requireProps,
   sealSchemaDeep,
-} from '../src';
-import { assertValidSchema } from './assertValidSchema';
+} from '../../src';
+import { assertValidSchema } from '../assertValidSchema';
 
 describe('composition', () => {
   describe('functional API', () => {
