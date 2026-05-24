@@ -362,6 +362,10 @@ The library targets **[JSON Schema Draft-07 (2018)](https://json-schema.org/draf
 
 **Forward-compatibility is a design property.** Schemas that use newer keywords from [Draft 2019-09](https://json-schema.org/draft/2019-09) or [Draft 2020-12](https://json-schema.org/draft/2020-12) — for example `$defs`, `prefixItems`, `dependentRequired`, `propertyNames`, `$dynamicRef` — pass through the library unchanged: every keyword the library does not explicitly transform rides through via TypeScript's `const` generic + `Omit`-based merge. See [docs/types.md](docs/types.md) for the mechanics.
 
+### Type compatibility with `json-schema-to-ts`
+
+The library accepts a homegrown `JSONSchemaObject` input type (kept separate from `json-schema-to-ts`'s `JSONSchema` for type-performance reasons). In practice the two are compatible: any `as const` schema literal that is valid under `json-schema-to-ts`'s `JSONSchema` type and uses only the keywords listed above is accepted as input, and every output schema is consumable by `FromSchema`. This is what makes `FromSchema<typeof transformed>` work in the example at the top of this README without any adapter.
+
 ## Related projects
 
 - https://github.com/codeperate/json-schema-builder
