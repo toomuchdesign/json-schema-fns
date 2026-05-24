@@ -23,7 +23,13 @@ type RenameRequired<
   ? { readonly [I in keyof Tuple]: RenameKey<Tuple[I], Renames> }
   : readonly [];
 
-type RenameProps<Schema extends JSONSchemaObject, Renames> = MergeRecords<
+/**
+ * @internal
+ */
+export type RenameProps<
+  Schema extends JSONSchemaObject,
+  Renames,
+> = MergeRecords<
   Schema,
   {
     properties: Simplify<RenameProperties<Schema['properties'], Renames>>;
