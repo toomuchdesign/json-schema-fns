@@ -23,23 +23,6 @@ Things explicitly **out of scope** for 1.0:
 
 ## Remaining 1.0 work
 
-### M1.5 Package distribution polish
-
-**Problem.** [package.json](../package.json) has only `main` and `types`. No `engines` field, no `exports` map.
-
-**Decision: C — stay CJS, add `exports` map + `engines`.** Single-format CJS keeps the broadest compatibility (Node CJS native, Node ESM via interop, Bun/Deno, every bundler). Add `"engines": { "node": ">=20" }` (matches `.nvmrc` and `@tsconfig/node20`). Add an `"exports"` map with a single `"default"` entry so both `import` and `require` resolve to the same CJS file:
-
-```json
-"exports": {
-  ".": {
-    "types": "./dist/index.d.ts",
-    "default": "./dist/index.js"
-  }
-}
-```
-
-Keep `"main"` and `"types"` for legacy resolvers. Build script unchanged (`tsc -p tsconfig.build.json`). TypeScript consumers on `moduleResolution: nodenext` are covered by `exports.types`. Provenance already wired — verify on next publish.
-
 ### M1.7 Preservation/touches column in README
 
 **Problem.** Today there's no documented answer to "what happens to `description`, `default`, `examples`, `$id` after I call `pickProps`?".
