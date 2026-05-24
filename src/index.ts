@@ -4,6 +4,7 @@ export { omitProps, pipeOmitProps } from './omitProps';
 export { omitPropsDeep, pipeOmitPropsDeep } from './omitPropsDeep';
 export { mergeProps, pipeMergeProps } from './mergeProps';
 export { renameProps, pipeRenameProps } from './renameProps';
+export { renamePropsDeep, pipeRenamePropsDeep } from './renamePropsDeep';
 export { sealSchemaDeep, pipeSealSchemaDeep } from './sealSchemaDeep';
 export { unsealSchemaDeep, pipeUnsealSchemaDeep } from './unsealSchemaDeep';
 export { requireProps, pipeRequireProps } from './requireProps';

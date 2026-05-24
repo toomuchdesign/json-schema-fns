@@ -50,6 +50,7 @@ npm install @toomuchdesign/json-schema-fns
 | [`pickPropsDeep`](#pickPropsDeep)       | Pick specific nested `properties` using dot-notation paths                   |
 | [`mergeProps`](#mergeProps)             | Merge two object JSON schemas' `properties` and `patternProperties` into one |
 | [`renameProps`](#renameProps)           | Rename specific `properties` via an `{ oldKey: newKey }` map                 |
+| [`renamePropsDeep`](#renamePropsDeep)   | Rename specific nested `properties` using dot-notation paths                 |
 | [`requireProps`](#requireProps)         | Mark specific properties as required (all if none provided)                  |
 | [`optionalProps`](#optionalProps)       | Make specific properties optional (all if none provided)                     |
 | [`sealSchemaDeep`](#sealSchemaDeep)     | Recursively set `additionalProperties: false` on all object schemas          |
@@ -188,6 +189,35 @@ const schema = {
 } as const;
 
 const result = renameProps(schema, { id: 'userId', email: 'emailAddress' });
+```
+
+### renamePropsDeep
+
+Rename specific nested properties in an object JSON schema using dot-notation paths. Source paths must resolve to existing properties (compile error on unknown paths); target names are arbitrary strings — renames don't move properties between levels. Bare and dotted entries can coexist: `{ user: 'account', 'user.id': 'userId' }` renames `user` at the top level and `id` within it. Position in each level's `required` is preserved.
+
+```ts
+import { renamePropsDeep } from '@toomuchdesign/json-schema-fns';
+
+const schema = {
+  type: 'object',
+  required: ['user', 'meta'],
+  properties: {
+    user: {
+      type: 'object',
+      required: ['id', 'email'],
+      properties: {
+        id: { type: 'string' },
+        email: { type: 'string' },
+      },
+    },
+    meta: { type: 'string' },
+  },
+} as const;
+
+const result = renamePropsDeep(schema, {
+  'user.id': 'userId',
+  meta: 'metadata',
+});
 ```
 
 ### requireProps
