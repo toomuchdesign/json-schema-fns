@@ -376,7 +376,7 @@ The library accepts a homegrown `JSONSchemaObject` input type (kept separate fro
 
 ## Contributing
 
-Contributions are welcome! Before opening a PR, please run:
+Contributions are welcome — see [CONTRIBUTING.md](./CONTRIBUTING.md) for the workflow, local checks, and versioning policy. Before opening a PR, please run:
 
 ```bash
 npx changeset

@@ -23,10 +23,6 @@ Things explicitly **out of scope** for 1.0:
 
 ## Remaining 1.0 work
 
-### M3.1 Repo files
-
-**Decision:** Add `CONTRIBUTING.md` (real content: `prepare` hook gotchas, the "always `npm run build` after recursive type changes" rule from [CLAUDE.md](../CLAUDE.md), changeset workflow, the single-major-bump deprecation policy). Skip `SECURITY.md` — for a zero-runtime-dep typings library the attack surface is provenance (already wired). Existing issue templates stay as-is.
-
 ### M3.3 GitHub topics on the repo
 
 **Decision:** Add topics matching the expanded npm keyword set. One-time, trivial, drives discoverability.
@@ -48,4 +44,4 @@ Things explicitly **out of scope** for 1.0:
 
 ## Deprecation policy
 
-Single-major-bump removal: breaking changes land in the next major release with no deprecation period. Document under a "Versioning" section in `CONTRIBUTING.md` (M3.1).
+Single-major-bump removal: breaking changes land in the next major release with no deprecation period. See [CONTRIBUTING.md](../CONTRIBUTING.md) for the canonical statement.
