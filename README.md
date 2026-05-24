@@ -368,10 +368,6 @@ The library targets **[JSON Schema Draft-07 (2018)](https://json-schema.org/draf
 - https://github.com/livelybone/union-tuple
 - https://github.com/ksxnodemodules/typescript-tuple
 
-## Todo
-
-- Consider exposing a pipe utility
-
 ## Contributing
 
 Contributions are welcome! Before opening a PR, please run:
