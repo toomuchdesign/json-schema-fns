@@ -6,7 +6,7 @@ addFormats(ajv);
 
 /**
  * Asserts that `schema` is itself a valid JSON Schema under the Draft-07
- * meta-schema — the dialect declared in M1.1 of the v1 roadmap.
+ * meta-schema — the dialect this library targets.
  *
  * Pair with the existing `toEqual` / `expectTypeOf` assertions to guarantee
  * every output of a public function is a real schema, not just structurally
